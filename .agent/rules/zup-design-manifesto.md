@@ -18,6 +18,7 @@ trigger: always_on
 
 - **Spring Over Linear:** Linear "Ease-in" animations are forbidden as they feel robotic.
 - **Micro-interactions:** Icons should be "alive." The Journal should write, the Settings gear should mesh, and the Wallet icon should "breathe" when connected.
+- **Squircle**: Always prefer squircle shapes with smooth rounded corner, totally cicle shapes or totally square shapes should be 100% avoided, unless explicity asked.
 
 ## 4. Web3 Mechanics: "It Just Works"
 
