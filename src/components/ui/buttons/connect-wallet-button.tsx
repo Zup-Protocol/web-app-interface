@@ -3,6 +3,7 @@ import {
   type ConnectIconHandle,
 } from "@/components/ui/icons/connect";
 import { cn } from "@/lib/utils";
+import { useAppKit } from "@reown/appkit/react";
 import { useRef } from "react";
 import { PrimaryButton } from "./primary-button";
 
@@ -15,6 +16,7 @@ export function ConnectWalletButton({
   ...props
 }: ConnectWalletButtonProps) {
   const connectRef = useRef<ConnectIconHandle>(null);
+  const appKit = useAppKit();
 
   return (
     <PrimaryButton
@@ -24,6 +26,7 @@ export function ConnectWalletButton({
       onMouseLeave={() => connectRef.current?.stopAnimation()}
       onPointerDown={() => connectRef.current?.startAnimation()}
       onPointerLeave={() => connectRef.current?.stopAnimation()}
+      onClick={() => appKit.open({ view: "Connect" })}
       {...props}
     >
       Connect Wallet

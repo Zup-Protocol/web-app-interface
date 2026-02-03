@@ -85,11 +85,13 @@
   /* Buttons */
   --secondary-button-background: hsl(250 100% 67.1% / 0.15);
   --secondary-button-background-hover: hsl(250 100% 67.1% / 0.25);
-  --tertiary-button-background: hsl(240 30% 95%);
+  --tertiary-button-background: hsl(240 44% 96%);
   --tertiary-button-background-hover: hsl(240 30% 91%);
+  --outline-button-border: hsl(240, 10%, 92%);
 }
 
 .dark {
+  --background: hsl(250 18% 7%);
 }
 
 @theme inline {
@@ -110,6 +112,7 @@
   --color-tertiary-button-background-hover: var(
     --tertiary-button-background-hover
   );
+  --color-outline-button-border: var(--outline-button-border);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
