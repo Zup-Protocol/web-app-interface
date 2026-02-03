@@ -22,6 +22,8 @@ export function ConnectWalletButton({
       className={cn("group flex items-center justify-center", className)}
       onRevealComplete={() => connectRef.current?.startAnimation()}
       onMouseLeave={() => connectRef.current?.stopAnimation()}
+      onPointerDown={() => connectRef.current?.startAnimation()}
+      onPointerLeave={() => connectRef.current?.stopAnimation()}
       {...props}
     >
       Connect Wallet

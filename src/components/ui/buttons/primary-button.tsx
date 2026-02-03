@@ -60,10 +60,20 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
   ) => {
     const Comp = (asChild ? Slot : motion.button) as any;
     const [isHovered, setIsHovered] = React.useState(false);
+    const [isMobile, setIsMobile] = React.useState(false);
+
+    React.useEffect(() => {
+      const checkMobile = () => {
+        setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+      };
+      checkMobile();
+      window.addEventListener("resize", checkMobile);
+      return () => window.removeEventListener("resize", checkMobile);
+    }, []);
 
     React.useEffect(() => {
       let timer: NodeJS.Timeout;
-      if (isHovered && !alwaysIcon && onRevealComplete) {
+      if (isHovered && onRevealComplete) {
         timer = setTimeout(() => {
           onRevealComplete();
         }, 120);
@@ -71,7 +81,9 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
       return () => {
         if (timer) clearTimeout(timer);
       };
-    }, [isHovered, alwaysIcon, onRevealComplete]);
+    }, [isHovered, onRevealComplete]);
+
+    const showIcon = alwaysIcon || isHovered || isMobile;
 
     return (
       <ScaleClickAnimation asChild>
@@ -107,9 +119,9 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                 key="icon-container"
                 initial={false}
                 animate={{
-                  width: alwaysIcon || isHovered ? "auto" : 0,
-                  opacity: alwaysIcon || isHovered ? 1 : 0,
-                  marginRight: (alwaysIcon || isHovered) && children ? 8 : 0,
+                  width: showIcon ? "auto" : 0,
+                  opacity: showIcon ? 1 : 0,
+                  marginRight: showIcon && children ? 8 : 0,
                 }}
                 transition={{
                   type: "spring",

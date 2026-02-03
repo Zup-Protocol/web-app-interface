@@ -10,12 +10,12 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/0 backdrop-blur-md">
-      <div className="w-full px-[20px] h-16 flex items-center justify-between">
+      <div className="w-full px-[20px] py-[15px] flex items-center justify-between">
         <div className="flex items-center gap-8">
           <BrandLogo />
 
           <TabButton
-            className="group"
+            className="group hidden sm:flex"
             onMouseEnter={() => plusRef.current?.startAnimation()}
             onMouseLeave={() => plusRef.current?.stopAnimation()}
             isActive={true}

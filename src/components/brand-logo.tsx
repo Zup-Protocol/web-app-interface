@@ -4,7 +4,10 @@ import { ScaleClickAnimation } from "./ui/animations/scale-click-animation";
 export const BrandLogo = () => {
   return (
     <ScaleClickAnimation asChild scale={0.97}>
-      <a href="/" className="inline-block cursor-pointer">
+      <a
+        href="/"
+        className="inline-block cursor-pointer hover:opacity-40 transition-opacity"
+      >
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -19,7 +22,12 @@ export const BrandLogo = () => {
           <img
             src="/images/zup-logo.svg"
             alt="Zup Protocol"
-            className="w-20 h-auto"
+            className="hidden sm:block w-20 h-auto"
+          />
+          <img
+            src="/images/zup-logormark.svg"
+            alt="Zup Protocol"
+            className="sm:hidden w-8 h-auto"
           />
         </motion.div>
       </a>
