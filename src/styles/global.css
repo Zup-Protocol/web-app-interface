@@ -66,6 +66,8 @@
   --popover: hsl(250 100% 96%);
   --popover-foreground: hsl(250 18% 7%);
   --primary: hsl(250 100% 67.1%);
+  --primary-hover: hsl(250 100% 67.1% / 0.8);
+
   --primary-foreground: hsl(0 0% 100%);
   --secondary: hsl(250 100% 90%);
   --secondary-foreground: hsl(250 100% 30%);
@@ -79,28 +81,15 @@
   --input: hsl(250 100% 88%);
   --ring: hsl(250 100% 67.1%);
   --radius: 0.75rem;
+
+  /* Buttons */
+  --secondary-button-background: hsl(250 100% 67.1% / 0.15);
+  --secondary-button-background-hover: hsl(250 100% 67.1% / 0.25);
+  --tertiary-button-background: hsl(240 30% 95%);
+  --tertiary-button-background-hover: hsl(240 30% 91%);
 }
 
 .dark {
-  --background: hsl(250 18% 7%);
-  --foreground: hsl(210 40% 98%);
-  --card: hsl(250 18% 10%);
-  --card-foreground: hsl(210 40% 98%);
-  --popover: hsl(250 18% 10%);
-  --popover-foreground: hsl(210 40% 98%);
-  --primary: hsl(250 100% 67.1%);
-  --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(250 18% 15%);
-  --secondary-foreground: hsl(210 40% 98%);
-  --muted: hsl(250 18% 15%);
-  --muted-foreground: hsl(250 10% 65%);
-  --accent: hsl(250 18% 15%);
-  --accent-foreground: hsl(210 40% 98%);
-  --destructive: hsl(0 62.8% 30.6%);
-  --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(250 18% 20%);
-  --input: hsl(250 18% 20%);
-  --ring: hsl(250 100% 67.1%);
 }
 
 @theme inline {
@@ -112,6 +101,15 @@
   --color-popover: var(--popover);
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary-button-background: var(--secondary-button-background);
+  --color-secondary-button-background-hover: var(
+    --secondary-button-background-hover
+  );
+  --color-tertiary-button-background: var(--tertiary-button-background);
+  --color-tertiary-button-background-hover: var(
+    --tertiary-button-background-hover
+  );
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);

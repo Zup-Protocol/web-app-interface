@@ -1,6 +1,5 @@
 ---
-import { BrandLogo } from "@/components/BrandLogo";
-import { HeroSection } from "@/components/HeroSection";
+import { HomeHeroSection } from "../components/home-hero-section";
 import Layout from "../layouts/Layout.astro";
 ---
 
@@ -8,28 +7,7 @@ import Layout from "../layouts/Layout.astro";
   <main
     class="flex min-h-screen flex-col items-center justify-center p-4 relative overflow-hidden"
   >
-    <!-- Background Gradient Effect -->
-    <div
-      class="absolute inset-0 -z-10 h-full w-full bg-background [background:radial-gradient(125%_125%_at_50%_10%,hsl(var(--background))_40%,hsl(var(--primary)/_0.1)_100%)]"
-    >
-    </div>
-
-    <div
-      class="z-10 text-center space-y-8 max-w-2xl px-4 flex flex-col items-center"
-    >
-      <BrandLogo client:load />
-
-      <h1
-        class="text-5xl md:text-7xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70 animate-fade-in-up"
-      >
-        Zup Protocol
-      </h1>
-      <p class="text-xl text-muted-foreground animate-fade-in-up delay-100">
-        The Future of Web3 Interaction. Web Native. Premium.
-      </p>
-
-      <HeroSection client:load />
-    </div>
+    <HomeHeroSection client:load />
   </main>
 </Layout>
 

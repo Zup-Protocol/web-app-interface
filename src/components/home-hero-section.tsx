@@ -1,8 +1,8 @@
-import { Button } from "@/components/ui/button";
+import { PrimaryButton } from "@/components/ui/buttons/primary-button";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
-export const HeroSection = () => {
+export const HomeHeroSection = () => {
   return (
     <div className="flex flex-col items-center gap-6 mt-8">
       <motion.div
@@ -15,7 +15,7 @@ export const HeroSection = () => {
           delay: 0.2,
         }}
       >
-        <Button
+        <PrimaryButton
           size="lg"
           className="text-lg px-8 py-6 rounded-full shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-shadow duration-300"
           onClick={() => alert("Welcome to Zup Protocol!")}
@@ -23,7 +23,7 @@ export const HeroSection = () => {
           <Sparkles className="mr-2 h-5 w-5" />
           Join the Future
           <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
+        </PrimaryButton>
       </motion.div>
 
       <motion.p
