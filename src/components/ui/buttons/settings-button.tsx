@@ -79,7 +79,7 @@ export function SettingsButton({ className, ...props }: SettingsButtonProps) {
       <PopoverContent align="end" className="w-[240px] p-4">
         <h2 className="mb-3 text-sm font-medium">Theme Mode</h2>
         <Dropdown
-          variant={"tertiaryOnPopover"}
+          variant={"tertiaryOnModal"}
           items={themeItems}
           selected={(theme as ThemeMode) || ThemeMode.SYSTEM}
           onSelect={handleThemeChange}

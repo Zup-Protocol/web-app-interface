@@ -16,7 +16,7 @@ export const TabButton = React.forwardRef<HTMLButtonElement, TabButtonProps>(
         <motion.button
           ref={ref}
           className={cn(
-            "relative flex items-center gap-2 px-1 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer outline-none",
+            "relative flex items-center gap-2 px-1 py-2 text-base font-medium text-muted-foreground transition-colors hover:text-foreground cursor-pointer outline-none",
             isActive && "text-foreground",
             className,
           )}

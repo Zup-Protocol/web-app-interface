@@ -75,7 +75,7 @@
   --accent-foreground: hsl(250 100% 30%);
   --destructive: hsl(0 84.2% 60.2%);
   --destructive-foreground: hsl(210 40% 98%);
-  --border: hsl(250 100% 88%);
+  --border: hsl(0, 0%, 0%);
   --input: hsl(250 100% 88%);
   --ring: hsl(250 100% 67.1%);
   --radius: 0.75rem;
@@ -85,15 +85,17 @@
   --secondary-button-background-hover: hsl(250 100% 67.1% / 0.25);
   --tertiary-button-background: hsl(240 44% 96%);
   --tertiary-button-background-hover: hsl(240 30% 91%);
-  --tertiary-button-on-popover-background: hsl(240 44% 96%);
-  --tertiary-button-on-popover-background-hover: hsl(240 30% 91%);
   --outline-button-border: hsl(240, 10%, 92%);
   --outline-button-hover: hsl(240 44% 96%);
+  --divider: hsl(240, 10%, 92%);
 
-  /* Popover */
-  --popover: hsl(250 100% 98.5%);
-  --popover-outline: hsl(240, 10%, 92%);
-  --popover-foreground: hsl(250 18% 7%);
+  /* Modal */
+  --modal: hsl(250 100% 98.5%);
+  --modal-outline: hsl(240, 10%, 92%);
+  --modal-foreground: hsl(250 18% 7%);
+  --divider-on-modal: hsl(240, 10%, 92%);
+  --tertiary-button-on-modal-background: hsl(240 44% 96%);
+  --tertiary-button-on-modal-background-hover: hsl(240 30% 91%);
 }
 
 .dark {
@@ -107,15 +109,17 @@
   --secondary-button-background-hover: hsl(249, 43%, 34%);
   --tertiary-button-background: hsl(0 0% 13%);
   --tertiary-button-background-hover: hsl(240 3% 16%);
-  --tertiary-button-on-popover-background: hsl(240, 2%, 10%);
-  --tertiary-button-on-popover-background-hover: hsl(240, 2%, 8%);
   --outline-button-border: hsl(240, 3%, 15%);
   --outline-button-hover: hsl(240 3% 10%);
+  --divider: hsl(240, 3%, 15%);
 
-  /* Popover */
-  --popover: hsl(0 0% 13%);
-  --popover-outline: hsl(240, 3%, 15%);
-  --popover-foreground: hsl(240 9% 85%);
+  /* Modal */
+  --modal: hsl(0 0% 13%);
+  --modal-outline: hsl(240, 3%, 15%);
+  --modal-foreground: hsl(240 9% 85%);
+  --divider-on-modal: hsl(240, 3%, 21%);
+  --tertiary-button-on-modal-background: hsl(240, 2%, 10%);
+  --tertiary-button-on-modal-background-hover: hsl(240, 2%, 8%);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -126,21 +130,21 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
+  --color-modal: var(--modal);
+  --color-modal-foreground: var(--modal-foreground);
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-secondary-button-background: var(--secondary-button-background);
   --color-outline-button-hover: var(--outline-button-hover);
-  --color-popover-outline: var(--popover-outline);
+  --color-modal-outline: var(--modal-outline);
   --color-secondary-button-background-hover: var(
     --secondary-button-background-hover
   );
-  --color-tertiary-button-on-popover-background: var(
-    --tertiary-button-on-popover-background
+  --color-tertiary-button-on-modal-background: var(
+    --tertiary-button-on-modal-background
   );
-  --color-tertiary-button-on-popover-background-hover: var(
-    --tertiary-button-on-popover-background-hover
+  --color-tertiary-button-on-modal-background-hover: var(
+    --tertiary-button-on-modal-background-hover
   );
   --color-tertiary-button-background: var(--tertiary-button-background);
   --color-tertiary-button-background-hover: var(
@@ -159,6 +163,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-divider: var(--divider);
+  --color-divider-on-modal: var(--divider-on-modal);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -170,7 +176,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans leading-5.5 text-base;
   }
 }
 
@@ -190,5 +196,50 @@
   }
   to {
     clip-path: circle(200% at 0 0);
+  }
+}
+
+@media (min-width: 768px) {
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 24px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border: none;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 20px;
+    background-clip: padding-box;
+    border: 9px solid transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0, 0, 0, 0.25);
+    background-clip: padding-box;
+    border: 9px solid transparent;
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+  }
+
+  /* Force vertical spacing using invisible buttons */
+  .custom-scrollbar::-webkit-scrollbar-button:vertical:start:decrement {
+    display: block;
+    height: 0px;
+    background-color: transparent;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-button:vertical:end:increment {
+    display: block;
+    height: 0px;
+    background-color: transparent;
   }
 }

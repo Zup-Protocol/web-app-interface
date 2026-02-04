@@ -7,6 +7,7 @@ import { useConnection } from "wagmi";
 import { ThemeProvider } from "../providers/theme-provider";
 import { Web3Provider } from "../providers/web3-provider";
 import { BrandLogo } from "./brand-logo";
+import { NetworkSelector } from "./network-selector";
 import { ConnectWalletButton } from "./ui/buttons/connect-wallet-button";
 import { ConnectedWalletButton } from "./ui/buttons/connected-wallet-button";
 import { SettingsButton } from "./ui/buttons/settings-button";
@@ -58,6 +59,9 @@ function HeaderContent() {
         </div>
 
         <div className="flex items-center gap-3">
+          <motion.div variants={itemVariants}>
+            <NetworkSelector />
+          </motion.div>
           <motion.div variants={itemVariants}>
             {isConnected ? <ConnectedWalletButton /> : <ConnectWalletButton />}
           </motion.div>

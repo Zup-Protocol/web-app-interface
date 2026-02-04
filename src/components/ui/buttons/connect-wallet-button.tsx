@@ -4,7 +4,7 @@ import {
 } from "@/components/ui/icons/connect";
 import { cn } from "@/lib/utils";
 import { useAppKit } from "@reown/appkit/react";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { PrimaryButton } from "./primary-button";
 
 interface ConnectWalletButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,6 +17,18 @@ export function ConnectWalletButton({
 }: ConnectWalletButtonProps) {
   const connectRef = useRef<ConnectIconHandle>(null);
   const appKit = useAppKit();
+  const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(max-width: 640px)").matches);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   return (
     <PrimaryButton
@@ -29,7 +41,9 @@ export function ConnectWalletButton({
       onClick={() => appKit.open({ view: "Connect" })}
       {...props}
     >
-      Connect Wallet
+      {(!mounted || !isMobile) && (
+        <span className="hidden sm:inline">Connect Wallet</span>
+      )}
     </PrimaryButton>
   );
 }

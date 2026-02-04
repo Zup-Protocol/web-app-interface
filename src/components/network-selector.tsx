@@ -1,29 +1,60 @@
-import { cn } from "@/lib/utils";
-import { ChevronDown, LayoutGrid } from "lucide-react";
+import { useAppNetwork } from "@/hooks/use-network";
+import { AppNetworksUtils } from "@/lib/app-networks";
+import { ThemeMode } from "@/lib/theme-mode";
+import { ChevronDown } from "lucide-react";
+import { useTheme } from "next-themes";
+import { useState } from "react";
+import { NetworkSelectionModal } from "./modals/network-selection-modal";
+import { PrimaryButton } from "./ui/buttons/primary-button";
 
 interface NetworkSelectorProps {
   className?: string;
 }
 
 export function NetworkSelector({ className }: NetworkSelectorProps) {
+  const { network, setAppNetwork: setNetwork } = useAppNetwork();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { resolvedTheme } = useTheme();
+
+  const Icon = AppNetworksUtils.logoSvg[network];
+  const activeIcon = resolvedTheme === ThemeMode.DARK ? Icon.dark : Icon.light;
+  const iconSrc = typeof activeIcon === "string" ? activeIcon : activeIcon.src;
+
   return (
-    <button
-      className={cn(
-        "group flex items-center gap-2 px-3 py-2 bg-background border border-border rounded-xl",
-        "hover:bg-accent hover:text-accent-foreground transition-colors",
-        "cursor-pointer select-none",
-        className,
-      )}
-    >
-      <div className="flex items-center justify-center w-6 h-6 rounded-md bg-green-500/20 text-green-600">
-        {/* Placeholder for network icon, using LayoutGrid as generic for now since animated one failed */}
-        <LayoutGrid size={16} />
-      </div>
-      <span className="text-sm font-medium">All Networks</span>
-      <ChevronDown
-        size={14}
-        className="text-muted-foreground group-hover:text-foreground transition-colors"
+    <>
+      <PrimaryButton
+        variant="tertiary"
+        onClick={() => setIsModalOpen(true)}
+        icon={
+          <div className="flex items-center justify-center w-6 h-6">
+            {Icon && (
+              <img
+                src={iconSrc}
+                alt="Network"
+                className="w-full h-full object-contain"
+              />
+            )}
+          </div>
+        }
+        alwaysIcon
+      >
+        <div className="flex items-center gap-1.5">
+          <span className="text-base font-medium hidden sm:inline">
+            {AppNetworksUtils.networkName[network]}
+          </span>
+          <ChevronDown
+            size={14}
+            className="text-foreground group-hover:text-foreground transition-colors"
+          />
+        </div>
+      </PrimaryButton>
+
+      <NetworkSelectionModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        currentNetwork={network}
+        onSelectNetwork={setNetwork}
       />
-    </button>
+    </>
   );
 }

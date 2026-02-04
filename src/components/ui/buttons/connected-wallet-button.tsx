@@ -57,7 +57,7 @@ export function ConnectedWalletButton({
         {}
         <div className="flex items-center gap-2 invisible pointer-events-none select-none h-0 opacity-0">
           <div className="w-7 h-7" />
-          <span className="whitespace-nowrap font-medium">
+          <span className="whitespace-nowrap font-medium hidden sm:inline">
             Wallet Connected
           </span>
         </div>
@@ -75,7 +75,9 @@ export function ConnectedWalletButton({
               <div className="flex items-center justify-center w-7 h-7">
                 <CheckIcon size={22} autoplay delay={500} />
               </div>
-              <span className="text-inherit font-medium">Wallet Connected</span>
+              <span className="text-inherit font-medium hidden sm:inline">
+                Wallet Connected
+              </span>
             </motion.div>
           ) : (
             <motion.div
@@ -89,7 +91,7 @@ export function ConnectedWalletButton({
               <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-full ring-1 ring-white/10 shadow-sm">
                 <Avatar className="w-full h-full translate-y-px" {...config} />
               </div>
-              <span className="text-inherit font-medium">
+              <span className="text-inherit font-medium hidden sm:inline">
                 {ensName || formattedAddress}
               </span>
             </motion.div>

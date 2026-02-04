@@ -21,8 +21,8 @@ const dropdownTriggerVariants = cva(
           "border border-outline-button-border bg-transparent hover:bg-outline-button-hover text-foreground outline-none",
         tertiary:
           "bg-tertiary-button-background text-foreground hover:bg-tertiary-button-background-hover outline-none",
-        tertiaryOnPopover:
-          "bg-tertiary-button-on-popover-background text-foreground hover:bg-tertiary-button-on-popover-background-hover outline-none",
+        tertiaryOnModal:
+          "bg-tertiary-button-on-modal-background text-foreground hover:bg-tertiary-button-on-modal-background-hover outline-none",
       },
     },
     defaultVariants: {
@@ -34,10 +34,10 @@ const dropdownTriggerVariants = cva(
 const dropdownContentVariants = cva("", {
   variants: {
     variant: {
-      outline: "bg-popover outline-popover-outline",
+      outline: "bg-modal outline-modal-outline",
       tertiary: "bg-tertiary-button-background outline-outline-button-border",
-      tertiaryOnPopover:
-        "bg-tertiary-button-on-popover-background outline-popover-outline",
+      tertiaryOnModal:
+        "bg-tertiary-button-on-modal-background outline-modal-outline",
     },
   },
   defaultVariants: {
@@ -52,8 +52,7 @@ const dropdownItemVariants = cva(
       variant: {
         outline: "hover:bg-accent hover:text-accent-foreground",
         tertiary: "hover:bg-tertiary-button-background-hover",
-        tertiaryOnPopover:
-          "hover:bg-tertiary-button-on-popover-background-hover",
+        tertiaryOnModal: "hover:bg-tertiary-button-on-modal-background-hover",
       },
     },
     defaultVariants: {

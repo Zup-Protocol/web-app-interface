@@ -1,26 +1,36 @@
+import { AppNetworksUtils } from "@/lib/app-networks";
+import { ThemeMode } from "@/lib/theme-mode";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { mainnet } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 
-export const REOWN_PROJECT_ID =
-  import.meta.env.REOWN_PROJECT_ID || "PUNCH_PUNCH_PUNCH";
+const REOWN_PROJECT_ID = process.env.REOWN_PROJECT_ID || "";
 
-export const SUPPORTED_NETWORKS = [mainnet];
+const supportedNetworks = [
+  Object.values(AppNetworksUtils.wagmiNetwork).filter(
+    (value) => value !== undefined,
+  ),
+].flat();
 
 export const wagmiAdapter = new WagmiAdapter({
-  projectId: REOWN_PROJECT_ID,
-  networks: SUPPORTED_NETWORKS,
+  projectId: "5538068463f381cc4101c5e86e895c01",
+  networks: supportedNetworks,
 });
 
-if (typeof window !== "undefined") {
+export const config = wagmiAdapter.wagmiConfig;
+
+export function initializeAppKit() {
+  if (typeof window === "undefined") return;
+
   const getAppTheme = () =>
-    document.documentElement.classList.contains("dark") ? "dark" : "light";
+    document.documentElement.classList.contains(ThemeMode.DARK)
+      ? ThemeMode.DARK
+      : ThemeMode.LIGHT;
 
   const origin = window.location.origin;
 
   const appKit = createAppKit({
     adapters: [wagmiAdapter],
-    networks: SUPPORTED_NETWORKS as any,
+    networks: supportedNetworks as any,
     projectId: REOWN_PROJECT_ID,
     metadata: {
       name: "Zup Protocol",
@@ -44,6 +54,6 @@ if (typeof window !== "undefined") {
     attributes: true,
     attributeFilter: ["class"],
   });
-}
 
-export const config = wagmiAdapter.wagmiConfig;
+  return appKit;
+}
