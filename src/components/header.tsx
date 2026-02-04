@@ -1,8 +1,10 @@
 "use client";
 
+import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { useConnection } from "wagmi";
+import { ThemeProvider } from "../providers/theme-provider";
 import { Web3Provider } from "../providers/web3-provider";
 import { BrandLogo } from "./brand-logo";
 import { ConnectWalletButton } from "./ui/buttons/connect-wallet-button";
@@ -70,8 +72,14 @@ function HeaderContent() {
 
 export function Header() {
   return (
-    <Web3Provider>
-      <HeaderContent />
-    </Web3Provider>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme={ThemeMode.SYSTEM}
+      enableSystem
+    >
+      <Web3Provider>
+        <HeaderContent />
+      </Web3Provider>
+    </ThemeProvider>
   );
 }

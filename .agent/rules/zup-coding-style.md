@@ -69,3 +69,43 @@ To ensure consistency, every file must follow this structural sequence:
 ## 5. Decision Log
 
 For any complex architectural changes, briefly explain the "Why" behind your choice within the commit message or a localized `README.md` to maintain the project's long-term "Hierarchy of Truth."
+
+## 6. Strict Type Safety & Nominal Integrity
+
+TypeScript must be used to enforce business logic, not just to suppress compiler warnings. Avoid "Primitive Obsession" by ensuring that every value carries its own semantic type and intent through the mandatory use of **Enums** and **Branded Types**.
+
+### 6.1 The "Enum-First" Mandate
+
+Raw `string` and `number` types are strictly prohibited for values with a fixed set of options or high-stakes logic (e.g., Statuses, Chain IDs, Action Types).
+
+- **Mandatory Enums:** All sets of related constants must be defined as Enums. This provides a single, named source of truth and enables robust IDE autocomplete and refactoring.
+- **String Enums for Transparency:** Favor **String Enums** (e.g., `enum Status { Pending = 'PENDING', Active = 'ACTIVE' }`) for business-critical states. This ensures that logs, database entries, and API responses remain human-readable while maintaining strict type safety.
+- **Numeric Enums for Protocols:** Use **Numeric Enums** only when the underlying protocol or smart contract requires direct integer mapping (e.g., specific internal status codes or byte values).
+- **Rationale:** Relying on raw strings across files is a failure of architecture. If a value needs to change, it must be updated in exactly one place: the Enum definition.
+
+### 6.2 Nominal Typing (Branded Types)
+
+For critical Web3 primitives like `Address`, `TransactionHash`, or `BigInt` amounts, use **Branded Types** (Opaque Types) to prevent logical cross-contamination between different types that share the same underlying primitive.
+
+- **The Pattern:** Use intersection types (e.g., `type Address = string & { __brand: 'Address' }`) to ensure a standard string cannot be passed where a validated address is required.
+- **Validation Requirement:** All branded types must be instantiated through a "Constructor" or "Guard" function that performs necessary validation (e.g., lowercase check, checksum check) before casting to the Branded Type.
+
+### 6.3 Single Source of Truth
+
+All Enums and shared types must be centralized in the `/src/lib` layer.
+
+- **No Inline Logic:** Never check for a specific value using a raw string or number literal. You must always reference the Enum (e.g., `if (id === IndexerNetwork.Ethereum)`).
+- **Maintenance:** By referencing the Enum rather than the raw value, updating a protocol name or a chain ID becomes a one-line change that safely propagates across the entire project via the compiler.
+
+---
+
+## Type Safety Summary
+
+| Scenario       | Lazy Typing (Prohibited)   | Strict Safety (Required)              |
+| :------------- | :------------------------- | :------------------------------------ |
+| **User Role**  | `let role = "admin"`       | `enum UserRole { Admin = 'ADMIN' }`   |
+| **Address**    | `function send(a: string)` | `function send(a: ValidAddress)`      |
+| **Chain ID**   | `if (id === 1)`            | `if (id === IndexerNetwork.Ethereum)` |
+| **Sync State** | `state = "syncing"`        | `state = IndexerState.Syncing`        |
+
+---

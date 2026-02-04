@@ -63,8 +63,6 @@
   --foreground: hsl(250 18% 7%);
   --card: hsl(250 100% 96%);
   --card-foreground: hsl(250 18% 7%);
-  --popover: hsl(250 100% 96%);
-  --popover-foreground: hsl(250 18% 7%);
   --primary: hsl(250 100% 67.1%);
   --primary-hover: hsl(250 100% 67.1% / 0.8);
 
@@ -87,12 +85,40 @@
   --secondary-button-background-hover: hsl(250 100% 67.1% / 0.25);
   --tertiary-button-background: hsl(240 44% 96%);
   --tertiary-button-background-hover: hsl(240 30% 91%);
+  --tertiary-button-on-popover-background: hsl(240 44% 96%);
+  --tertiary-button-on-popover-background-hover: hsl(240 30% 91%);
   --outline-button-border: hsl(240, 10%, 92%);
+  --outline-button-hover: hsl(240 44% 96%);
+
+  /* Popover */
+  --popover: hsl(250 100% 98.5%);
+  --popover-outline: hsl(240, 10%, 92%);
+  --popover-foreground: hsl(250 18% 7%);
 }
 
 .dark {
-  --background: hsl(250 18% 7%);
+  --background: hsl(240 9% 4%);
+  --foreground: hsl(240 9% 85%);
+  --primary: hsl(250 100% 67%);
+  --primary-hover: hsl(250, 88%, 70%);
+
+  /* Buttons */
+  --secondary-button-background: hsl(249, 43%, 24%);
+  --secondary-button-background-hover: hsl(249, 43%, 34%);
+  --tertiary-button-background: hsl(0 0% 13%);
+  --tertiary-button-background-hover: hsl(240 3% 16%);
+  --tertiary-button-on-popover-background: hsl(240, 2%, 10%);
+  --tertiary-button-on-popover-background-hover: hsl(240, 2%, 8%);
+  --outline-button-border: hsl(240, 3%, 15%);
+  --outline-button-hover: hsl(240 3% 10%);
+
+  /* Popover */
+  --popover: hsl(0 0% 13%);
+  --popover-outline: hsl(240, 3%, 15%);
+  --popover-foreground: hsl(240 9% 85%);
 }
+
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
   --font-sans: "SNPro", ui-sans-serif, system-ui, sans-serif;
@@ -105,8 +131,16 @@
   --color-primary: var(--primary);
   --color-primary-hover: var(--primary-hover);
   --color-secondary-button-background: var(--secondary-button-background);
+  --color-outline-button-hover: var(--outline-button-hover);
+  --color-popover-outline: var(--popover-outline);
   --color-secondary-button-background-hover: var(
     --secondary-button-background-hover
+  );
+  --color-tertiary-button-on-popover-background: var(
+    --tertiary-button-on-popover-background
+  );
+  --color-tertiary-button-on-popover-background-hover: var(
+    --tertiary-button-on-popover-background-hover
   );
   --color-tertiary-button-background: var(--tertiary-button-background);
   --color-tertiary-button-background-hover: var(
@@ -137,5 +171,24 @@
   }
   body {
     @apply bg-background text-foreground font-sans;
+  }
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: 1.5s ease-in-out theme-wipe forwards;
+}
+
+@keyframes theme-wipe {
+  from {
+    clip-path: circle(0% at 0 0);
+  }
+  to {
+    clip-path: circle(200% at 0 0);
   }
 }

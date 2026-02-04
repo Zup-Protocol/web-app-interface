@@ -1,15 +1,15 @@
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import { mainnet, sepolia } from "@reown/appkit/networks";
+import { mainnet } from "@reown/appkit/networks";
 import { createAppKit } from "@reown/appkit/react";
 
 export const REOWN_PROJECT_ID =
   import.meta.env.REOWN_PROJECT_ID || "PUNCH_PUNCH_PUNCH";
 
-export const networks = [mainnet, sepolia];
+export const SUPPORTED_NETWORKS = [mainnet];
 
 export const wagmiAdapter = new WagmiAdapter({
   projectId: REOWN_PROJECT_ID,
-  networks,
+  networks: SUPPORTED_NETWORKS,
 });
 
 if (typeof window !== "undefined") {
@@ -20,7 +20,7 @@ if (typeof window !== "undefined") {
 
   const appKit = createAppKit({
     adapters: [wagmiAdapter],
-    networks: networks as any,
+    networks: SUPPORTED_NETWORKS as any,
     projectId: REOWN_PROJECT_ID,
     metadata: {
       name: "Zup Protocol",
