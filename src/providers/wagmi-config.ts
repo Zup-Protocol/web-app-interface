@@ -3,7 +3,7 @@ import { ThemeMode } from "@/lib/theme-mode";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import { createAppKit } from "@reown/appkit/react";
 
-const REOWN_PROJECT_ID = process.env.REOWN_PROJECT_ID || "";
+const REOWN_PROJECT_ID = import.meta.env.PUBLIC_REOWN_PROJECT_ID || "";
 
 const supportedNetworks = [
   Object.values(AppNetworksUtils.wagmiNetwork).filter(
@@ -12,7 +12,7 @@ const supportedNetworks = [
 ].flat();
 
 export const wagmiAdapter = new WagmiAdapter({
-  projectId: "5538068463f381cc4101c5e86e895c01",
+  projectId: REOWN_PROJECT_ID,
   networks: supportedNetworks,
 });
 
