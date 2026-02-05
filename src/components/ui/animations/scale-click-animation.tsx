@@ -8,6 +8,7 @@ interface ScaleClickAnimationProps {
   className?: string;
   scale?: number;
   asChild?: boolean;
+  disabled?: boolean;
 }
 
 export function ScaleClickAnimation({
@@ -15,6 +16,7 @@ export function ScaleClickAnimation({
   className,
   scale = 0.96,
   asChild = false,
+  disabled = false,
 }: ScaleClickAnimationProps) {
   const [isTapping, setIsTapping] = React.useState(false);
 
@@ -43,16 +45,18 @@ export function ScaleClickAnimation({
     } as any,
   };
 
+  const finalProps = disabled ? {} : animationProps;
+
   if (asChild) {
     return (
-      <Slot {...animationProps} className={className}>
+      <Slot {...finalProps} className={className}>
         {children}
       </Slot>
     );
   }
 
   return (
-    <motion.div className={className} {...animationProps}>
+    <motion.div className={className} {...finalProps}>
       {children}
     </motion.div>
   );

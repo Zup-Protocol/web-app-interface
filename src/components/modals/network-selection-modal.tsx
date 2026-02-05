@@ -92,7 +92,7 @@ export function NetworkSelectionModal({
               <CloseButton onClick={onClose} />
             </div>
           </div>
-          <p className="text-base text-[#9CA3AF] max-w-[300px] sm:max-w-md">
+          <p className="text-base text-mutated-text max-w-[300px] sm:max-w-md">
             {translate(AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION)}
           </p>
         </div>

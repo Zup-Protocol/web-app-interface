@@ -3,9 +3,6 @@ export enum AppTranslationsKeys {
   HEADER_BUTTONS_CONNECT = "header.buttons.connect",
   HEADER_BUTTONS_SETTINGS = "header.buttons.settings",
   HEADER_BUTTONS_CONNECTED = "header.buttons.connected",
-  HERO_TITLE = "hero.title",
-  HERO_SUBTITLE = "hero.subtitle",
-  HERO_WELCOME = "hero.welcome",
   NETWORK_SELECTOR_MODAL_TITLE = "network.selector.modal.title",
   NETWORK_SELECTOR_MODAL_DESCRIPTION = "network.selector.modal.description",
   NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER = "network.selector.modal.search.placeholder",
@@ -23,4 +20,12 @@ export enum AppTranslationsKeys {
   SETTINGS_LANGUAGE_PT = "settings.language.pt",
   SETTINGS_LANGUAGE_SYSTEM = "settings.language.system",
   NETWORKS_ALL = "networks.all",
+
+  NEW_POSITION_TITLE = "newPosition.title",
+  NEW_POSITION_DESCRIPTION = "newPosition.description",
+  NEW_POSITION_TOKEN_A_LABEL = "newPosition.tokenA.label",
+  NEW_POSITION_TOKEN_B_LABEL = "newPosition.tokenB.label",
+  NEW_POSITION_SELECT_TOKEN = "newPosition.selectToken",
+  NEW_POSITION_SEARCH_BUTTON = "newPosition.searchButton",
+  NEW_POSITION_SEARCH_SETTINGS_BUTTON = "newPosition.searchSettingsButton",
 }

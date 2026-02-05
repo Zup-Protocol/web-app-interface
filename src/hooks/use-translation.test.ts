@@ -38,12 +38,12 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation());
 
     const translation = result.current.translate(
-      AppTranslationsKeys.HERO_TITLE,
+      AppTranslationsKeys.HEADER_NAV_POSITIONS,
     );
     // Assuming English is default and populated
     expect(translation).toBe(
       AppLanguagesUtils.translations[AppLanguages.ENGLISH][
-        AppTranslationsKeys.HERO_TITLE
+        AppTranslationsKeys.HEADER_NAV_POSITIONS
       ],
     );
   });
@@ -53,11 +53,11 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation());
 
     const translation = result.current.translate(
-      AppTranslationsKeys.HERO_TITLE,
+      AppTranslationsKeys.HEADER_NAV_POSITIONS,
     );
     expect(translation).toBe(
       AppLanguagesUtils.translations[AppLanguages.SPANISH][
-        AppTranslationsKeys.HERO_TITLE
+        AppTranslationsKeys.HEADER_NAV_POSITIONS
       ],
     );
   });
@@ -73,11 +73,11 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation());
 
     const translation = result.current.translate(
-      AppTranslationsKeys.HERO_TITLE,
+      AppTranslationsKeys.HEADER_NAV_POSITIONS,
     );
     expect(translation).toBe(
       AppLanguagesUtils.translations[AppLanguages.PORTUGUESE][
-        AppTranslationsKeys.HERO_TITLE
+        AppTranslationsKeys.HEADER_NAV_POSITIONS
       ],
     );
   });
@@ -90,11 +90,11 @@ describe("useTranslation", () => {
 
     // If fr, effective locale becomes SYSTEM (which maps to EN in translations map)
     const translation = result.current.translate(
-      AppTranslationsKeys.HERO_TITLE,
+      AppTranslationsKeys.HEADER_NAV_POSITIONS,
     );
     expect(translation).toBe(
       AppLanguagesUtils.translations[AppLanguages.SYSTEM][
-        AppTranslationsKeys.HERO_TITLE
+        AppTranslationsKeys.HEADER_NAV_POSITIONS
       ],
     );
   });
@@ -109,12 +109,12 @@ describe("useTranslation", () => {
     const { result } = renderHook(() => useTranslation());
 
     const translation = result.current.translate(
-      AppTranslationsKeys.HERO_TITLE,
+      AppTranslationsKeys.HEADER_NAV_POSITIONS,
     );
     // Should fallback to SYSTEM translation
     expect(translation).toBe(
       AppLanguagesUtils.translations[AppLanguages.SYSTEM][
-        AppTranslationsKeys.HERO_TITLE
+        AppTranslationsKeys.HEADER_NAV_POSITIONS
       ],
     );
   });

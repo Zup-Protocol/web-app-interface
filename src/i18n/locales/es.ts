@@ -5,10 +5,6 @@ export const es: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.HEADER_BUTTONS_CONNECT]: "Conectar Billetera",
   [AppTranslationsKeys.HEADER_BUTTONS_SETTINGS]: "Configuración",
   [AppTranslationsKeys.HEADER_BUTTONS_CONNECTED]: "Conectado",
-  [AppTranslationsKeys.HERO_TITLE]: "Únete al Futuro",
-  [AppTranslationsKeys.HERO_SUBTITLE]:
-    "(Este es un Componente React Premium con Física de Resorte)",
-  [AppTranslationsKeys.HERO_WELCOME]: "¡Bienvenido a Zup Protocol!",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE]: "Seleccionar Red",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION]:
     'Selecciona tu red preferida. Elige una blockchain específica para filtrar datos o selecciona "Todas las redes" para una descripción general multichain',
@@ -30,4 +26,14 @@ export const es: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.SETTINGS_LANGUAGE_PT]: "Portugués (Português)",
   [AppTranslationsKeys.NETWORKS_ALL]: "Todas las Redes",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_SYSTEM]: "Sistema",
+
+  [AppTranslationsKeys.NEW_POSITION_TITLE]: "Nueva Posición",
+  [AppTranslationsKeys.NEW_POSITION_DESCRIPTION]:
+    "Selecciona los tokens para aportar liquidez. Nosotros nos encargamos de buscar pools en todos los exchanges que soportamos",
+  [AppTranslationsKeys.NEW_POSITION_TOKEN_A_LABEL]: "Token A",
+  [AppTranslationsKeys.NEW_POSITION_TOKEN_B_LABEL]: "Token B",
+  [AppTranslationsKeys.NEW_POSITION_SELECT_TOKEN]: "Seleccionar Token",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "¡Muéstrame el dinero!",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]:
+    "Configuración de Búsqueda",
 };

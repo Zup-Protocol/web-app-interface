@@ -79,6 +79,7 @@
   --input: hsl(250 100% 88%);
   --ring: hsl(250 100% 67.1%);
   --radius: 0.75rem;
+  --divider: hsl(240, 10%, 92%);
 
   /* Buttons */
   --secondary-button-background: hsl(250 100% 67.1% / 0.15);
@@ -87,7 +88,8 @@
   --tertiary-button-background-hover: hsl(240 30% 91%);
   --outline-button-border: hsl(240, 10%, 92%);
   --outline-button-hover: hsl(240 44% 96%);
-  --divider: hsl(240, 10%, 92%);
+  --disabled-button-background: hsl(240 44% 94%);
+  --disabled-button-foreground: hsl(240, 10%, 65%);
 
   /* Modal */
   --modal: hsl(250 100% 98.5%);
@@ -96,6 +98,9 @@
   --divider-on-modal: hsl(240, 10%, 92%);
   --tertiary-button-on-modal-background: hsl(240 44% 96%);
   --tertiary-button-on-modal-background-hover: hsl(240 30% 91%);
+
+  /* Text */
+  --mutated-text: hsl(240, 10%, 60%);
 }
 
 .dark {
@@ -103,15 +108,17 @@
   --foreground: hsl(240 9% 85%);
   --primary: hsl(250 100% 67%);
   --primary-hover: hsl(250, 88%, 70%);
+  --divider: hsl(240, 3%, 15%);
 
   /* Buttons */
-  --secondary-button-background: hsl(249, 43%, 24%);
-  --secondary-button-background-hover: hsl(249, 43%, 34%);
+  --secondary-button-background: hsl(249, 42%, 13%);
+  --secondary-button-background-hover: hsl(249, 43%, 20%);
   --tertiary-button-background: hsl(0 0% 13%);
   --tertiary-button-background-hover: hsl(240 3% 16%);
   --outline-button-border: hsl(240, 3%, 15%);
   --outline-button-hover: hsl(240 3% 10%);
-  --divider: hsl(240, 3%, 15%);
+  --disabled-button-background: hsl(240, 3%, 7%);
+  --disabled-button-foreground: hsl(240, 3%, 30%);
 
   /* Modal */
   --modal: hsl(0 0% 13%);
@@ -120,6 +127,9 @@
   --divider-on-modal: hsl(240, 3%, 21%);
   --tertiary-button-on-modal-background: hsl(240, 2%, 10%);
   --tertiary-button-on-modal-background-hover: hsl(240, 2%, 8%);
+
+  /* Text */
+  --mutated-text: hsl(240, 3%, 40%);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -138,6 +148,9 @@
   --color-secondary-button-background: var(--secondary-button-background);
   --color-outline-button-hover: var(--outline-button-hover);
   --color-modal-outline: var(--modal-outline);
+  --color-mutated-text: var(--mutated-text);
+  --color-disabled-button-background: var(--disabled-button-background);
+  --color-disabled-button-foreground: var(--disabled-button-foreground);
   --color-secondary-button-background-hover: var(
     --secondary-button-background-hover
   );

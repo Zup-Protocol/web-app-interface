@@ -5,10 +5,6 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.HEADER_BUTTONS_CONNECT]: "Connect Wallet",
   [AppTranslationsKeys.HEADER_BUTTONS_SETTINGS]: "Settings",
   [AppTranslationsKeys.HEADER_BUTTONS_CONNECTED]: "Connected",
-  [AppTranslationsKeys.HERO_TITLE]: "Join the Future",
-  [AppTranslationsKeys.HERO_SUBTITLE]:
-    "(This is a Premium React Component with Spring Physics)",
-  [AppTranslationsKeys.HERO_WELCOME]: "Welcome to Zup Protocol!",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE]: "Select Network",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION]:
     'Select your preferred network. Choose a specific chain to filter data, or select "All Networks" for a multi-chain overview',
@@ -29,4 +25,13 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NETWORKS_ALL]: "All Networks",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_PT]: "Portuguese (Português)",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_SYSTEM]: "System",
+
+  [AppTranslationsKeys.NEW_POSITION_TITLE]: "New Position",
+  [AppTranslationsKeys.NEW_POSITION_DESCRIPTION]:
+    "Pick the tokens you want to provide liquidity for. We'll hunt down the best pools across every exchange we support.",
+  [AppTranslationsKeys.NEW_POSITION_TOKEN_A_LABEL]: "Token A",
+  [AppTranslationsKeys.NEW_POSITION_TOKEN_B_LABEL]: "Token B",
+  [AppTranslationsKeys.NEW_POSITION_SELECT_TOKEN]: "Select Token",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "Show me the money!",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]: "Search Settings",
 };

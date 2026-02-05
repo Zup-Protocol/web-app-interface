@@ -16,6 +16,8 @@ const buttonVariants = cva(
           "border border-outline-button-border bg-background hover:bg-outline-button-hover hover:text-foreground",
         tertiary:
           "bg-tertiary-button-background text-foreground hover:bg-tertiary-button-background-hover",
+        disabled:
+          "bg-disabled-button-background text-disabled-button-foreground cursor-default",
       },
       size: {
         default: "h-[50px] px-5 py-2",
@@ -84,7 +86,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
     const showIcon = alwaysIcon || isHovered || isMobile;
 
     return (
-      <ScaleClickAnimation asChild>
+      <ScaleClickAnimation asChild disabled={variant === "disabled"}>
         <Comp
           {...props}
           {...(asChild ? {} : { layout: true })}
@@ -93,17 +95,25 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
           {...(asChild
             ? {
                 onMouseEnter: (e: React.MouseEvent<HTMLButtonElement>) => {
+                  if (variant === "disabled") return;
                   setIsHovered(true);
                   props.onMouseEnter?.(e);
                 },
                 onMouseLeave: (e: React.MouseEvent<HTMLButtonElement>) => {
+                  if (variant === "disabled") return;
                   setIsHovered(false);
                   props.onMouseLeave?.(e);
                 },
               }
             : {
-                onHoverStart: () => setIsHovered(true),
-                onHoverEnd: () => setIsHovered(false),
+                onHoverStart: () => {
+                  if (variant === "disabled") return;
+                  setIsHovered(true);
+                },
+                onHoverEnd: () => {
+                  if (variant === "disabled") return;
+                  setIsHovered(false);
+                },
                 transition: {
                   type: "spring",
                   stiffness: 450,
