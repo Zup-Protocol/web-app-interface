@@ -1,6 +1,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import * as React from "react";
 
 import { ScaleClickAnimation } from "@/components/ui/animations/scale-click-animation";
@@ -87,7 +87,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
       <ScaleClickAnimation asChild>
         <Comp
           {...props}
-          {...(asChild ? {} : { layout: "size" })}
+          {...(asChild ? {} : { layout: true })}
           className={cn(buttonVariants({ variant, size, className }))}
           ref={ref}
           {...(asChild
@@ -111,10 +111,15 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                 },
               })}
         >
-          <div className="flex items-center justify-center">
+          <motion.div
+            layout
+            className="flex items-center justify-center h-full w-full"
+            transition={{ type: "spring", stiffness: 450, damping: 35 }}
+          >
             {icon && (
               <motion.div
                 key="icon-container"
+                layout
                 initial={false}
                 animate={{
                   width: showIcon ? "auto" : 0,
@@ -126,7 +131,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                   stiffness: 450,
                   damping: 35,
                 }}
-                className="flex items-center justify-center shrink-0 overflow-hidden"
+                className="flex items-center justify-center shrink-0"
                 style={{ overflow: "hidden" }}
               >
                 {icon}
@@ -135,10 +140,21 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
             <motion.span
               layout
               transition={{ type: "spring", stiffness: 450, damping: 35 }}
+              className="inline-flex items-center justify-center relative"
             >
-              {children}
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.span
+                  key={typeof children === "string" ? children : "content"}
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -5 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {children}
+                </motion.span>
+              </AnimatePresence>
             </motion.span>
-          </div>
+          </motion.div>
         </Comp>
       </ScaleClickAnimation>
     );
