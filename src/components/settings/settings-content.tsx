@@ -1,13 +1,14 @@
 "use client";
 
-import { Dropdown } from "@/components/ui/dropdown";
+import { Dropdown, type DropdownItem } from "@/components/ui/dropdown";
 import { MonitorIcon } from "@/components/ui/icons/monitor";
 import { MoonIcon } from "@/components/ui/icons/moon";
 import { SunIcon } from "@/components/ui/icons/sun";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import { AppLanguagesUtils } from "@/lib/app-languages";
+import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { ThemeMode } from "@/lib/theme-mode";
+import { Languages } from "lucide-react";
 import { useTheme } from "next-themes";
 
 export function SettingsContent() {
@@ -24,22 +25,31 @@ export function SettingsContent() {
     },
   ];
 
-  const languageItems = AppLanguagesUtils.values.map((lang) => {
-    const flag = AppLanguagesUtils.flag[lang];
-    const flagSrc = typeof flag === "string" ? flag : flag.src;
+  const languageItems: DropdownItem<AppLanguages>[] =
+    AppLanguagesUtils.values.map((lang) => {
+      if (lang === AppLanguages.SYSTEM) {
+        return {
+          value: lang,
+          label: AppLanguagesUtils.getLanguageName(lang, translate),
+          icon: <Languages size={16} />,
+        };
+      }
 
-    return {
-      value: lang,
-      label: AppLanguagesUtils.getLanguageName(lang, translate),
-      icon: (
-        <img
-          src={flagSrc}
-          alt={AppLanguagesUtils.getLanguageName(lang, translate)}
-          className="w-4 h-4 rounded-full object-cover"
-        />
-      ),
-    };
-  });
+      const flag = AppLanguagesUtils.flag[lang];
+      const flagSrc = typeof flag === "string" ? flag : flag.src;
+
+      return {
+        value: lang,
+        label: AppLanguagesUtils.getLanguageName(lang, translate),
+        icon: (
+          <img
+            src={flagSrc}
+            alt={AppLanguagesUtils.getLanguageName(lang, translate)}
+            className="w-4 h-4 rounded-full object-cover"
+          />
+        ),
+      };
+    });
 
   const handleThemeChange = (newTheme: ThemeMode) => {
     if (newTheme === theme) return;

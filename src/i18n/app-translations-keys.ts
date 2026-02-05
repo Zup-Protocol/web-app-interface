@@ -16,5 +16,6 @@ export enum AppTranslationsKeys {
   SETTINGS_LANGUAGE_EN = "settings.language.en",
   SETTINGS_LANGUAGE_ES = "settings.language.es",
   SETTINGS_LANGUAGE_PT = "settings.language.pt",
+  SETTINGS_LANGUAGE_SYSTEM = "settings.language.system",
   NETWORKS_ALL = "networks.all",
 }

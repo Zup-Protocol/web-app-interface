@@ -7,6 +7,7 @@ import { es } from "@/i18n/locales/es";
 import { pt } from "@/i18n/locales/pt";
 
 export enum AppLanguages {
+  SYSTEM = "system",
   ENGLISH = "en",
   SPANISH = "es",
   PORTUGUESE = "pt",
@@ -18,21 +19,29 @@ export abstract class AppLanguagesUtils {
   ) as AppLanguages[];
 
   static flag: Record<AppLanguages, ImageMetadata | string> = {
+    [AppLanguages.SYSTEM]: "",
     [AppLanguages.ENGLISH]: usaFlag,
     [AppLanguages.SPANISH]: spainFlag,
     [AppLanguages.PORTUGUESE]: brazilFlag,
   };
 
   static nameKey: Record<AppLanguages, AppTranslationsKeys> = {
+    [AppLanguages.SYSTEM]: AppTranslationsKeys.SETTINGS_LANGUAGE_SYSTEM,
     [AppLanguages.ENGLISH]: AppTranslationsKeys.SETTINGS_LANGUAGE_EN,
     [AppLanguages.SPANISH]: AppTranslationsKeys.SETTINGS_LANGUAGE_ES,
     [AppLanguages.PORTUGUESE]: AppTranslationsKeys.SETTINGS_LANGUAGE_PT,
   };
 
+  static defaultLanguage = AppLanguages.ENGLISH;
+
   static translations: Record<
     AppLanguages,
     Record<AppTranslationsKeys, string>
   > = {
+    // When "System" is selected, the actual translation logic is handled dynamically
+    // based on the browser's language. If the browser language is not supported,
+    // we use the value assigned here as the default.
+    [AppLanguages.SYSTEM]: en,
     [AppLanguages.ENGLISH]: en,
     [AppLanguages.SPANISH]: es,
     [AppLanguages.PORTUGUESE]: pt,
