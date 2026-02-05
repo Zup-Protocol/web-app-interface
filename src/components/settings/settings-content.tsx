@@ -16,11 +16,19 @@ export function SettingsContent() {
   const { translate, locale, setLocale } = useTranslation();
 
   const themeItems = [
-    { value: ThemeMode.LIGHT, label: "Light", icon: <SunIcon size={16} /> },
-    { value: ThemeMode.DARK, label: "Dark", icon: <MoonIcon size={16} /> },
+    {
+      value: ThemeMode.LIGHT,
+      label: translate(AppTranslationsKeys.SETTINGS_THEME_LIGHT),
+      icon: <SunIcon size={16} />,
+    },
+    {
+      value: ThemeMode.DARK,
+      label: translate(AppTranslationsKeys.SETTINGS_THEME_DARK),
+      icon: <MoonIcon size={16} />,
+    },
     {
       value: ThemeMode.SYSTEM,
-      label: "System",
+      label: translate(AppTranslationsKeys.SETTINGS_THEME_SYSTEM),
       icon: <MonitorIcon size={16} />,
     },
   ];
@@ -90,7 +98,9 @@ export function SettingsContent() {
           items={themeItems}
           selected={(theme as ThemeMode) || ThemeMode.SYSTEM}
           onSelect={handleThemeChange}
-          placeholder="Select theme"
+          placeholder={translate(
+            AppTranslationsKeys.SETTINGS_THEME_PLACEHOLDER,
+          )}
         />
       </div>
 
@@ -103,7 +113,9 @@ export function SettingsContent() {
           items={languageItems}
           selected={locale}
           onSelect={(value) => setLocale(value as any)}
-          placeholder="Select language"
+          placeholder={translate(
+            AppTranslationsKeys.SETTINGS_LANGUAGE_PLACEHOLDER,
+          )}
         />
       </div>
     </div>

@@ -18,6 +18,11 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION]:
     "We couldn't find any network matching your search. Try adjusting your keywords.",
   [AppTranslationsKeys.SETTINGS_THEME_TITLE]: "Theme Mode",
+  [AppTranslationsKeys.SETTINGS_THEME_LIGHT]: "Light",
+  [AppTranslationsKeys.SETTINGS_THEME_DARK]: "Dark",
+  [AppTranslationsKeys.SETTINGS_THEME_SYSTEM]: "System",
+  [AppTranslationsKeys.SETTINGS_THEME_PLACEHOLDER]: "Select theme",
+  [AppTranslationsKeys.SETTINGS_LANGUAGE_PLACEHOLDER]: "Select language",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_TITLE]: "Language",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_EN]: "English",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_ES]: "Spanish (Español)",
