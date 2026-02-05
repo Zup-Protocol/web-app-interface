@@ -22,5 +22,6 @@ export const es: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.SETTINGS_LANGUAGE_TITLE]: "Idioma",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_EN]: "Inglés (English)",
   [AppTranslationsKeys.SETTINGS_LANGUAGE_ES]: "Español",
+  [AppTranslationsKeys.SETTINGS_LANGUAGE_PT]: "Portugués (Português)",
   [AppTranslationsKeys.NETWORKS_ALL]: "Todas las Redes",
 };
