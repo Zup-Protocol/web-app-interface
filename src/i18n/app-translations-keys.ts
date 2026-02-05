@@ -28,4 +28,9 @@ export enum AppTranslationsKeys {
   NEW_POSITION_SELECT_TOKEN = "newPosition.selectToken",
   NEW_POSITION_SEARCH_BUTTON = "newPosition.searchButton",
   NEW_POSITION_SEARCH_SETTINGS_BUTTON = "newPosition.searchSettingsButton",
+
+  SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE = "searchSettings.minLiquidity.title",
+  SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP = "searchSettings.minLiquidity.tooltip",
+  SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING = "searchSettings.lowLiquidity.warning",
+  SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON = "searchSettings.filterExchanges.button",
 }

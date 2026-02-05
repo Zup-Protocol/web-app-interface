@@ -43,6 +43,10 @@ export function ScaleClickAnimation({
       mass: 0.5,
       restDelta: 0.001,
     } as any,
+    style: {
+      transformOrigin: "center",
+      willChange: "transform",
+    },
   };
 
   const finalProps = disabled ? {} : animationProps;

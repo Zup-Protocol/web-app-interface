@@ -37,4 +37,12 @@ export const pt: Record<AppTranslationsKeys, string> = {
     "Me mostre onde está o dinheiro!",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]:
     "Configurações de Busca",
+
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]:
+    "Liquidez Mínima da Pool",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
+    "Pools com liquidez abaixo desse valor não serão exibidas",
+  [AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON]: "Corretoras",
+  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
+    "Liquidez mínima baixa pode levar a rendimentos enganosos, tenha cuidado",
 };

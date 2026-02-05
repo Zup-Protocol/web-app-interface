@@ -34,4 +34,12 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NEW_POSITION_SELECT_TOKEN]: "Select Token",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "Show me the money!",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]: "Search Settings",
+
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]:
+    "Minimum Pool Liquidity",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
+    "Pools with liquidity below this amount will be excluded from results.",
+  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
+    "Low liquidity can make yields look misleading, be careful out there",
+  [AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON]: "Exchanges",
 };
