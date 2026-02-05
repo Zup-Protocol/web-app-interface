@@ -8,19 +8,48 @@ This document defines the mandatory engineering and aesthetic standards for the 
 
 ---
 
-## 1. Naming Conventions: Clarity Over Brevity
+## 1. Naming Conventions: Semantic Intent
 
-We prioritize **Semantic Intent**. A developer should understand a file's purpose just by looking at the file tree.
+Every identifier—whether a folder, file, function, or parameter—must reveal its purpose at a glance. We prioritize **intent over brevity**. If a name is too short to be descriptive, it is considered technical debt.
 
-- **Descriptive Naming:** Always choose clear, descriptive names over short, ambiguous ones.
-  - **Bad:** `user/name.ts`, `utils/logic.ts`
-  - **Good:** `user/user-display-name-formatter.ts`, `auth/session-validation-service.ts`
-- **Kebab-Case:** All folders and file names must use `kebab-case`.
-- **Functional Suffixes:** Use suffixes to identify the file type at a glance:
-  - `-provider.tsx` (Context Providers)
-  - `-hook.ts` (Custom React Hooks)
-  - `-processor.ts` (Data transformation logic)
-  - `-service.ts` (External API/Business logic)
+### 1.1 Files & Folders
+
+- **Kebab-Case:** All directories and filenames must use `kebab-case`.
+- **Functional Suffixes:** Use suffixes to categorize files immediately:
+  - `-provider.tsx` (Context)
+  - `-hook.ts` (React Hooks)
+  - `-processor.ts` (Data Transformation)
+  - `-service.ts` (API/External Business Logic)
+- **Example:**
+  - **Bad:** `utils/logic.ts`
+  - **Good:** `auth/session-validation-service.ts`
+
+### 1.2 Functions & Methods
+
+- **Verb-Noun Pattern:** Function names must start with a verb indicating the action, followed by the subject.
+- **No Abbreviations:** Avoid "lazy" shorthand that requires context-switching to decipher.
+- **Example:**
+  - **Bad:** `calc()`, `handle()`, `t()`
+  - **Good:** `calculateTokenYield()`, `handleDepositSubmit()`, `formatTimestamp()`
+
+### 1.3 Parameters & Variables
+
+- **Contextual Clarity:** Parameters must describe the data they hold, not just the data type.
+- **Strict Prohibition:** Single-letter parameters (e.g., `e`, `t`, `v`) and generic names (e.g., `data`, `val`, `item`) are **strictly prohibited**.
+- **Example:**
+  - **Bad:** `function save(t: string)`
+  - **Good:** `function save(tokenAddress: string)`
+
+---
+
+## Naming Quick Reference
+
+| Category      | Prohibited (Lazy) | Required (Semantic)                   |
+| :------------ | :---------------- | :------------------------------------ |
+| **File**      | `user/name.ts`    | `user/user-display-name-formatter.ts` |
+| **Function**  | `get()`           | `getLiquidityPoolByAddress()`         |
+| **Parameter** | `(p: number)`     | `(priceInUsd: number)`                |
+| **Variable**  | `const list = []` | `const activePoolList = []`           |
 
 ---
 
@@ -110,4 +139,40 @@ All Enums and shared types must be centralized in the `/src/lib` layer.
 
 ---
 
-## 7. Named Params
+## 7. Named Parameters via Object Destructuring
+
+We prioritize **Call-Site Clarity**. A developer reading a function call should understand the meaning of every argument without having to "Peek Definition." Standard positional arguments become "Magic Arguments" that lead to logic errors and reduced maintainability.
+
+### 7.1 The Mandatory Threshold
+
+Named parameters (via object destructuring) are **mandatory** in the following scenarios:
+
+- **3+ Parameters:** Any function accepting three or more arguments must use a single object parameter.
+- **Boolean Flags:** If a function takes any `boolean` arguments, it must use named parameters. Raw `true`/`false` values at the call site are strictly prohibited as they provide zero context.
+- **Ambiguous Types:** When multiple consecutive parameters share the same type (e.g., two strings or two numbers), named parameters must be used to prevent accidental swapping.
+
+### 7.2 The "Unary" Exception
+
+You may use standard positional parameters **only** for "Unary Functions" (single parameter) or well-known mathematical/utility functions where the context is unmistakable.
+
+- **Allowed:** `sqrt(16)`, `slugify(title)`, `abs(value)`.
+- **Prohibited:** `getUser(123, true, "active")`.
+- **Correct:** `getUser({ id: 123, includeMetadata: true, status: "active" })`.
+
+### 7.3 Implementation Standards
+
+To keep the codebase clean and avoid signature bloat, follow these typing rules:
+
+- **Inline Types (< 3 props):** If the parameter object has only 1 or 2 properties, you may type it inline.
+- **Interfaces (> 3 props):** For 3 or more properties, you must define a dedicated interface named `[FunctionName]Params` to keep the function signature readable and reusable.
+
+---
+
+## Parameter Strategy Comparison
+
+| Feature                | Positional Parameters (Prohibited for 3+)     | Named Parameters (Required)                           |
+| :--------------------- | :-------------------------------------------- | :---------------------------------------------------- |
+| **Readability**        | `createPool(addr, 500, true)`                 | `createPool({ address: addr, fee: 500, isV4: true })` |
+| **Order Sensitivity**  | **Strict.** Swapping breaks logic.            | **Flexible.** Key-value mapping is order-independent. |
+| **Optionality**        | Requires passing `undefined` for middle args. | Simply omit the key from the object.                  |
+| **Self-Documentation** | Requires IDE hover or file navigation.        | Documentation is built directly into the call site.   |
