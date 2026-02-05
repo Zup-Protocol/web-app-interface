@@ -9,25 +9,64 @@ import { createPortal } from "react-dom";
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpen?: () => void;
+  onOpenChange?: (open: boolean) => void;
+  closeOnOverlayClick?: boolean;
+  closeOnEscape?: boolean;
   children: React.ReactNode;
   className?: string;
 }
 
-export function Modal({ isOpen, onClose, children, className }: ModalProps) {
+export function Modal({
+  isOpen,
+  onClose,
+  onOpen,
+  onOpenChange,
+  closeOnOverlayClick = true,
+  closeOnEscape = true,
+  children,
+  className,
+}: ModalProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)");
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
+  }, []);
+
+  React.useEffect(() => {
+    if (!mounted) return;
+
     if (isOpen) {
       document.body.style.overflow = "hidden";
+      onOpen?.();
     } else {
       document.body.style.overflow = "unset";
     }
+
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && closeOnEscape) {
+        onClose();
+        onOpenChange?.(false);
+      }
+    };
+
+    if (isOpen && closeOnEscape) {
+      window.addEventListener("keydown", handleEscape);
+    }
+
     return () => {
       document.body.style.overflow = "unset";
+      window.removeEventListener("keydown", handleEscape);
     };
-  }, [isOpen]);
+  }, [isOpen, mounted, onOpen, onClose, onOpenChange, closeOnEscape]);
+
+  const handleBackdropClick = () => {
+    if (closeOnOverlayClick) {
+      onClose();
+      onOpenChange?.(false);
+    }
+  };
 
   if (!mounted) return null;
 
@@ -40,7 +79,8 @@ export function Modal({ isOpen, onClose, children, className }: ModalProps) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose}
+            onClick={handleBackdropClick}
+            data-testid="modal-backdrop"
             className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm"
           />
 
