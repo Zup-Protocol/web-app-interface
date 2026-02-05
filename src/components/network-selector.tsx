@@ -41,7 +41,7 @@ export function NetworkSelector({}: NetworkSelectorProps) {
         alwaysIcon
       >
         <div className="flex items-center gap-1.5">
-          <span className="text-base font-medium hidden sm:inline">
+          <span className="text-base font-semibold hidden sm:inline">
             {AppNetworksUtils.getTranslatedNetworkName(network, translate)}
           </span>
           <ChevronDown

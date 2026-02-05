@@ -36,7 +36,10 @@ export function ConnectWalletButton({
   return (
     <PrimaryButton
       icon={<ConnectIcon ref={connectRef} size={20} />}
-      className={cn("group flex items-center justify-center", className)}
+      className={cn(
+        "group flex items-center justify-center font-semibold",
+        className,
+      )}
       onRevealComplete={() => connectRef.current?.startAnimation()}
       onMouseLeave={() => connectRef.current?.stopAnimation()}
       onPointerDown={() => connectRef.current?.startAnimation()}

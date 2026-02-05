@@ -13,7 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const dropdownTriggerVariants = cva(
-  "flex h-12 w-full items-center justify-between rounded-[12px] px-3 py-2 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer",
+  "flex h-12 w-full items-center justify-between rounded-[12px] px-3 py-2 text-base transition-all disabled:cursor-not-allowed disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 cursor-pointer",
   {
     variants: {
       variant: {
@@ -46,7 +46,7 @@ const dropdownContentVariants = cva("", {
 });
 
 const dropdownItemVariants = cva(
-  "relative flex w-full cursor-pointer select-none items-center rounded-lg p-4 text-sm outline-none transition-colors data-disabled:pointer-events-none data-disabled:opacity-50",
+  "relative flex w-full cursor-pointer select-none items-center rounded-lg p-4 text-base outline-none transition-colors data-disabled:pointer-events-none data-disabled:opacity-50",
   {
     variants: {
       variant: {

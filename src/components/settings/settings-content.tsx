@@ -72,7 +72,7 @@ export function SettingsContent() {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
-        <h2 className="text-sm font-medium">
+        <h2 className="text-base font-medium">
           {translate(AppTranslationsKeys.SETTINGS_THEME_TITLE)}
         </h2>
         <Dropdown
@@ -85,7 +85,7 @@ export function SettingsContent() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h2 className="text-sm font-medium">
+        <h2 className="text-base font-medium">
           {translate(AppTranslationsKeys.SETTINGS_LANGUAGE_TITLE)}
         </h2>
         <Dropdown

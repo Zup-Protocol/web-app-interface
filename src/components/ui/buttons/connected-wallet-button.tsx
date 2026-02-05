@@ -59,7 +59,7 @@ export function ConnectedWalletButton({
       <div className="relative flex items-center justify-center">
         {}
         <div className="flex items-center gap-2 invisible pointer-events-none select-none h-0 opacity-0">
-          <div className="w-7 h-7" />
+          <div className="w-10 h-7" />
           <span className="whitespace-nowrap font-medium hidden sm:inline">
             {translate(AppTranslationsKeys.HEADER_BUTTONS_CONNECTED)}
           </span>
@@ -94,7 +94,7 @@ export function ConnectedWalletButton({
               <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-full ring-1 ring-white/10 shadow-sm">
                 <Avatar className="w-full h-full translate-y-px" {...config} />
               </div>
-              <span className="text-inherit font-medium hidden sm:inline">
+              <span className="text-base font-medium hidden sm:inline">
                 {ensName || formattedAddress}
               </span>
             </motion.div>

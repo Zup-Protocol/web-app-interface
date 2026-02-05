@@ -64,7 +64,7 @@ export function NetworkCard({
           <div className="w-full h-full bg-muted rounded-full" />
         )}
       </motion.div>
-      <span className="text-[16px] font-bold tracking-tight">{name}</span>
+      <span className="text-base font-bold tracking-tight">{name}</span>
 
       {isSelected && (
         <motion.div

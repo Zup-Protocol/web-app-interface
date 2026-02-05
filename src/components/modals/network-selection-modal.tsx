@@ -84,14 +84,14 @@ export function NetworkSelectionModal({
       <div className="flex-1 overflow-y-auto overflow-x-hidden ml-0 mr-0 bg-modal/80 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="relative flex flex-col items-start pt-6 px-5 sm:items-center sm:text-center sm:pt-12 sm:pl-20 sm:pr-14 text-left gap-1.5 pb-2">
           <div className="flex items-center justify-between w-full sm:justify-center">
-            <h2 className="text-[22px] sm:text-[24px] font-bold tracking-tight text-foreground">
+            <h2 className="text-[22px] sm:text-[23px] font-semibold tracking-tight text-foreground">
               {translate(AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE)}
             </h2>
             <div className="sm:hidden">
               <CloseButton onClick={onClose} />
             </div>
           </div>
-          <p className="text-[16px] text-[#9CA3AF] max-w-[300px] sm:max-w-md">
+          <p className="text-base text-[#9CA3AF] max-w-[300px] sm:max-w-md">
             {translate(AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION)}
           </p>
         </div>
