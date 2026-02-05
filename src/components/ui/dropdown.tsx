@@ -156,7 +156,12 @@ export function Dropdown<T extends string | number>({
               {selectedItem?.label ?? placeholder}
             </span>
           </span>
-          <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronDown
+            className={cn(
+              "ml-2 h-4 w-4 shrink-0 opacity-50 transition-transform duration-200",
+              open && "rotate-180",
+            )}
+          />
         </button>
       </PopoverTrigger>
       <PopoverContent
