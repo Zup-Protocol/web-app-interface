@@ -6,6 +6,7 @@ import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { useConnection } from "wagmi";
+import { AnimationProvider } from "../providers/animation-provider";
 import { ThemeProvider } from "../providers/theme-provider";
 import { Web3Provider } from "../providers/web3-provider";
 import { BrandLogo } from "./brand-logo";
@@ -85,7 +86,9 @@ export function Header() {
       enableSystem
     >
       <Web3Provider>
-        <HeaderContent />
+        <AnimationProvider>
+          <HeaderContent />
+        </AnimationProvider>
       </Web3Provider>
     </ThemeProvider>
   );

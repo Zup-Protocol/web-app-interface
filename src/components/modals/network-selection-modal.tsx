@@ -64,8 +64,9 @@ export function NetworkSelectionModal({
       scale: 1,
       transition: {
         type: "spring",
-        stiffness: 200,
+        stiffness: 350,
         damping: 30,
+        mass: 1,
       },
     },
     exit: {
@@ -115,7 +116,6 @@ export function NetworkSelectionModal({
 
         <div className="pt-8 pb-12 px-5 sm:px-10">
           <motion.div
-            layoutRoot
             variants={containerVariants}
             initial="hidden"
             animate="show"
@@ -130,12 +130,6 @@ export function NetworkSelectionModal({
                   initial="hidden"
                   animate="show"
                   exit="exit"
-                  style={{
-                    willChange: "transform, opacity",
-                    backfaceVisibility: "hidden",
-                    transform: "translateZ(0)",
-                    rotate: 0.01,
-                  }}
                 >
                   <NetworkCard
                     network={id}

@@ -36,9 +36,10 @@ export function ScaleClickAnimation({
     onPointerCancel: handlePointerUpOrCancel,
     transition: {
       type: "spring",
-      stiffness: 600,
-      damping: 30,
+      stiffness: 400,
+      damping: 25,
       mass: 0.5,
+      restDelta: 0.001,
     } as any,
   };
 

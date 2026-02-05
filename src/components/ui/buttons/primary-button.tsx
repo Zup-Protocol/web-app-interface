@@ -108,13 +108,19 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                   type: "spring",
                   stiffness: 450,
                   damping: 35,
+                  mass: 0.8,
                 },
               })}
         >
           <motion.div
             layout
             className="flex items-center justify-center h-full w-full"
-            transition={{ type: "spring", stiffness: 450, damping: 35 }}
+            transition={{
+              type: "spring",
+              stiffness: 450,
+              damping: 35,
+              mass: 0.8,
+            }}
           >
             {icon && (
               <motion.div
@@ -130,6 +136,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                   type: "spring",
                   stiffness: 450,
                   damping: 35,
+                  mass: 0.8,
                 }}
                 className="flex items-center justify-center shrink-0"
                 style={{ overflow: "hidden" }}
@@ -139,7 +146,12 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
             )}
             <motion.span
               layout
-              transition={{ type: "spring", stiffness: 450, damping: 35 }}
+              transition={{
+                type: "spring",
+                stiffness: 450,
+                damping: 35,
+                mass: 0.8,
+              }}
               className="inline-flex items-center justify-center relative"
             >
               <AnimatePresence mode="popLayout" initial={false}>
