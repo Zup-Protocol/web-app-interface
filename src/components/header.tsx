@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslation } from "@/hooks/use-translation";
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { useRef } from "react";
@@ -31,6 +33,7 @@ const groupVariants = {
 function HeaderContent() {
   const plusRef = useRef<PlusIconHandle>(null);
   const { isConnected } = useConnection();
+  const { translate } = useTranslation();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/0 backdrop-blur-md">
@@ -53,7 +56,7 @@ function HeaderContent() {
               isActive={true}
             >
               <PlusIcon ref={plusRef} size={18} />
-              <span>New Position</span>
+              <span>{translate(AppTranslationsKeys.HEADER_NAV_POSITIONS)}</span>
             </TabButton>
           </motion.div>
         </div>

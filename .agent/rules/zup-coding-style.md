@@ -109,3 +109,5 @@ All Enums and shared types must be centralized in the `/src/lib` layer.
 | **Sync State** | `state = "syncing"`        | `state = IndexerState.Syncing`        |
 
 ---
+
+## 7. Named Params

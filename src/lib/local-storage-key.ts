@@ -1,3 +1,4 @@
 export enum LocalStorageKey {
-  THEME = "theme",
+  THEME = "zup-theme",
+  LOCALE = "zup-locale-preference",
 }

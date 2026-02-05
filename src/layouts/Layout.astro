@@ -5,6 +5,7 @@ import "../styles/global.css";
 import { ThemeMode } from "@/lib/theme-mode";
 import { LocalStorageKey } from "@/lib/local-storage-key";
 import { Header } from "@/components/header";
+import { LocaleInitializer } from "@/components/common/locale-initializer";
 
 interface Props {
   title: string;
@@ -26,6 +27,9 @@ const { title } = Astro.props;
     <title>{title} | Zup Protocol</title>
     <ClientRouter />
     <script is:inline define:vars={{ ThemeMode, LocalStorageKey }}>
+      import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
+      import { LocalStorageKey } from "@/lib/local-storage-key";
+
       (function () {
         function getTheme() {
           if (
@@ -89,11 +93,32 @@ const { title } = Astro.props;
             if (getTheme() === ThemeMode.SYSTEM) setClass(ThemeMode.SYSTEM);
           });
       })();
+
+      (function () {
+        function getInitialLocale() {
+          const stored =
+            typeof localStorage !== "undefined"
+              ? localStorage.getItem(LocalStorageKey.LOCALE)
+              : null;
+          if (stored) return stored;
+
+          if (typeof navigator !== "undefined") {
+            const sys = navigator.language.split("-")[0];
+
+            if (AppLanguagesUtils.values.includes(sys)) return sys;
+          }
+          return AppLanguages.ENGLISH;
+        }
+
+        const locale = getInitialLocale();
+        document.documentElement.lang = locale;
+      })();
     </script>
   </head>
   <body
     class="bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"
   >
+    <LocaleInitializer client:only="react" />
     <Header client:only="react" />
     <slot />
   </body>

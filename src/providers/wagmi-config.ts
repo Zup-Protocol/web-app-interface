@@ -32,6 +32,7 @@ export function initializeAppKit() {
     adapters: [wagmiAdapter],
     networks: supportedNetworks as any,
     projectId: REOWN_PROJECT_ID,
+    enableAuthLogger: false,
     metadata: {
       name: "Zup Protocol",
       description: "Liquidity Pools made easy",

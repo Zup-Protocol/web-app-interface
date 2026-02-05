@@ -2,6 +2,8 @@ import {
   ConnectIcon,
   type ConnectIconHandle,
 } from "@/components/ui/icons/connect";
+import { useTranslation } from "@/hooks/use-translation";
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { cn } from "@/lib/utils";
 import { useAppKit } from "@reown/appkit/react";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +17,7 @@ export function ConnectWalletButton({
   className,
   ...props
 }: ConnectWalletButtonProps) {
+  const { translate } = useTranslation();
   const connectRef = useRef<ConnectIconHandle>(null);
   const appKit = useAppKit();
   const [isMobile, setIsMobile] = useState(false);
@@ -42,7 +45,9 @@ export function ConnectWalletButton({
       {...props}
     >
       {(!mounted || !isMobile) && (
-        <span className="hidden sm:inline">Connect Wallet</span>
+        <span className="hidden sm:inline">
+          {translate(AppTranslationsKeys.HEADER_BUTTONS_CONNECT)}
+        </span>
       )}
     </PrimaryButton>
   );

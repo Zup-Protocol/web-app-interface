@@ -18,7 +18,7 @@ export function ScaleClickAnimation({
 }: ScaleClickAnimationProps) {
   const [isTapping, setIsTapping] = React.useState(false);
 
-  const handlePointerDown = (e: React.PointerEvent) => {
+  const handlePointerDown = () => {
     setIsTapping(true);
     triggerHaptic(10);
   };

@@ -1,9 +1,11 @@
 "use client";
 
 import searchingIcon from "@/assets/escalerin/escalerin-searching-networks.svg";
+import { useTranslation } from "@/hooks/use-translation";
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { AppNetworks, AppNetworksUtils } from "@/lib/app-networks";
 import { AnimatePresence, motion } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { CloseButton } from "../ui/buttons/close-button";
 import { NetworkCard } from "../ui/cards/network-card";
 import { Modal } from "../ui/modal";
@@ -24,59 +26,83 @@ export function NetworkSelectionModal({
   onSelectNetwork,
 }: NetworkSelectionModalProps) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredNetworks, setFilteredNetworks] = useState(
-    AppNetworksUtils.values,
-  );
+  const { translate } = useTranslation();
 
-  useEffect(() => {
+  const filteredNetworks = useMemo(() => {
     if (searchQuery.trim() === "") {
-      setFilteredNetworks(AppNetworksUtils.values);
-    } else {
-      setFilteredNetworks(
-        AppNetworksUtils.values.filter((id) =>
-          AppNetworksUtils.networkName[id]
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase()),
-        ),
-      );
+      return AppNetworksUtils.values;
     }
-  }, [searchQuery]);
+    const query = searchQuery.toLowerCase();
+    return AppNetworksUtils.values.filter((id) =>
+      AppNetworksUtils.getTranslatedNetworkName(id, translate)
+        .toLowerCase()
+        .includes(query),
+    );
+  }, [searchQuery, translate]);
 
   const handleSelect = (networkId: AppNetworks) => {
     onSelectNetwork(networkId);
     onClose();
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1, // Wait a bit for the modal to open
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 15, scale: 0.95 },
+    show: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 30,
+      },
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.95,
+      transition: { duration: 0.2 },
+    },
+  } as any;
+
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      {/* Close Button - Hoisted to be relative to the Modal Frame, ignoring scrollbars */}
       <div className="hidden sm:block absolute top-6 right-6 sm:top-8 sm:right-8 z-50">
         <CloseButton onClick={onClose} />
       </div>
 
-      <div className="flex-1 overflow-y-auto overflow-x-hidden ml-0 mr-0 bg-modal [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-        {/* Scrollable Intro (Title + Description) - Scrolls away */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden ml-0 mr-0 bg-modal/80 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
         <div className="relative flex flex-col items-start pt-6 px-5 sm:items-center sm:text-center sm:pt-12 sm:pl-20 sm:pr-14 text-left gap-1.5 pb-2">
           <div className="flex items-center justify-between w-full sm:justify-center">
             <h2 className="text-[22px] sm:text-[24px] font-bold tracking-tight text-foreground">
-              Select Network
+              {translate(AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE)}
             </h2>
             <div className="sm:hidden">
               <CloseButton onClick={onClose} />
             </div>
           </div>
           <p className="text-[16px] text-[#9CA3AF] max-w-[300px] sm:max-w-md">
-            Select your preferred network. Choose a specific chain to filter
-            data, or select "All Networks" for a multi-chain overview
+            {translate(AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION)}
           </p>
         </div>
 
-        {/* Sticky Search Bar - Sticks to top */}
         <div className="sticky top-0 z-30 bg-modal/80 backdrop-blur-md py-5 px-5 sm:pl-20 sm:pr-14 sm:py-7">
           <div className="w-full sm:flex sm:justify-center">
             <div className="w-full sm:max-w-sm">
               <SearchInput
-                placeholder="Find a network"
+                placeholder={translate(
+                  AppTranslationsKeys.NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER,
+                )}
                 value={searchQuery}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                   setSearchQuery(e.target.value)
@@ -87,19 +113,10 @@ export function NetworkSelectionModal({
           </div>
         </div>
 
-        {/* Content Area */}
         <div className="pt-8 pb-12 px-5 sm:px-10">
           <motion.div
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.08,
-                  delayChildren: 0.1,
-                },
-              },
-            }}
+            layoutRoot
+            variants={containerVariants}
             initial="hidden"
             animate="show"
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[12px] justify-items-stretch"
@@ -108,29 +125,24 @@ export function NetworkSelectionModal({
               {filteredNetworks.map((id) => (
                 <motion.div
                   key={id}
-                  layout
-                  variants={{
-                    hidden: { opacity: 0, y: 20, scale: 0.95 },
-                    show: {
-                      opacity: 1,
-                      y: 0,
-                      scale: 1,
-                      transition: {
-                        type: "spring",
-                        stiffness: 100,
-                        damping: 15,
-                      },
-                    },
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.9,
-                    transition: { duration: 0.2 },
+                  layout="position"
+                  variants={itemVariants}
+                  initial="hidden"
+                  animate="show"
+                  exit="exit"
+                  style={{
+                    willChange: "transform, opacity",
+                    backfaceVisibility: "hidden",
+                    transform: "translateZ(0)",
+                    rotate: 0.01,
                   }}
                 >
                   <NetworkCard
                     network={id}
-                    name={AppNetworksUtils.networkName[id]}
+                    name={AppNetworksUtils.getTranslatedNetworkName(
+                      id,
+                      translate,
+                    )}
                     isSelected={currentNetwork === id}
                     onClick={() => handleSelect(id)}
                   />
@@ -140,12 +152,22 @@ export function NetworkSelectionModal({
           </motion.div>
 
           {filteredNetworks.length === 0 && (
-            <StateDisplay
-              className="py-0"
-              image={searchingIcon}
-              title="No networks found"
-              description="We couldn't find any network matching your search. Try adjusting your keywords."
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <StateDisplay
+                className="py-0"
+                image={searchingIcon}
+                title={translate(
+                  AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_TITLE,
+                )}
+                description={translate(
+                  AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION,
+                )}
+              />
+            </motion.div>
           )}
         </div>
       </div>

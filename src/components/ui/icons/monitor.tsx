@@ -1,6 +1,5 @@
 "use client";
 
-import type { Variants } from "motion/react";
 import { motion, useAnimation } from "motion/react";
 import type { HTMLAttributes } from "react";
 import { forwardRef, useCallback, useImperativeHandle, useRef } from "react";
@@ -15,18 +14,6 @@ export interface MonitorIconHandle {
 interface MonitorIconProps extends HTMLAttributes<HTMLDivElement> {
   size?: number;
 }
-
-const SCREEN_VARIANTS: Variants = {
-  normal: { opacity: 1, scale: 1 },
-  animate: {
-    opacity: [1, 0.8, 1, 0.9, 1],
-    scale: [1, 1.02, 1],
-    transition: {
-      duration: 0.4,
-      times: [0, 0.2, 0.4, 0.6, 1],
-    },
-  },
-};
 
 const MonitorIcon = forwardRef<MonitorIconHandle, MonitorIconProps>(
   ({ onMouseEnter, onMouseLeave, className, size = 28, ...props }, ref) => {

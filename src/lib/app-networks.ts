@@ -1,3 +1,4 @@
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import type { ImageMetadata } from "astro";
 import {
   base,
@@ -120,6 +121,17 @@ export abstract class AppNetworksUtils {
     [AppNetworks.PLASMA]: "Plasma",
     [AppNetworks.MONAD]: "Monad",
   };
+
+  static getTranslatedNetworkName(
+    network: AppNetworks,
+    translate: (key: AppTranslationsKeys) => string,
+  ): string {
+    if (network === AppNetworks.ALL_NETWORKS) {
+      return translate(AppTranslationsKeys.NETWORKS_ALL);
+    }
+
+    return this.networkName[network];
+  }
 
   static brandColor: Record<AppNetworks, string> = {
     [AppNetworks.ALL_NETWORKS]: "#FFFFFF",

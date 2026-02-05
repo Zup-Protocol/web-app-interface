@@ -1,8 +1,12 @@
 import { PrimaryButton } from "@/components/ui/buttons/primary-button";
+import { useTranslation } from "@/hooks/use-translation";
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { motion } from "framer-motion";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export const HomeHeroSection = () => {
+  const { translate } = useTranslation();
+
   return (
     <div className="flex flex-col items-center gap-6 mt-8">
       <motion.div
@@ -18,10 +22,10 @@ export const HomeHeroSection = () => {
         <PrimaryButton
           size="lg"
           className="text-lg px-8 py-6 rounded-full shadow-[0_0_20px_rgba(var(--primary),0.3)] hover:shadow-[0_0_30px_rgba(var(--primary),0.5)] transition-shadow duration-300"
-          onClick={() => alert("Welcome to Zup Protocol!")}
+          onClick={() => alert(translate(AppTranslationsKeys.HERO_WELCOME))}
         >
           <Sparkles className="mr-2 h-5 w-5" />
-          Join the Future
+          {translate(AppTranslationsKeys.HERO_TITLE)}
           <ArrowRight className="ml-2 h-5 w-5" />
         </PrimaryButton>
       </motion.div>
@@ -32,7 +36,7 @@ export const HomeHeroSection = () => {
         transition={{ delay: 0.5, duration: 0.5 }}
         className="text-sm text-muted-foreground"
       >
-        (This is a Premium React Component with Spring Physics)
+        {translate(AppTranslationsKeys.HERO_SUBTITLE)}
       </motion.p>
     </div>
   );

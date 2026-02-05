@@ -1,5 +1,7 @@
 "use client";
 
+import { useTranslation } from "@/hooks/use-translation";
+import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { cn } from "@/lib/utils";
 import { useAppKit } from "@reown/appkit/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -19,6 +21,7 @@ export function ConnectedWalletButton({
   className,
   ...props
 }: ConnectedWalletButtonProps) {
+  const { translate } = useTranslation();
   const { address } = useConnection();
   const { data: ensName } = useEnsName({ address });
   const { open } = useAppKit();
@@ -42,7 +45,7 @@ export function ConnectedWalletButton({
   return (
     <PrimaryButton
       className={cn(
-        "group transition-all duration-500 overflow-hidden px-3",
+        "group transition-all duration-500 overflow-hidden",
         isSuccess
           ? "bg-[#10B981] hover:bg-[#059669] text-white border-transparent"
           : "border-outline-button-border",
@@ -58,7 +61,7 @@ export function ConnectedWalletButton({
         <div className="flex items-center gap-2 invisible pointer-events-none select-none h-0 opacity-0">
           <div className="w-7 h-7" />
           <span className="whitespace-nowrap font-medium hidden sm:inline">
-            Wallet Connected
+            {translate(AppTranslationsKeys.HEADER_BUTTONS_CONNECTED)}
           </span>
         </div>
 
@@ -76,7 +79,7 @@ export function ConnectedWalletButton({
                 <CheckIcon size={22} autoplay delay={500} />
               </div>
               <span className="text-inherit font-medium hidden sm:inline">
-                Wallet Connected
+                {translate(AppTranslationsKeys.HEADER_BUTTONS_CONNECTED)}
               </span>
             </motion.div>
           ) : (

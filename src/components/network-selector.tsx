@@ -1,4 +1,5 @@
 import { useAppNetwork } from "@/hooks/use-network";
+import { useTranslation } from "@/hooks/use-translation";
 import { AppNetworksUtils } from "@/lib/app-networks";
 import { ThemeMode } from "@/lib/theme-mode";
 import { ChevronDown } from "lucide-react";
@@ -11,10 +12,11 @@ interface NetworkSelectorProps {
   className?: string;
 }
 
-export function NetworkSelector({ className }: NetworkSelectorProps) {
+export function NetworkSelector({}: NetworkSelectorProps) {
   const { network, setAppNetwork: setNetwork } = useAppNetwork();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { resolvedTheme } = useTheme();
+  const { translate } = useTranslation();
 
   const Icon = AppNetworksUtils.logoSvg[network];
   const activeIcon = resolvedTheme === ThemeMode.DARK ? Icon.dark : Icon.light;
@@ -40,7 +42,7 @@ export function NetworkSelector({ className }: NetworkSelectorProps) {
       >
         <div className="flex items-center gap-1.5">
           <span className="text-base font-medium hidden sm:inline">
-            {AppNetworksUtils.networkName[network]}
+            {AppNetworksUtils.getTranslatedNetworkName(network, translate)}
           </span>
           <ChevronDown
             size={14}
