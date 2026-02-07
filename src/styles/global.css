@@ -90,12 +90,16 @@
   --outline-button-hover: hsl(240 44% 96%);
   --disabled-button-background: hsl(240 44% 94%);
   --disabled-button-foreground: hsl(240, 10%, 65%);
+  --destructive-secondary-button-background: hsla(0, 84%, 60%, 0.1);
+  --destructive-secondary-button-background-hover: hsla(0, 84%, 60%, 0.15);
 
   /* Modal */
   --modal: hsl(250 100% 98.5%);
   --modal-outline: hsl(240, 10%, 92%);
   --modal-foreground: hsl(250 18% 7%);
   --divider-on-modal: hsl(240, 10%, 92%);
+  --outline-button-border-on-modal: hsl(240, 10%, 92%);
+  --outline-button-hover-on-modal: hsl(240 44% 96%);
   --tertiary-button-on-modal-background: hsl(240 44% 96%);
   --tertiary-button-on-modal-background-hover: hsl(240 30% 91%);
 
@@ -119,12 +123,16 @@
   --outline-button-hover: hsl(240 3% 10%);
   --disabled-button-background: hsl(240, 3%, 7%);
   --disabled-button-foreground: hsl(240, 3%, 30%);
+  --destructive-secondary-button-background: hsla(0, 84%, 60%, 0.15);
+  --destructive-secondary-button-background-hover: hsla(0, 84%, 60%, 0.2);
 
   /* Modal */
   --modal: hsl(0 0% 13%);
   --modal-outline: hsl(240, 3%, 15%);
   --modal-foreground: hsl(240 9% 85%);
   --divider-on-modal: hsl(240, 3%, 21%);
+  --outline-button-border-on-modal: hsl(240, 3%, 21%);
+  --outline-button-hover-on-modal: hsl(240, 2%, 16%);
   --tertiary-button-on-modal-background: hsl(240, 2%, 10%);
   --tertiary-button-on-modal-background-hover: hsl(240, 2%, 8%);
 
@@ -136,7 +144,13 @@
 
 @theme inline {
   --font-sans: "SNPro", ui-sans-serif, system-ui, sans-serif;
-  --text-base: 0.9375rem;
+  --text-base: 1rem;
+  --color-destructive-secondary-button-background: var(
+    --destructive-secondary-button-background
+  );
+  --color-destructive-secondary-button-background-hover: var(
+    --destructive-secondary-button-background-hover
+  );
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -147,6 +161,8 @@
   --color-primary-hover: var(--primary-hover);
   --color-secondary-button-background: var(--secondary-button-background);
   --color-outline-button-hover: var(--outline-button-hover);
+  --color-outline-button-border-on-modal: var(--outline-button-border-on-modal);
+  --color-outline-button-hover-on-modal: var(--outline-button-hover-on-modal);
   --color-modal-outline: var(--modal-outline);
   --color-mutated-text: var(--mutated-text);
   --color-disabled-button-background: var(--disabled-button-background);

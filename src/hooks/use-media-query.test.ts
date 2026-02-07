@@ -1,17 +1,23 @@
 import { act, renderHook } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useMediaQuery } from "./use-media-query";
 
 describe("useMediaQuery", () => {
   let matchMediaMock: any;
+  let originalMatchMedia: any;
 
   beforeEach(() => {
+    originalMatchMedia = window.matchMedia;
     matchMediaMock = {
       matches: false,
       addEventListener: vi.fn(),
       removeEventListener: vi.fn(),
     };
     window.matchMedia = vi.fn().mockImplementation(() => matchMediaMock);
+  });
+
+  afterEach(() => {
+    window.matchMedia = originalMatchMedia;
   });
 
   it("returns matches from matchMedia", () => {
@@ -40,9 +46,16 @@ describe("useMediaQuery", () => {
     expect(result.current).toBe(true);
   });
 
-  it("unsubscribes on unmount", () => {
+  it("uses subscribe and unsubscribe correctly", () => {
     const { unmount } = renderHook(() => useMediaQuery("(min-width: 768px)"));
+    expect(matchMediaMock.addEventListener).toHaveBeenCalledWith(
+      "change",
+      expect.any(Function),
+    );
     unmount();
-    expect(matchMediaMock.removeEventListener).toHaveBeenCalled();
+    expect(matchMediaMock.removeEventListener).toHaveBeenCalledWith(
+      "change",
+      expect.any(Function),
+    );
   });
 });

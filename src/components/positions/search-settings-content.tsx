@@ -8,16 +8,30 @@ import { LocalStorageKey } from "@/lib/local-storage-key";
 import { AnimationProvider } from "@/providers/animation-provider";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
-import { PrimaryButton } from "../ui/buttons/primary-button";
 import { InfoTooltip } from "../ui/info-tooltip";
 
+import { SlidersHorizontalIcon } from "@/components/ui/icons/sliders";
 import {
   DEFAULT_SEARCH_SETTINGS,
   type SearchSettingsConfig,
 } from "@/core/DTOs/search-settings-config.dto";
+import { Badge } from "../ui/badge";
+import { PrimaryButton } from "../ui/buttons/primary-button";
 import { DeleteIcon, type DeleteIconHandle } from "../ui/icons/trash";
 
-export function SearchSettingsContent() {
+interface SearchSettingsContentProps {
+  onDone?: () => void;
+  onExchangesClick: () => void;
+  blockedExchangesCount: number;
+  totalExchangesCount: number;
+}
+
+export function SearchSettingsContent({
+  onDone,
+  onExchangesClick,
+  blockedExchangesCount,
+  totalExchangesCount,
+}: SearchSettingsContentProps) {
   const { translate } = useTranslation();
   const deleteIconRef = useRef<DeleteIconHandle>(null);
   const [minLiquidity, setMinLiquidity] = useState<string>(
@@ -41,16 +55,33 @@ export function SearchSettingsContent() {
   const handleMinLiquidityChange = (value: string) => {
     setMinLiquidity(value);
 
-    const newConfig: SearchSettingsConfig = {
-      minLiquidity: value,
-    };
+    try {
+      const stored = localStorage.getItem(LocalStorageKey.SEARCH_SETTINGS);
 
-    localStorage.setItem(
-      LocalStorageKey.SEARCH_SETTINGS,
-      JSON.stringify(newConfig),
-    );
+      const config: SearchSettingsConfig = stored
+        ? JSON.parse(stored)
+        : { ...DEFAULT_SEARCH_SETTINGS };
 
-    window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
+      config.minLiquidity = value;
+
+      localStorage.setItem(
+        LocalStorageKey.SEARCH_SETTINGS,
+        JSON.stringify(config),
+      );
+
+      window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
+    } catch {
+      const fallbackConfig: SearchSettingsConfig = {
+        ...DEFAULT_SEARCH_SETTINGS,
+        minLiquidity: value,
+      };
+
+      localStorage.setItem(
+        LocalStorageKey.SEARCH_SETTINGS,
+        JSON.stringify(fallbackConfig),
+      );
+      window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
+    }
   };
 
   return (
@@ -88,6 +119,12 @@ export function SearchSettingsContent() {
             value={minLiquidity}
             onValueChange={handleMinLiquidityChange}
             placeholder="0"
+            enterKeyHint="done"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onDone?.();
+              }
+            }}
           />
           <AnimatePresence>
             {Number(minLiquidity) <
@@ -107,11 +144,32 @@ export function SearchSettingsContent() {
           </AnimatePresence>
         </div>
 
-        <PrimaryButton variant="outline" className="h-10">
-          {translate(
-            AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON,
-          )}
-        </PrimaryButton>
+        <div className="flex flex-col gap-2 pt-2 border-t border-divider">
+          <PrimaryButton
+            variant="tertiaryOnModal"
+            state={
+              blockedExchangesCount === totalExchangesCount
+                ? "destructive"
+                : "default"
+            }
+            className="w-full justify-center h-10 px-4"
+            onClick={onExchangesClick}
+            alwaysIcon
+            icon={
+              <div className="relative">
+                <SlidersHorizontalIcon size={16} />
+                <AnimatePresence>
+                  {blockedExchangesCount > 0 && (
+                    <Badge className="-top-0.5 -right-0.5" />
+                  )}
+                </AnimatePresence>
+              </div>
+            }
+          >
+            {translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE)} (
+            {totalExchangesCount - blockedExchangesCount}/{totalExchangesCount})
+          </PrimaryButton>
+        </div>
       </div>
     </AnimationProvider>
   );

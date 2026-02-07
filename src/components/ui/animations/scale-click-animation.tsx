@@ -1,11 +1,11 @@
-import { triggerHaptic } from "@/lib/haptic";
-import { Slot } from "@radix-ui/react-slot";
-import { motion } from "framer-motion";
+import { type HTMLMotionProps, m } from "framer-motion";
 import * as React from "react";
 
-interface ScaleClickAnimationProps {
+import { triggerHaptic } from "@/lib/haptic";
+import { Slot } from "@radix-ui/react-slot";
+
+interface ScaleClickAnimationProps extends HTMLMotionProps<"div"> {
   children: React.ReactNode;
-  className?: string;
   scale?: number;
   asChild?: boolean;
   disabled?: boolean;
@@ -17,21 +17,35 @@ export function ScaleClickAnimation({
   scale = 0.96,
   asChild = false,
   disabled = false,
+  ...props
 }: ScaleClickAnimationProps) {
   const [isTapping, setIsTapping] = React.useState(false);
 
-  const handlePointerDown = () => {
+  const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
     setIsTapping(true);
     triggerHaptic(10);
+    props.onPointerDown?.(event);
   };
 
-  const handlePointerUpOrCancel = () => {
+  const handlePointerUpOrCancel = (
+    event: React.PointerEvent<HTMLDivElement>,
+  ) => {
     setTimeout(() => setIsTapping(false), 80);
+    if (event.type === "pointerup") {
+      props.onPointerUp?.(event);
+    } else {
+      props.onPointerCancel?.(event);
+    }
   };
 
   const animationProps = {
     animate: {
-      scale: isTapping ? scale : 1,
+      ...(typeof props.animate === "object" ? props.animate : {}),
+      scale: isTapping
+        ? scale
+        : ((typeof props.animate === "object"
+            ? (props.animate as any)?.scale
+            : 1) ?? 1),
     },
     onPointerDown: handlePointerDown,
     onPointerUp: handlePointerUpOrCancel,
@@ -42,26 +56,29 @@ export function ScaleClickAnimation({
       damping: 25,
       mass: 0.5,
       restDelta: 0.001,
-    } as any,
+      ...(typeof props.transition === "object" ? props.transition : {}),
+    },
     style: {
       transformOrigin: "center",
       willChange: "transform",
+      ...(props.style as any),
     },
   };
 
   const finalProps = disabled ? {} : animationProps;
+  const mergedProps = { ...props, ...finalProps };
 
   if (asChild) {
     return (
-      <Slot {...finalProps} className={className}>
+      <Slot {...(mergedProps as any)} className={className}>
         {children}
       </Slot>
     );
   }
 
   return (
-    <motion.div className={className} {...finalProps}>
+    <m.div className={className} {...mergedProps}>
       {children}
-    </motion.div>
+    </m.div>
   );
 }

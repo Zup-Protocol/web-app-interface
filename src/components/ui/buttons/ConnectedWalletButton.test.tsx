@@ -2,10 +2,10 @@ import {
     act,
     fireEvent,
     render,
-    screen,
-    waitFor,
+    screen
 } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { useConnection } from "wagmi";
 import { ConnectedWalletButton } from "./connected-wallet-button";
 
 // Mock dependencies
@@ -14,17 +14,10 @@ vi.mock("@reown/appkit/react", () => ({
   useAppKit: () => ({
     open: mockOpen,
   }),
-  useAppKitAccount: () => ({
-    address: "0x1234567890123456789012345678901234567890",
-    isConnected: true,
-  }),
 }));
 
-const mockAddress = "0x1234567890123456789012345678901234567890";
 vi.mock("wagmi", () => ({
-  useConnection: () => ({
-    address: mockAddress,
-  }),
+  useConnection: vi.fn(),
   useEnsName: () => ({
     data: null,
   }),
@@ -42,9 +35,12 @@ vi.mock("react-nice-avatar", () => ({
 }));
 
 describe("ConnectedWalletButton", () => {
+  const mockAddress = "0x1234567890123456789012345678901234567890";
+
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+    vi.mocked(useConnection).mockReturnValue({ address: mockAddress } as any);
   });
 
   afterEach(() => {
@@ -66,17 +62,21 @@ describe("ConnectedWalletButton", () => {
   it("shows success state initially then normal state", () => {
     render(<ConnectedWalletButton />);
 
-    // success state shows header.buttons.connected key (multiple due to layout hacks)
     expect(
       screen.getAllByText("header.buttons.connected").length,
     ).toBeGreaterThan(0);
 
     act(() => {
-      vi.advanceTimersByTime(2000);
+      vi.advanceTimersByTime(2100);
     });
 
-    waitFor(() => {
-      expect(screen.getByText("0x1234...7890")).toBeInTheDocument();
-    });
+    expect(screen.getByText("0x1234...7890")).toBeInTheDocument();
+  });
+
+  it("handles empty address", () => {
+    vi.mocked(useConnection).mockReturnValue({ address: undefined } as any);
+    render(<ConnectedWalletButton />);
+    // Should not show any address
+    expect(screen.queryByText(/0x/)).not.toBeInTheDocument();
   });
 });

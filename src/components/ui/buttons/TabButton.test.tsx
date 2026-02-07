@@ -1,6 +1,26 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { TabButton } from "./tab-button";
+
+// Mock framer-motion
+vi.mock("framer-motion", async () => {
+  const actual = await vi.importActual("framer-motion");
+  return {
+    ...actual,
+    motion: {
+      button: ({ children, onHoverStart, onHoverEnd, ...props }: any) => (
+        <button
+          {...props}
+          onMouseEnter={onHoverStart}
+          onMouseLeave={onHoverEnd}
+        >
+          {children}
+        </button>
+      ),
+      div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    },
+  };
+});
 
 describe("TabButton", () => {
   it("renders children", () => {
@@ -12,5 +32,13 @@ describe("TabButton", () => {
     render(<TabButton isActive>Tab 1</TabButton>);
     const button = screen.getByRole("button");
     expect(button).toHaveClass("text-foreground");
+  });
+
+  it("handles hover states", () => {
+    render(<TabButton>Hover Tab</TabButton>);
+    const button = screen.getByRole("button");
+
+    fireEvent.mouseEnter(button);
+    fireEvent.mouseLeave(button);
   });
 });

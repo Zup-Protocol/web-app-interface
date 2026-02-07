@@ -42,7 +42,20 @@ export const pt: Record<AppTranslationsKeys, string> = {
     "Liquidez Mínima da Pool",
   [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
     "Pools com liquidez abaixo desse valor não serão exibidas",
-  [AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON]: "Corretoras",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE]: "Corretoras",
   [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
     "Liquidez mínima baixa pode levar a rendimentos enganosos, tenha cuidado",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]:
+    "Buscar corretoras por nome",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL]: "Desativar tudo",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL]: "Ativar tudo",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL]: "Todos",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED]: "Ativas",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED]: "Inativas",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]:
+    "Desative corretoras para ocultá-las dos resultados. Você pode reativá-las quando quiser.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]:
+    "Nenhuma corretora encontrada",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
+    "Não achamos nenhuma corretora com esses critérios. Tente mudar os filtros ou procurar outra coisa.",
 };

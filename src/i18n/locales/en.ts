@@ -41,5 +41,18 @@ export const en: Record<AppTranslationsKeys, string> = {
     "Pools with liquidity below this amount will be excluded from results.",
   [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
     "Low liquidity can make yields look misleading, be careful out there",
-  [AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON]: "Exchanges",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE]: "Exchanges",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]:
+    "Search exchanges by name",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL]: "Disable All",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL]: "Enable All",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL]: "All",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED]: "Enabled",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED]: "Disabled",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]:
+    "Don't want to see certain exchanges? Just turn them off here. They'll stay hidden until you enable them again.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]:
+    "No exchanges found",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
+    "No exchanges match your filters. Try adjusting your search or checking a different category.",
 };

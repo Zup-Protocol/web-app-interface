@@ -3,11 +3,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NetworkSelector } from "./network-selector";
 
 // Mock dependencies
-const mockSetNetwork = vi.fn();
-// Mock hook implementation
-const mockNetwork = "ethereum"; // lowercase id assumption or enum value? AppNetworks usually enum
+const mockSetNetwork = vi.hoisted(() => vi.fn());
+const mockNetwork = vi.hoisted(() => "ethereum");
 
-// Assuming AppNetworks works similarly to AppLanguages
 vi.mock("@/hooks/use-network", () => ({
   useAppNetwork: () => ({
     network: mockNetwork,
@@ -21,30 +19,36 @@ vi.mock("@/hooks/use-translation", () => ({
   }),
 }));
 
+const mockUseTheme = vi.hoisted(() =>
+  vi.fn(() => ({ resolvedTheme: "light" })),
+);
 vi.mock("next-themes", () => ({
-  useTheme: () => ({ resolvedTheme: "light" }),
+  useTheme: mockUseTheme,
 }));
 
-// Mock AppNetworksUtils.
-// However, since it is a static class using valid logic, we might use real one if available.
-// But to isolate, we can mock it.
+const mockLogoSvg = vi.hoisted(() => ({
+  ethereum: { light: "eth.svg" as any, dark: "eth-dark.svg" as any },
+}));
+
 vi.mock("@/lib/app-networks", () => ({
   AppNetworksUtils: {
-    logoSvg: {
-      ethereum: { light: "eth.svg", dark: "eth-dark.svg" },
-    },
+    logoSvg: mockLogoSvg,
     getTranslatedNetworkName: (network: string) => `Name: ${network}`,
   },
 }));
 
-// Mock NetworkSelectionModal to avoid complex rendering
 vi.mock("./modals/network-selection-modal", () => ({
-  NetworkSelectionModal: ({ isOpen, onSelectNetwork }: any) =>
+  NetworkSelectionModal: ({ isOpen, onClose, onSelectNetwork }: any) =>
     isOpen ? (
       <div data-testid="network-modal">
-        ModalOpen{" "}
-        <button onClick={() => onSelectNetwork("polygon")}>
-          Select Polygon
+        <button data-testid="modal-close" onClick={onClose}>
+          Close
+        </button>
+        <button
+          data-testid="modal-select-arbitrum"
+          onClick={() => onSelectNetwork("arbitrum")}
+        >
+          Arbitrum
         </button>
       </div>
     ) : null,
@@ -52,13 +56,14 @@ vi.mock("./modals/network-selection-modal", () => ({
 
 describe("NetworkSelector", () => {
   beforeEach(() => {
-    mockSetNetwork.mockClear();
+    vi.clearAllMocks();
+    mockUseTheme.mockReturnValue({ resolvedTheme: "light" });
+    mockLogoSvg.ethereum = { light: "eth.svg", dark: "eth-dark.svg" };
   });
 
   it("renders current network name and icon", () => {
     render(<NetworkSelector />);
     expect(screen.getByText("Name: ethereum")).toBeInTheDocument();
-    // Icon
     const img = screen.getByAltText("Network");
     expect(img).toHaveAttribute("src", "eth.svg");
   });
@@ -70,13 +75,42 @@ describe("NetworkSelector", () => {
     expect(screen.getByTestId("network-modal")).toBeInTheDocument();
   });
 
-  it("selects network via modal interaction", () => {
+  it("renders dark theme icon", () => {
+    mockUseTheme.mockReturnValue({ resolvedTheme: "dark" });
     render(<NetworkSelector />);
-    fireEvent.click(screen.getByRole("button")); // open
+    const img = screen.getByAltText("Network");
+    expect(img).toHaveAttribute("src", "eth-dark.svg");
+  });
 
-    const selectBtn = screen.getByText("Select Polygon");
+  it("handles modal lifecycle and selection", () => {
+    render(<NetworkSelector />);
+    const button = screen.getByRole("button");
+    fireEvent.click(button);
+
+    // The modal should be open now.
+    // Our mock for NetworkSelectionModal is:
+    // ({ isOpen, onClose, onSelectNetwork }: any) => isOpen ? ( ... ) : null
+
+    const closeBtn = screen.getByTestId("modal-close");
+    fireEvent.click(closeBtn);
+
+    expect(screen.queryByTestId("modal-close")).not.toBeInTheDocument();
+
+    // Re-open and select
+    fireEvent.click(button);
+    const selectBtn = screen.getByTestId("modal-select-arbitrum");
     fireEvent.click(selectBtn);
 
-    expect(mockSetNetwork).toHaveBeenCalledWith("polygon");
+    expect(mockSetNetwork).toHaveBeenCalledWith("arbitrum");
+  });
+
+  it("handles object icon src (e.g. from static imports)", () => {
+    mockLogoSvg.ethereum = {
+      light: { src: "eth-obj.svg" },
+      dark: { src: "eth-dark-obj.svg" },
+    };
+    render(<NetworkSelector />);
+    const img = screen.getByAltText("Network");
+    expect(img).toHaveAttribute("src", "eth-obj.svg");
   });
 });

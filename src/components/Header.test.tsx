@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { Header } from "./header";
 
@@ -61,7 +61,11 @@ vi.mock("./ui/buttons/settings-button", () => ({
   SettingsButton: () => <div data-testid="settings-button" />,
 }));
 vi.mock("./ui/buttons/tab-button", () => ({
-  TabButton: ({ children }: any) => <div>{children}</div>,
+  TabButton: ({ children, onMouseEnter, onMouseLeave }: any) => (
+    <div onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
+      {children}
+    </div>
+  ),
 }));
 
 describe("Header", () => {
@@ -88,5 +92,13 @@ describe("Header", () => {
     render(<Header />);
     expect(screen.getByText("Connected")).toBeInTheDocument();
     expect(screen.queryByText("Connect")).not.toBeInTheDocument();
+  });
+
+  it("triggers animations on TabButton hover", () => {
+    mockIsConnected.mockReturnValue(false);
+    render(<Header />);
+    const tab = screen.getByText("header.nav.positions").parentElement!;
+    fireEvent.mouseEnter(tab);
+    fireEvent.mouseLeave(tab);
   });
 });

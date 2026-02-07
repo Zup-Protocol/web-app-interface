@@ -37,7 +37,7 @@ function HeaderContent() {
   const { translate } = useTranslation();
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/10 bg-background/0 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full bg-background/0 backdrop-blur-md">
       <motion.div
         className="w-full px-[20px] py-[15px] flex items-center justify-between"
         initial="hidden"

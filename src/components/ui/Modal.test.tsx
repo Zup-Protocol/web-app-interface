@@ -1,3 +1,4 @@
+import { useMediaQuery } from "@/hooks/use-media-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { forwardRef } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -5,7 +6,7 @@ import { Modal } from "./modal";
 
 // Mock matchMedia simply as true
 vi.mock("@/hooks/use-media-query", () => ({
-  useMediaQuery: () => true,
+  useMediaQuery: vi.fn(() => true),
 }));
 
 // Mock framer-motion simply
@@ -29,6 +30,7 @@ describe("Modal", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     document.body.style.overflow = "unset";
+    vi.mocked(useMediaQuery).mockReturnValue(true);
   });
 
   it("renders nothing when closed", () => {
@@ -111,5 +113,17 @@ describe("Modal", () => {
 
     fireEvent.keyDown(window, { key: "Escape", code: "Escape" });
     expect(onClose).not.toHaveBeenCalled();
+  });
+
+  it("renders mobile view when screen is small", async () => {
+    vi.mocked(useMediaQuery).mockReturnValue(false);
+
+    render(
+      <Modal isOpen={true} onClose={vi.fn()}>
+        <div data-testid="mobile-content">MobileContent</div>
+      </Modal>,
+    );
+
+    await screen.findByTestId("mobile-content");
   });
 });

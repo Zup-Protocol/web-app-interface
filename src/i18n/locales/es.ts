@@ -41,7 +41,20 @@ export const es: Record<AppTranslationsKeys, string> = {
     "Liquidez Mínima del Pool",
   [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
     "Ocultaremos los pools con liquidez inferior a esta cantidad.",
-  [AppTranslationsKeys.SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON]: "Exchanges",
   [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
     "Un mínimo de liquidez bajo puede mostrar rendimientos engañosos. Ten cuidado",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE]: "Exchanges",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]:
+    "Buscar exchanges por nombre",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL]: "Desactivar todo",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL]: "Activar todo",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL]: "Todos",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED]: "Activos",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED]: "Inactivos",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]:
+    "Desactiva los exchanges que quieras ocultar de tu búsqueda. ¡Puedes volver a activarlos cuando quieras!",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]:
+    "No se encontraron exchanges",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
+    "Sin resultados para esta búsqueda. Intenta ajustando los filtros o probando algo distinto",
 };

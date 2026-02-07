@@ -110,7 +110,7 @@ export function Modal({
                 "bg-modal pointer-events-auto border-modal-outline flex flex-col shadow-2xl overflow-hidden relative",
                 isDesktop
                   ? "w-full max-w-5xl h-[85vh] rounded-[24px] border"
-                  : "w-full max-h-[85vh] h-auto rounded-t-[24px] rounded-b-none border-t border-x border-b-0",
+                  : "w-full max-h-[90vh] h-auto rounded-t-[24px] rounded-b-none border-t border-x border-b-0",
                 className,
               )}
             >

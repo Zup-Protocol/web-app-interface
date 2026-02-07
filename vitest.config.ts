@@ -30,6 +30,7 @@ export default getViteConfig({
         "tests/**",
         "**/*.d.ts",
         ".agent/**",
+        "src/components/ui/icons/**",
       ],
     },
   },

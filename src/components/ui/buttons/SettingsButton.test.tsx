@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SettingsButton } from "./settings-button";
 
 // Mock dependencies
@@ -31,9 +31,11 @@ vi.mock("@/components/ui/icons/cog", async () => {
   };
 });
 
-
-// Start fresh with JSDOM
 describe("SettingsButton", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it("renders the button with cog icon", () => {
     render(<SettingsButton />);
     expect(screen.getByRole("button")).toBeInTheDocument();
@@ -50,5 +52,13 @@ describe("SettingsButton", () => {
     await waitFor(() => {
       expect(screen.getByTestId("settings-content")).toBeInTheDocument();
     });
+  });
+
+  it("triggers cog animation on hover", () => {
+    render(<SettingsButton />);
+    const button = screen.getByRole("button");
+
+    fireEvent.mouseEnter(button);
+    fireEvent.mouseLeave(button);
   });
 });

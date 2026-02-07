@@ -4,6 +4,7 @@ import "../styles/global.css";
 
 import { ThemeMode } from "@/lib/theme-mode";
 import { LocalStorageKey } from "@/lib/local-storage-key";
+import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { Header } from "@/components/header";
 import { LocaleInitializer } from "@/components/common/locale-initializer";
 
@@ -12,6 +13,10 @@ interface Props {
 }
 
 const { title } = Astro.props;
+
+const supportedLanguages = AppLanguagesUtils.values.filter(
+  (v) => v !== AppLanguages.SYSTEM,
+);
 ---
 
 <!doctype html>
@@ -26,10 +31,15 @@ const { title } = Astro.props;
     <meta name="theme-color" content="" id="theme-color-meta" />
     <title>{title} | Zup Protocol</title>
     <ClientRouter />
-    <script is:inline define:vars={{ ThemeMode, LocalStorageKey }}>
-      import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
-      import { LocalStorageKey } from "@/lib/local-storage-key";
-
+    <script
+      is:inline
+      define:vars={{
+        ThemeMode,
+        LocalStorageKey,
+        AppLanguages,
+        supportedLanguages,
+      }}
+    >
       (function () {
         function getTheme() {
           if (
@@ -72,7 +82,6 @@ const { title } = Astro.props;
         const theme = getTheme();
         setClass(theme);
 
-        // Watch for manual changes to the .dark class (e.g. by next-themes)
         const observer = new MutationObserver(() => {
           updateMeta();
         });
@@ -105,7 +114,7 @@ const { title } = Astro.props;
           if (typeof navigator !== "undefined") {
             const sys = navigator.language.split("-")[0];
 
-            if (AppLanguagesUtils.values.includes(sys)) return sys;
+            if (supportedLanguages.includes(sys)) return sys;
           }
           return AppLanguages.ENGLISH;
         }

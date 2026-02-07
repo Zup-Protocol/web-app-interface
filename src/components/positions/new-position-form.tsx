@@ -1,9 +1,9 @@
 "use client";
 
+import { ExchangesFilterModal } from "@/components/modals/exchanges-filter-modal";
 import { SearchSettingsContent } from "@/components/positions/search-settings-content";
 import { TokenSelectorButton } from "@/components/positions/token-selector-button";
-import { PrimaryButton } from "@/components/ui/buttons/primary-button";
-import { CogIcon, type CogIconHandle } from "@/components/ui/icons/cog";
+import { type SlidersHorizontalIconHandle } from "@/components/ui/icons/sliders";
 import {
   Popover,
   PopoverContent,
@@ -17,34 +17,54 @@ import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { CustomEvent } from "@/lib/custom-event";
 import { LocalStorageKey } from "@/lib/local-storage-key";
+import { SupportedDexsUtils } from "@/lib/supported-dexs";
+import { cn } from "@/lib/utils";
 import { AnimationProvider } from "@/providers/animation-provider";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { Badge } from "../ui/badge";
+import { PrimaryButton } from "../ui/buttons/primary-button";
+import { CogIcon } from "../ui/icons/cog";
 import { SparklesIcon, type SparklesIconHandle } from "../ui/icons/sparkles";
 
 export function NewPositionForm() {
   const { translate } = useTranslation();
-  const searchSettingsIconRef = useRef<CogIconHandle>(null);
+  const searchSettingsIconRef = useRef<SlidersHorizontalIconHandle>(null);
   const sparklesIconRef = useRef<SparklesIconHandle>(null);
   const [hasSearchSettingsChanges, setHasSearchSettingsChanges] =
     useState(false);
+  const [blockedExchangesCount, setBlockedExchangesCount] = useState(0);
+  const [isExchangesModalOpen, setIsExchangesModalOpen] = useState(false);
+  const [isSearchSettingsOpen, setIsSearchSettingsOpen] = useState(false);
 
   useEffect(() => {
     const checkSettings = () => {
       try {
         const stored = localStorage.getItem(LocalStorageKey.SEARCH_SETTINGS);
-
-        if (stored) {
-          const config = JSON.parse(stored) as SearchSettingsConfig;
-          const isDifferent =
-            JSON.stringify(config) !== JSON.stringify(DEFAULT_SEARCH_SETTINGS);
-
-          setHasSearchSettingsChanges(isDifferent);
-        } else {
+        if (!stored) {
           setHasSearchSettingsChanges(false);
+          setBlockedExchangesCount(0);
+          return;
         }
+
+        const config = JSON.parse(stored) as SearchSettingsConfig;
+
+        const hasChanges = (
+          Object.keys(DEFAULT_SEARCH_SETTINGS) as Array<
+            keyof SearchSettingsConfig
+          >
+        ).some((key) => {
+          if (key === "blockedExchanges") return false;
+          return config[key] !== DEFAULT_SEARCH_SETTINGS[key];
+        });
+
+        setHasSearchSettingsChanges(hasChanges);
+
+        const blocked = config.blockedExchanges || [];
+        setBlockedExchangesCount(blocked.length);
       } catch {
         setHasSearchSettingsChanges(false);
+        setBlockedExchangesCount(0);
       }
     };
 
@@ -58,9 +78,15 @@ export function NewPositionForm() {
       );
     };
   }, []);
+  const totalDexs = SupportedDexsUtils.count;
+  const isSomeBlocked = blockedExchangesCount > 0;
 
   return (
     <AnimationProvider>
+      <ExchangesFilterModal
+        isOpen={isExchangesModalOpen}
+        onClose={() => setIsExchangesModalOpen(false)}
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -80,46 +106,61 @@ export function NewPositionForm() {
           </p>
         </header>
 
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1.5">
+        <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-[10px]">
             <div className="flex items-end justify-between">
-              <label className="text-sm text-mutated-text">
+              <label className="text-sm text-mutated-text shrink-0 leading-none pb-[3px]">
                 {translate(AppTranslationsKeys.NEW_POSITION_TOKEN_A_LABEL)}
               </label>
-              <Popover>
+              <Popover
+                open={isSearchSettingsOpen}
+                onOpenChange={setIsSearchSettingsOpen}
+              >
                 <PopoverTrigger asChild>
-                  <div className="inline-block relative">
-                    <PrimaryButton
-                      variant="outline"
-                      className={`h-10 px-4 ${
-                        hasSearchSettingsChanges
-                          ? "text-primary border-primary/30 bg-primary/5 hover:bg-primary/10"
-                          : ""
-                      }`}
-                      onMouseEnter={() =>
-                        searchSettingsIconRef.current?.startAnimation()
-                      }
-                      onMouseLeave={() =>
-                        searchSettingsIconRef.current?.stopAnimation()
-                      }
-                      icon={
-                        <div className="relative">
-                          <CogIcon ref={searchSettingsIconRef} size={16} />
-                          {hasSearchSettingsChanges && (
-                            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-primary rounded-full border-2 border-background" />
-                          )}
-                        </div>
-                      }
-                      alwaysIcon
-                    >
-                      {translate(
-                        AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON,
-                      )}
-                    </PrimaryButton>
-                  </div>
+                  <button
+                    aria-label="Search Settings"
+                    className="relative flex items-center justify-center p-2 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer outline-none group"
+                    onMouseEnter={() =>
+                      searchSettingsIconRef.current?.startAnimation()
+                    }
+                    onMouseLeave={() =>
+                      searchSettingsIconRef.current?.stopAnimation()
+                    }
+                  >
+                    <div className="relative">
+                      <CogIcon
+                        ref={searchSettingsIconRef}
+                        size={22}
+                        className={cn(
+                          "transition-colors",
+                          hasSearchSettingsChanges || isSomeBlocked
+                            ? "text-orange-400"
+                            : "text-mutated-text group-hover:text-foreground",
+                        )}
+                      />
+                      <AnimatePresence>
+                        {(hasSearchSettingsChanges || isSomeBlocked) && (
+                          <Badge className="-top-0.5 -right-0.5 w-2 h-2" />
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  </button>
                 </PopoverTrigger>
-                <PopoverContent align="end" className="w-[280px] p-4">
-                  <SearchSettingsContent />
+                <PopoverContent
+                  align="end"
+                  className="w-[280px] p-4"
+                  onInteractOutside={(e) => {
+                    if (isExchangesModalOpen) {
+                      e.preventDefault();
+                    }
+                  }}
+                >
+                  <SearchSettingsContent
+                    onDone={() => setIsSearchSettingsOpen(false)}
+                    onExchangesClick={() => setIsExchangesModalOpen(true)}
+                    blockedExchangesCount={blockedExchangesCount}
+                    totalExchangesCount={totalDexs}
+                  />
                 </PopoverContent>
               </Popover>
             </div>
@@ -128,8 +169,8 @@ export function NewPositionForm() {
             />
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm text-mutated-text">
+          <div className="flex flex-col gap-[10px]">
+            <label className="text-sm text-mutated-text leading-none">
               {translate(AppTranslationsKeys.NEW_POSITION_TOKEN_B_LABEL)}
             </label>
             <TokenSelectorButton

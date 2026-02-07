@@ -31,6 +31,15 @@ export enum AppTranslationsKeys {
 
   SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE = "searchSettings.minLiquidity.title",
   SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP = "searchSettings.minLiquidity.tooltip",
-  SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING = "searchSettings.lowLiquidity.warning",
-  SEARCH_SETTINGS_FILTER_EXCHANGES_BUTTON = "searchSettings.filterExchanges.button",
+  SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING = "searchSettings.lowLiquidityWarning",
+  EXCHANGES_FILTER_MODAL_TITLE = "exchangesFilterModal.title",
+  EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER = "exchangesFilterModal.searchPlaceholder",
+  EXCHANGES_FILTER_MODAL_CLEAR_ALL = "exchangesFilterModal.clearAll",
+  EXCHANGES_FILTER_MODAL_SELECT_ALL = "exchangesFilterModal.selectAll",
+  EXCHANGES_FILTER_MODAL_FILTER_ALL = "exchangesFilterModal.filterAll",
+  EXCHANGES_FILTER_MODAL_FILTER_ENABLED = "exchangesFilterModal.filterEnabled",
+  EXCHANGES_FILTER_MODAL_FILTER_DISABLED = "exchangesFilterModal.filterDisabled",
+  EXCHANGES_FILTER_MODAL_DESCRIPTION = "exchangesFilterModal.description",
+  EXCHANGES_FILTER_MODAL_EMPTY_TITLE = "exchangesFilterModal.emptyTitle",
+  EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION = "exchangesFilterModal.emptyDescription",
 }

@@ -7,15 +7,24 @@ import { cn } from "@/lib/utils";
 import { ScaleClickAnimation } from "../animations/scale-click-animation";
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-[12px] font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer overflow-hidden",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-[12px] font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer overflow-hidden border border-transparent",
   {
     variants: {
       variant: {
         default: "bg-primary text-primary-foreground hover:bg-primary-hover",
         outline:
-          "border border-outline-button-border bg-background hover:bg-outline-button-hover hover:text-foreground",
+          "border-outline-button-border bg-background hover:bg-outline-button-hover hover:text-foreground",
+        secondary:
+          "text-primary bg-secondary-button-background hover:bg-secondary-button-background-hover hover:text-foreground",
         tertiary:
           "bg-tertiary-button-background text-foreground hover:bg-tertiary-button-background-hover",
+        tertiaryOnModal:
+          "bg-tertiary-button-on-modal-background text-foreground hover:bg-tertiary-button-on-modal-background-hover",
+        destructivePrimary: "bg-red-400 text-white hover:bg-red-300",
+        destructiveSecondary:
+          "bg-destructive-secondary-button-background text-red-500 hover:bg-destructive-secondary-button-background-hover",
+        destructiveOutline:
+          "border-red-500/30 text-red-500 hover:bg-red-500/5 hover:border-red-500/50",
         disabled:
           "bg-disabled-button-background text-disabled-button-foreground cursor-default",
       },
@@ -33,22 +42,38 @@ const buttonVariants = cva(
   },
 );
 
+export type PrimaryButtonVariant =
+  | "default"
+  | "outline"
+  | "secondary"
+  | "tertiary"
+  | "tertiaryOnModal"
+  | "destructivePrimary"
+  | "destructiveOutline"
+  | "destructiveSecondary"
+  | "disabled";
+
+export type PrimaryButtonState = "default" | "destructive";
+
 export interface PrimaryButtonProps
   extends
     React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof buttonVariants> {
+    Omit<VariantProps<typeof buttonVariants>, "variant"> {
+  variant?: PrimaryButtonVariant | null;
   asChild?: boolean;
   icon?: React.ReactNode;
   alwaysIcon?: boolean;
   onRevealComplete?: () => void;
+  state?: PrimaryButtonState;
 }
 
 const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
   (
     {
       className,
-      variant,
+      variant: explicitVariant,
       size,
+      state = "default",
       asChild = false,
       icon,
       alwaysIcon = false,
@@ -61,6 +86,19 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
     const Comp = (asChild ? Slot : motion.button) as any;
     const [isHovered, setIsHovered] = React.useState(false);
     const [isMobile, setIsMobile] = React.useState(false);
+
+    const getFinalVariant = (): PrimaryButtonVariant => {
+      if (state === "destructive") {
+        if (explicitVariant === "secondary") return "destructiveSecondary";
+        if (explicitVariant === "outline") return "destructiveOutline";
+        if (!explicitVariant || explicitVariant === "default")
+          return "destructivePrimary";
+      }
+
+      return explicitVariant || "default";
+    };
+
+    const finalVariant = getFinalVariant();
 
     React.useEffect(() => {
       const checkMobile = () => {
@@ -89,28 +127,30 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
       <Comp
         {...props}
         {...(asChild ? {} : { layout: true })}
-        className={cn(buttonVariants({ variant, size, className }))}
+        className={cn(
+          buttonVariants({ variant: finalVariant, size, className }),
+        )}
         ref={ref}
         {...(asChild
           ? {
               onMouseEnter: (e: React.MouseEvent<HTMLButtonElement>) => {
-                if (variant === "disabled") return;
+                if (finalVariant === "disabled") return;
                 setIsHovered(true);
                 props.onMouseEnter?.(e);
               },
               onMouseLeave: (e: React.MouseEvent<HTMLButtonElement>) => {
-                if (variant === "disabled") return;
+                if (finalVariant === "disabled") return;
                 setIsHovered(false);
                 props.onMouseLeave?.(e);
               },
             }
           : {
               onHoverStart: () => {
-                if (variant === "disabled") return;
+                if (finalVariant === "disabled") return;
                 setIsHovered(true);
               },
               onHoverEnd: () => {
-                if (variant === "disabled") return;
+                if (finalVariant === "disabled") return;
                 setIsHovered(false);
               },
               transition: {
@@ -148,7 +188,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
                 mass: 0.8,
               }}
               className="flex items-center justify-center shrink-0"
-              style={{ overflow: "hidden" }}
+              style={{ overflow: showIcon ? "visible" : "hidden" }}
             >
               {icon}
             </motion.div>
@@ -180,7 +220,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
     );
 
     return (
-      <ScaleClickAnimation asChild disabled={variant === "disabled"}>
+      <ScaleClickAnimation asChild disabled={finalVariant === "disabled"}>
         {buttonContent}
       </ScaleClickAnimation>
     );
