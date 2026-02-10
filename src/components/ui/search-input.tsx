@@ -1,5 +1,6 @@
 "use client";
 
+import { KeyboardEventKey } from "@/lib/keyboard-event-keys";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, m } from "framer-motion";
 import { X } from "lucide-react";
@@ -94,9 +95,7 @@ export const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
             props.onBlur?.(e);
           }}
           onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.currentTarget.blur();
-            }
+            if (e.key === KeyboardEventKey.Enter) e.currentTarget.blur();
             props.onKeyDown?.(e);
           }}
           enterKeyHint="search"

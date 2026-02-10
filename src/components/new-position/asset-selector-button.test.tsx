@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { TokenSelectorButton } from "./token-selector-button";
+import { AssetSelectorButton } from "../asset-selector/asset-selector-button";
 
 // Mock framer-motion
 vi.mock("framer-motion", async () => {
@@ -39,16 +39,16 @@ vi.mock("@/components/ui/icons/cursor-click", () => {
   };
 });
 
-describe("TokenSelectorButton", () => {
+describe("AssetSelectorButton", () => {
   it("renders correctly with label", () => {
-    render(<TokenSelectorButton label="Select Token" />);
-    expect(screen.getByText("Select Token")).toBeInTheDocument();
+    render(<AssetSelectorButton label="Select Asset" />);
+    expect(screen.getByText("Select Asset")).toBeInTheDocument();
     expect(screen.getByTestId("cursor-click-icon")).toBeInTheDocument();
   });
 
   it("calls onClick when clicked", () => {
     const onClickMock = vi.fn();
-    render(<TokenSelectorButton label="Select Token" onClick={onClickMock} />);
+    render(<AssetSelectorButton label="Select Asset" onClick={onClickMock} />);
 
     const button = screen.getByRole("button");
     fireEvent.click(button);
@@ -57,7 +57,7 @@ describe("TokenSelectorButton", () => {
   });
 
   it("handles hover states correctly", async () => {
-    render(<TokenSelectorButton label="Select Token" />);
+    render(<AssetSelectorButton label="Select Asset" />);
     const button = screen.getByRole("button");
 
     fireEvent.mouseEnter(button);

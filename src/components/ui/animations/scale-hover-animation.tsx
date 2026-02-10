@@ -30,8 +30,10 @@ export function ScaleHoverAnimation({
             : 1) ?? 1),
     },
     transition: {
-      duration: 0.2,
-      ease: "easeOut",
+      type: "spring",
+      stiffness: 300,
+      damping: 25,
+      mass: 0.5,
       ...(typeof props.transition === "object" ? props.transition : {}),
     },
     onPointerEnter: (event: React.PointerEvent<HTMLDivElement>) => {

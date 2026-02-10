@@ -30,9 +30,10 @@ export const es: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NEW_POSITION_TITLE]: "Nueva Posición",
   [AppTranslationsKeys.NEW_POSITION_DESCRIPTION]:
     "Selecciona los tokens para aportar liquidez. Nosotros nos encargamos de buscar pools en todos los exchanges que soportamos",
-  [AppTranslationsKeys.NEW_POSITION_TOKEN_A_LABEL]: "Token A",
-  [AppTranslationsKeys.NEW_POSITION_TOKEN_B_LABEL]: "Token B",
-  [AppTranslationsKeys.NEW_POSITION_SELECT_TOKEN]: "Seleccionar Token",
+  [AppTranslationsKeys.NEW_POSITION_ASSET_A_LABEL]: "Activo A",
+  [AppTranslationsKeys.NEW_POSITION_ASSET_B_LABEL]: "Activo B",
+  [AppTranslationsKeys.NEW_POSITION_BASKET_LABEL]: "Canasta",
+  [AppTranslationsKeys.NEW_POSITION_SELECT_ASSET]: "Seleccionar Activo",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "¡Muéstrame el dinero!",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]:
     "Configuración de Búsqueda",
@@ -57,4 +58,18 @@ export const es: Record<AppTranslationsKeys, string> = {
     "No se encontraron exchanges",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
     "Sin resultados para esta búsqueda. Intenta ajustando los filtros o probando algo distinto",
+  [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_PLACEHOLDER]: "Buscar activo",
+  [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_RESULTS_TITLE]:
+    "Resultados de búsqueda",
+  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_TITLE]: "No se encontraron activos",
+  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION]:
+    'No pudimos encontrar ningún resultado para "{query}". Intenta buscando otra cosa.',
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE]: "Canastas de tokens",
+  [AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE]: "Tokens",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS]: "{count} tokens",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORK]: "{count} red",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS]:
+    "{count} redes",
+  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK]: "{count} red",
+  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]: "{count} redes",
 };

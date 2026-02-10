@@ -1,6 +1,9 @@
 "use client";
 
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useScrollLock } from "@/hooks/use-scroll-lock";
+import { KeyboardEventKey } from "@/lib/keyboard-event-keys";
+import { ScreenBreakpoints } from "@/lib/screen-breakpoints";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import * as React from "react";
@@ -27,25 +30,24 @@ export function Modal({
   children,
   className,
 }: ModalProps) {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
+  const isDesktop = useMediaQuery(ScreenBreakpoints.DESKTOP);
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
+  useScrollLock({ enabled: isOpen });
+
   React.useEffect(() => {
     if (!mounted) return;
 
     if (isOpen) {
-      document.body.style.overflow = "hidden";
       onOpen?.();
-    } else {
-      document.body.style.overflow = "unset";
     }
 
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && closeOnEscape) {
+      if (e.key === KeyboardEventKey.Escape && closeOnEscape) {
         onClose();
         onOpenChange?.(false);
       }
@@ -56,7 +58,6 @@ export function Modal({
     }
 
     return () => {
-      document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleEscape);
     };
   }, [isOpen, mounted, onOpen, onClose, onOpenChange, closeOnEscape]);
@@ -81,13 +82,13 @@ export function Modal({
             exit={{ opacity: 0 }}
             onClick={handleBackdropClick}
             data-testid="modal-backdrop"
-            className="fixed inset-0 z-100 bg-black/60 backdrop-blur-sm"
+            className="fixed inset-0 z-200 bg-black/60 backdrop-blur-sm"
           />
 
           {/* Modal Container */}
           <div
             className={cn(
-              "fixed z-101 flex pointer-events-none",
+              "fixed z-201 flex pointer-events-none",
               isDesktop
                 ? "inset-0 items-center justify-center p-4"
                 : "inset-0 items-end justify-center p-0",
@@ -110,7 +111,7 @@ export function Modal({
                 "bg-modal pointer-events-auto border-modal-outline flex flex-col shadow-2xl overflow-hidden relative",
                 isDesktop
                   ? "w-full max-w-5xl h-[85vh] rounded-[24px] border"
-                  : "w-full max-h-[90vh] h-auto rounded-t-[24px] rounded-b-none border-t border-x border-b-0",
+                  : "w-full max-h-[80vh] h-auto rounded-t-[24px] rounded-b-none border-t border-x border-b-0",
                 className,
               )}
             >

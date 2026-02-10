@@ -4,6 +4,7 @@ import { UsdInput } from "@/components/ui/usd-input";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { CustomEvent } from "@/lib/custom-event";
+import { KeyboardEventKey } from "@/lib/keyboard-event-keys";
 import { LocalStorageKey } from "@/lib/local-storage-key";
 import { AnimationProvider } from "@/providers/animation-provider";
 import { AnimatePresence, motion } from "framer-motion";
@@ -121,7 +122,7 @@ export function SearchSettingsContent({
             placeholder="0"
             enterKeyHint="done"
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === KeyboardEventKey.Enter) {
                 onDone?.();
               }
             }}

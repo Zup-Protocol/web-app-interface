@@ -70,7 +70,7 @@ vi.mock("@/components/modals/exchanges-filter-modal", () => ({
     ) : null,
 }));
 
-vi.mock("@/components/positions/search-settings-content", () => ({
+vi.mock("@/components/new-position/search-settings-content", () => ({
   SearchSettingsContent: ({ onDone, onExchangesClick }: any) => {
     return (
       <div data-testid="search-settings-content">
@@ -82,8 +82,8 @@ vi.mock("@/components/positions/search-settings-content", () => ({
   },
 }));
 
-vi.mock("@/components/positions/token-selector-button", () => ({
-  TokenSelectorButton: ({ label }: any) => <button>{label}</button>,
+vi.mock("@/components/asset-selector/asset-selector-button", () => ({
+  AssetSelectorButton: ({ label }: any) => <button>{label}</button>,
 }));
 
 vi.mock("@/components/ui/buttons/primary-button", () => ({

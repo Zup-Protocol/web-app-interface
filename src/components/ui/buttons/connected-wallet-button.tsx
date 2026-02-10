@@ -2,6 +2,7 @@
 
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
+import { AddressFormatter } from "@/lib/address-formatter";
 import { cn } from "@/lib/utils";
 import { useAppKit } from "@reown/appkit/react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -35,9 +36,7 @@ export function ConnectedWalletButton({
     }
   }, [address]);
 
-  const formattedAddress = address
-    ? `${address.slice(0, 6)}...${address.slice(-4)}`
-    : "";
+  const formattedAddress = AddressFormatter.truncateAddress(address || "");
 
   const config = genConfig(address || "");
   const isSuccess = phase === "success";

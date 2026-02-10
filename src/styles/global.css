@@ -59,7 +59,7 @@
 }
 
 :root {
-  --background: hsl(250 100% 98.5%);
+  --background: hsl(250 100% 99.5%);
   --foreground: hsl(250 18% 7%);
   --card: hsl(250 100% 96%);
   --card-foreground: hsl(250 18% 7%);
@@ -84,8 +84,8 @@
   /* Buttons */
   --secondary-button-background: hsl(250 100% 67.1% / 0.15);
   --secondary-button-background-hover: hsl(250 100% 67.1% / 0.25);
-  --tertiary-button-background: hsl(240 44% 96%);
-  --tertiary-button-background-hover: hsl(240 30% 91%);
+  --tertiary-button-background: hsl(240 20% 97%);
+  --tertiary-button-background-hover: hsl(240 20% 95%);
   --outline-button-border: hsl(240, 10%, 92%);
   --outline-button-hover: hsl(240 44% 96%);
   --disabled-button-background: hsl(240 44% 94%);
@@ -94,14 +94,14 @@
   --destructive-secondary-button-background-hover: hsla(0, 84%, 60%, 0.15);
 
   /* Modal */
-  --modal: hsl(250 100% 98.5%);
+  --modal: hsl(250 100% 99.5%);
   --modal-outline: hsl(240, 10%, 92%);
   --modal-foreground: hsl(250 18% 7%);
   --divider-on-modal: hsl(240, 10%, 92%);
   --outline-button-border-on-modal: hsl(240, 10%, 92%);
   --outline-button-hover-on-modal: hsl(240 44% 96%);
-  --tertiary-button-on-modal-background: hsl(240 44% 96%);
-  --tertiary-button-on-modal-background-hover: hsl(240 30% 91%);
+  --tertiary-button-on-modal-background: hsl(240 20% 97%);
+  --tertiary-button-on-modal-background-hover: hsl(240 20% 95%);
 
   /* Text */
   --mutated-text: hsl(240, 10%, 60%);
@@ -117,8 +117,8 @@
   /* Buttons */
   --secondary-button-background: hsl(249, 42%, 13%);
   --secondary-button-background-hover: hsl(249, 43%, 20%);
-  --tertiary-button-background: hsl(0 0% 13%);
-  --tertiary-button-background-hover: hsl(240 3% 16%);
+  --tertiary-button-background: hsl(240 6% 8%);
+  --tertiary-button-background-hover: hsl(240 6% 10%);
   --outline-button-border: hsl(240, 3%, 15%);
   --outline-button-hover: hsl(240 3% 10%);
   --disabled-button-background: hsl(240, 3%, 7%);
@@ -127,14 +127,14 @@
   --destructive-secondary-button-background-hover: hsla(0, 84%, 60%, 0.2);
 
   /* Modal */
-  --modal: hsl(0 0% 13%);
+  --modal: hsl(240 6% 8%);
   --modal-outline: hsl(240, 3%, 15%);
   --modal-foreground: hsl(240 9% 85%);
   --divider-on-modal: hsl(240, 3%, 21%);
   --outline-button-border-on-modal: hsl(240, 3%, 21%);
   --outline-button-hover-on-modal: hsl(240, 2%, 16%);
-  --tertiary-button-on-modal-background: hsl(240, 2%, 10%);
-  --tertiary-button-on-modal-background-hover: hsl(240, 2%, 8%);
+  --tertiary-button-on-modal-background: hsl(240 5% 12%);
+  --tertiary-button-on-modal-background-hover: hsl(240, 5%, 15%);
 
   /* Text */
   --mutated-text: hsl(240, 3%, 40%);
@@ -230,6 +230,10 @@
 }
 
 @media (min-width: 768px) {
+  .custom-scrollbar {
+    scrollbar-gutter: stable;
+  }
+
   .custom-scrollbar::-webkit-scrollbar {
     width: 24px;
   }

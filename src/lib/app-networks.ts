@@ -1,14 +1,14 @@
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import type { ImageMetadata } from "astro";
 import {
-  base,
-  hyperEvm,
-  mainnet,
-  monad,
-  plasma,
-  scroll,
-  unichain,
-  type Chain,
+    base,
+    hyperEvm,
+    mainnet,
+    monad,
+    plasma,
+    scroll,
+    unichain,
+    type Chain,
 } from "viem/chains";
 import allNetworksIcon from "../assets/icons/all-networks.svg";
 import baseLogoWhite from "../assets/logos/blockchains/base-white.svg";
@@ -143,4 +143,23 @@ export abstract class AppNetworksUtils {
     [AppNetworks.PLASMA]: "#163029",
     [AppNetworks.MONAD]: "#6E54FF",
   };
+
+  static explorerUrl: Record<AppNetworks, string> = {
+    [AppNetworks.ALL_NETWORKS]: "",
+    [AppNetworks.ETHEREUM]: "https://etherscan.io",
+    [AppNetworks.BASE]: "https://basescan.org",
+    [AppNetworks.HYPER_EVM]: "https://explorer.hyperevm.xyz",
+    [AppNetworks.UNICHAIN]: "https://unichain.blockscout.com",
+    [AppNetworks.SCROLL]: "https://scrollscan.com",
+    [AppNetworks.PLASMA]: "https://explorer.plasma.org", // Placeholder
+    [AppNetworks.MONAD]: "https://explorer.monad.xyz", // Placeholder
+  };
+
+  static getExplorerUrl(chainId: number): string {
+    const network = this.values.find(
+      (n) => this.wagmiNetwork[n]?.id === chainId,
+    );
+    if (!network) return "";
+    return this.explorerUrl[network];
+  }
 }
