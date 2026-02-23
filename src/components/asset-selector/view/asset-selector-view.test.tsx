@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 // Mock ResizeObserver
@@ -71,6 +71,17 @@ vi.mock("@/i18n/app-translations-keys", () => ({
     ASSET_SELECTOR_ERROR_RETRY: "assetSelector.error.retry",
     ASSET_SELECTOR_BASKETS_TITLE: "assetSelector.baskets.title",
     ASSET_SELECTOR_TOKENS_TITLE: "assetSelector.tokens.title",
+    ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS:
+      "assetSelector.basket.subtitle.tokens",
+    ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS:
+      "assetSelector.basket.subtitle.networks",
+    ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK:
+      "assetSelector.token.subtitle.network",
+    ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS:
+      "assetSelector.token.subtitle.networks",
+    ASSET_SELECTOR_FILTER_ALL: "assetSelector.filter.all",
+    ASSET_SELECTOR_FILTER_TOKENS: "assetSelector.filter.tokens",
+    ASSET_SELECTOR_FILTER_BASKETS: "assetSelector.filter.baskets",
   },
 }));
 
@@ -78,6 +89,9 @@ vi.mock("lucide-react", () => ({
   ArrowLeft: () => <div data-testid="arrow-left" />,
   Search: () => <div data-testid="search-icon" />,
   X: () => <div data-testid="x-icon" />,
+  Blend: () => <div data-testid="blend-icon" />,
+  Coins: () => <div data-testid="coins-icon" />,
+  ShoppingBasket: () => <div data-testid="shopping-basket-icon" />,
 }));
 
 vi.mock("framer-motion", () => {
@@ -99,6 +113,7 @@ vi.mock("framer-motion", () => {
     motion: m,
     m: m,
     AnimatePresence: ({ children }: any) => children,
+    LayoutGroup: ({ children }: any) => children,
     useAnimation: () => ({
       start: vi.fn(() => new Promise((resolve) => setTimeout(resolve, 0))),
       stop: vi.fn(),
@@ -114,6 +129,7 @@ vi.mock("framer-motion", () => {
 });
 
 // Now import the component
+import { useHydricBaskets } from "@/hooks/tokens/use-hydric-baskets";
 import { AssetSelectorView } from "./asset-selector-view";
 
 const queryClient = new QueryClient({
@@ -204,5 +220,102 @@ describe("AssetSelectorView", () => {
     fireEvent.click(retryButton);
 
     expect(refetch).toHaveBeenCalled();
+  });
+});
+
+describe("AssetSelectorView Filtering", () => {
+  const defaultProps = {
+    onBack: vi.fn(),
+    onSelect: vi.fn(),
+    onDeselect: vi.fn(),
+  };
+
+  const mockTokens = [
+    { type: "token", id: "1", symbol: "T1", address: "0x1", chainId: 1 },
+  ];
+  const mockBaskets = [
+    {
+      type: "basket" as const,
+      id: "b1" as any,
+      symbol: "B1",
+      tokens: [],
+      chainIds: [],
+      name: "B1",
+      description: "B1 desc",
+      logoUrl: "",
+      addresses: [],
+    },
+  ];
+
+  it("filters assets by type when tabs are clicked", async () => {
+    // Mock tokens and baskets
+    mockUseHydricTokens.mockReturnValue({
+      data: { tokens: mockTokens },
+      isLoading: false,
+    });
+    vi.mocked(useHydricBaskets).mockReturnValue({
+      data: mockBaskets,
+      isLoading: false,
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssetSelectorView side={"A"} {...defaultProps} />
+      </QueryClientProvider>,
+    );
+
+    // Default "All" state: both should be present
+    expect(screen.getByText("T1")).toBeInTheDocument();
+    expect(screen.getByText("B1")).toBeInTheDocument();
+
+    // Click "Tokens" tab
+    const tokensTab = screen.getByText("assetSelector.filter.tokens");
+    fireEvent.click(tokensTab);
+
+    // Only tokens should be visible
+    expect(screen.getByText("T1")).toBeInTheDocument();
+    expect(screen.queryByText("B1")).not.toBeInTheDocument();
+
+    // Click "Baskets" tab
+    const basketsTab = screen.getByText("assetSelector.filter.baskets");
+    fireEvent.click(basketsTab);
+
+    // Only baskets should be visible
+    expect(screen.queryByText("T1")).not.toBeInTheDocument();
+    expect(screen.getByText("B1")).toBeInTheDocument();
+
+    // Click "All" tab
+    const allTab = screen.getByText("assetSelector.filter.all");
+    fireEvent.click(allTab);
+
+    // Both should be visible again
+    expect(screen.getByText("T1")).toBeInTheDocument();
+    expect(screen.getByText("B1")).toBeInTheDocument();
+  });
+
+  it("hides filters when searching", async () => {
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssetSelectorView side={"A"} {...defaultProps} />
+      </QueryClientProvider>,
+    );
+
+    // Initially tabs are visible
+    expect(screen.getByText("assetSelector.filter.all")).toBeInTheDocument();
+
+    const searchInput = screen.getByPlaceholderText(
+      "assetSelector.searchPlaceholder",
+    );
+    fireEvent.change(searchInput, { target: { value: "search query" } });
+
+    // Tabs should be hidden after debounce
+    await waitFor(
+      () => {
+        expect(
+          screen.queryByText("assetSelector.filter.all"),
+        ).not.toBeInTheDocument();
+      },
+      { timeout: 1000 },
+    );
   });
 });

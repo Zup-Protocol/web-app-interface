@@ -34,6 +34,16 @@ describe("TabButton", () => {
     expect(button).toHaveClass("text-foreground");
   });
 
+  it("applies primary active styles", () => {
+    render(
+      <TabButton isActive activeColor="primary">
+        Tab 1
+      </TabButton>,
+    );
+    const button = screen.getByRole("button");
+    expect(button).toHaveClass("text-primary");
+  });
+
   it("handles hover states", () => {
     render(<TabButton>Hover Tab</TabButton>);
     const button = screen.getByRole("button");

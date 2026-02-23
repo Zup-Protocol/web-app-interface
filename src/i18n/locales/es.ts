@@ -76,4 +76,7 @@ export const es: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
     "No pudimos cargar los activos. Por favor, inténtalo de nuevo.",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Intentar de nuevo",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_ALL]: "Todo",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_TOKENS]: "Tokens",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_BASKETS]: "Canastas",
 };

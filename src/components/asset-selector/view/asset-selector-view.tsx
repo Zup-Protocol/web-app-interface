@@ -5,6 +5,7 @@ import UnknownTokenImage from "@/assets/escalerin/escalerin-unknown-token.svg";
 import { AssetSelectorHeader } from "@/components/asset-selector/view/asset-selector-header";
 import { BasketListItem } from "@/components/asset-selector/view/basket-list-item";
 import { TokenListItem } from "@/components/asset-selector/view/token-list-item";
+import { TabButton } from "@/components/ui/buttons/tab-button";
 import { TextButton } from "@/components/ui/buttons/text-button";
 import { RefreshIcon } from "@/components/ui/icons/refresh";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +25,8 @@ import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { AppNetworksUtils } from "@/lib/app-networks";
 import { ScreenBreakpoints } from "@/lib/screen-breakpoints";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, m } from "framer-motion";
+import { AnimatePresence, LayoutGroup, m } from "framer-motion";
+import { Blend, Coins, ShoppingBasket } from "lucide-react";
 import * as React from "react";
 import { useDebounce } from "use-debounce";
 
@@ -57,6 +59,12 @@ const itemVariants = {
   },
 };
 
+enum AssetFilter {
+  ALL = "ALL",
+  TOKENS = "TOKENS",
+  BASKETS = "BASKETS",
+}
+
 export function AssetSelectorView({
   onBack,
   onSelect,
@@ -70,6 +78,30 @@ export function AssetSelectorView({
   const inputRef = React.useRef<HTMLInputElement>(null);
   const parentRef = React.useRef<HTMLDivElement>(null);
   const { translate } = useTranslation();
+  const [activeFilter, setActiveFilter] = React.useState<AssetFilter>(
+    AssetFilter.ALL,
+  );
+
+  const filterOptions = React.useMemo(
+    () => [
+      {
+        id: AssetFilter.ALL,
+        label: AppTranslationsKeys.ASSET_SELECTOR_FILTER_ALL,
+        Icon: Blend,
+      },
+      {
+        id: AssetFilter.TOKENS,
+        label: AppTranslationsKeys.ASSET_SELECTOR_FILTER_TOKENS,
+        Icon: Coins,
+      },
+      {
+        id: AssetFilter.BASKETS,
+        label: AppTranslationsKeys.ASSET_SELECTOR_FILTER_BASKETS,
+        Icon: ShoppingBasket,
+      },
+    ],
+    [],
+  );
 
   const { network } = useAppNetwork();
   const activeChainId = AppNetworksUtils.chainId[network];
@@ -125,11 +157,23 @@ export function AssetSelectorView({
   // Combine data for display
   const allTokens = React.useMemo(() => tokensData?.tokens ?? [], [tokensData]);
 
+  const filteredBaskets = React.useMemo(() => {
+    if (debouncedSearchQuery) return [];
+    if (activeFilter === AssetFilter.TOKENS) return [];
+    return baskets ?? [];
+  }, [baskets, debouncedSearchQuery, activeFilter]);
+
+  const filteredTokens = React.useMemo(() => {
+    if (activeFilter === AssetFilter.BASKETS && !debouncedSearchQuery)
+      return [];
+    return allTokens;
+  }, [allTokens, debouncedSearchQuery, activeFilter]);
+
   const isEmpty =
     !isLoadingTokens &&
     !isLoadingBaskets &&
-    allTokens.length === 0 &&
-    (debouncedSearchQuery ? true : (baskets ?? []).length === 0);
+    filteredTokens.length === 0 &&
+    (debouncedSearchQuery ? true : filteredBaskets.length === 0);
 
   return (
     <>
@@ -166,6 +210,34 @@ export function AssetSelectorView({
             <AssetSelectorHeader {...headerProps} />
           </div>
 
+          <AnimatePresence>
+            {!debouncedSearchQuery && (
+              <m.div
+                initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+                animate={{ opacity: 1, height: "auto", marginBottom: 24 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                className="mx-auto w-full max-w-[500px] px-6 sm:px-0 overflow-hidden"
+              >
+                <LayoutGroup>
+                  <div className="flex items-center gap-4">
+                    {filterOptions.map(({ id, label, Icon }) => (
+                      <TabButton
+                        key={id}
+                        isActive={activeFilter === id}
+                        onClick={() => setActiveFilter(id)}
+                        activeColor="primary"
+                      >
+                        <Icon size={18} />
+                        {translate(label)}
+                      </TabButton>
+                    ))}
+                  </div>
+                </LayoutGroup>
+              </m.div>
+            )}
+          </AnimatePresence>
+
           <div
             className={cn(
               "w-full mx-auto px-6 sm:px-0 pt-0 pb-48",
@@ -199,8 +271,9 @@ export function AssetSelectorView({
                 <EmptySearchStateView searchQuery={searchQuery} />
               ) : (
                 <AssetListView
-                  baskets={debouncedSearchQuery ? [] : (baskets ?? [])}
-                  tokens={allTokens}
+                  key={`asset-list-${activeFilter}`}
+                  baskets={filteredBaskets}
+                  tokens={filteredTokens}
                   onSelect={handleSelect}
                   isAssetDisabled={isAssetDisabled}
                   parentRef={parentRef}
@@ -214,7 +287,9 @@ export function AssetSelectorView({
                       ? isLoadingTokens
                       : isLoadingBaskets || isLoadingTokens
                   }
-                  showBaskets={!debouncedSearchQuery}
+                  showBaskets={
+                    activeFilter !== AssetFilter.TOKENS && !debouncedSearchQuery
+                  }
                   isFetchingMore={isFetchingNextPage}
                 />
               )}
@@ -303,7 +378,6 @@ function AssetListView({
 
   return (
     <m.div
-      key="asset-list"
       variants={containerVariants}
       initial="hidden"
       animate="show"

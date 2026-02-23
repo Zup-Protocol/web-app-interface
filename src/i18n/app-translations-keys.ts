@@ -57,4 +57,7 @@ export enum AppTranslationsKeys {
   ASSET_SELECTOR_ERROR_TITLE = "assetSelector.error.title",
   ASSET_SELECTOR_ERROR_DESCRIPTION = "assetSelector.error.description",
   ASSET_SELECTOR_ERROR_RETRY = "assetSelector.error.retry",
+  ASSET_SELECTOR_FILTER_ALL = "assetSelector.filter.all",
+  ASSET_SELECTOR_FILTER_TOKENS = "assetSelector.filter.tokens",
+  ASSET_SELECTOR_FILTER_BASKETS = "assetSelector.filter.baskets",
 }

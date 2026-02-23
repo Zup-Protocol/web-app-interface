@@ -76,4 +76,7 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
     "An error happened while trying to load the assets. Please try again.",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Try again",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_ALL]: "All",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_TOKENS]: "Tokens",
+  [AppTranslationsKeys.ASSET_SELECTOR_FILTER_BASKETS]: "Baskets",
 };
