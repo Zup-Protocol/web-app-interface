@@ -18,8 +18,11 @@ export const wagmiAdapter = new WagmiAdapter({
 
 export const config = wagmiAdapter.wagmiConfig;
 
+let appKitInstance: any = null;
+
 export function initializeAppKit() {
   if (typeof window === "undefined") return;
+  if (appKitInstance) return appKitInstance;
 
   const getAppTheme = () =>
     document.documentElement.classList.contains(ThemeMode.DARK)
@@ -56,5 +59,6 @@ export function initializeAppKit() {
     attributeFilter: ["class"],
   });
 
+  appKitInstance = appKit;
   return appKit;
 }

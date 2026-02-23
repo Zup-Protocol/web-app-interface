@@ -23,6 +23,7 @@ interface VirtualizedListProps<T> {
   className?: string;
   containerClassName?: string;
   forceInternalScroll?: boolean;
+  onEndClose?: () => void;
 }
 
 export function VirtualizedList<T>({
@@ -34,6 +35,7 @@ export function VirtualizedList<T>({
   className,
   containerClassName,
   forceInternalScroll = false,
+  onEndClose,
 }: VirtualizedListProps<T>) {
   const isMobile = useMediaQuery(ScreenBreakpoints.MOBILE);
   const useInternalScroll = isMobile || forceInternalScroll;
@@ -79,6 +81,16 @@ export function VirtualizedList<T>({
       });
 
   const virtualItems = rowVirtualizer.getVirtualItems();
+  React.useEffect(() => {
+    const lastItem = virtualItems[virtualItems.length - 1];
+
+    if (!lastItem || !onEndClose) return;
+
+    if (lastItem.index >= items.length - 1 && onEndClose) {
+      onEndClose();
+    }
+  }, [virtualItems, onEndClose, items.length]);
+
   const totalSize = rowVirtualizer.getTotalSize();
 
   const desktopScrollMargin = !useInternalScroll

@@ -1,5 +1,6 @@
 "use client";
 
+import { AssetLogo } from "@/components/ui/asset-logo";
 import { InfoTooltip } from "@/components/ui/info-tooltip";
 import { cn } from "@/lib/utils";
 import { m } from "framer-motion";
@@ -10,7 +11,8 @@ interface AssetListItemProps {
   title: string;
   subtitle?: string;
   logoUrl?: string;
-  logoFallback: string;
+  assetName?: string;
+  assetSymbol?: string;
   tooltipContent?: ReactNode;
   onClick: () => void;
   disabled?: boolean;
@@ -21,7 +23,8 @@ export function AssetListItem({
   title,
   subtitle,
   logoUrl,
-  logoFallback,
+  assetName,
+  assetSymbol,
   tooltipContent,
   onClick,
   disabled,
@@ -40,22 +43,18 @@ export function AssetListItem({
           "bg-tertiary-button-background hover:bg-tertiary-button-background-hover",
           "transition-colors duration-200",
           "text-left group cursor-pointer",
-          disabled && "opacity-40 cursor-not-allowed grayscale",
+          disabled &&
+            "opacity-40 cursor-not-allowed hover:bg-tertiary-button-background",
           className,
         )}
       >
         <div className="flex items-center gap-4 min-w-0">
-          <div className="w-12 h-12 shrink-0 rounded-full bg-foreground/5 overflow-hidden flex items-center justify-center">
-            {logoUrl ? (
-              <img
-                src={logoUrl}
-                alt={title}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="text-xl font-bold opacity-20">{logoFallback}</div>
-            )}
-          </div>
+          <AssetLogo
+            url={logoUrl}
+            name={assetName}
+            symbol={assetSymbol}
+            size={48}
+          />
           <div className="flex flex-col min-w-0">
             <span className="text-base font-semibold text-foreground truncate">
               {title}

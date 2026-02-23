@@ -1,17 +1,18 @@
 "use client";
+import { AppProviders } from "@/providers/app-providers";
 
 import { AssetSelectorButton } from "@/components/asset-selector/asset-selector-button";
 import { ExchangesFilterModal } from "@/components/modals/exchanges-filter-modal";
 import { SearchSettingsContent } from "@/components/new-position/search-settings-content";
 import { type SlidersHorizontalIconHandle } from "@/components/ui/icons/sliders";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-  DEFAULT_SEARCH_SETTINGS,
-  type SearchSettingsConfig,
+    DEFAULT_SEARCH_SETTINGS,
+    type SearchSettingsConfig,
 } from "@/core/DTOs/search-settings-config.dto";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
@@ -19,7 +20,6 @@ import { CustomEvent } from "@/lib/custom-event";
 import { LocalStorageKey } from "@/lib/local-storage-key";
 import { SupportedDexsUtils } from "@/lib/supported-dexs";
 import { cn } from "@/lib/utils";
-import { AnimationProvider } from "@/providers/animation-provider";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "../ui/badge";
@@ -29,8 +29,8 @@ import { SparklesIcon, type SparklesIconHandle } from "../ui/icons/sparkles";
 
 import { AssetSelectorView } from "@/components/asset-selector/view/asset-selector-view";
 import {
-  type AssetSelectorSide,
-  type SelectableAsset,
+    type AssetSelectorSide,
+    type SelectableAsset,
 } from "@/core/types/token.types";
 
 export function NewPositionForm() {
@@ -127,7 +127,7 @@ export function NewPositionForm() {
   const isFormReady = !!assetA && !!assetB;
 
   return (
-    <AnimationProvider>
+    <AppProviders>
       <ExchangesFilterModal
         isOpen={isExchangesModalOpen}
         onClose={() => setIsExchangesModalOpen(false)}
@@ -286,6 +286,6 @@ export function NewPositionForm() {
           )}
         </AnimatePresence>
       </m.div>
-    </AnimationProvider>
+    </AppProviders>
   );
 }

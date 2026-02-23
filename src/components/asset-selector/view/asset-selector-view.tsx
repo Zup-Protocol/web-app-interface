@@ -4,25 +4,26 @@ import UnknownTokenImage from "@/assets/escalerin/escalerin-unknown-token.svg";
 import { AssetSelectorHeader } from "@/components/asset-selector/view/asset-selector-header";
 import { BasketListItem } from "@/components/asset-selector/view/basket-list-item";
 import { TokenListItem } from "@/components/asset-selector/view/token-list-item";
+import { Skeleton } from "@/components/ui/skeleton";
 import { StateDisplay } from "@/components/ui/state-display";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
 import type {
   AssetSelectorSide,
   SelectableAsset,
 } from "@/core/types/token.types";
+import { useHydricBaskets } from "@/hooks/tokens/use-hydric-baskets";
+import { useHydricTokens } from "@/hooks/tokens/use-hydric-tokens";
 import { useMediaQuery } from "@/hooks/use-media-query";
+import { useAppNetwork } from "@/hooks/use-network";
 import { useScrollLock } from "@/hooks/use-scroll-lock";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import {
-  MOCK_SEARCH_RESULTS,
-  POPULAR_TOKENS,
-  TOKEN_BASKETS,
-} from "@/lib/fixtures/token-fixtures";
+import { AppNetworksUtils } from "@/lib/app-networks";
 import { ScreenBreakpoints } from "@/lib/screen-breakpoints";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, m } from "framer-motion";
 import * as React from "react";
+import { useDebounce } from "use-debounce";
 
 interface AssetSelectorViewProps {
   onBack: () => void;
@@ -62,20 +63,27 @@ export function AssetSelectorView({
 }: AssetSelectorViewProps) {
   const isMobile = useMediaQuery(ScreenBreakpoints.MOBILE);
   const [searchQuery, setSearchQuery] = React.useState("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const parentRef = React.useRef<HTMLDivElement>(null);
 
-  useScrollLock({ enabled: isMobile });
+  const { network } = useAppNetwork();
 
-  const filteredAssets =
-    searchQuery.length > 0
-      ? MOCK_SEARCH_RESULTS.filter(
-          (asset) =>
-            asset.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (asset.type !== "basket" &&
-              asset.symbol.toLowerCase().includes(searchQuery.toLowerCase())),
-        )
-      : null;
+  const { data: baskets, isLoading: isLoadingBaskets } = useHydricBaskets();
+
+  const {
+    data: tokensData,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading: isLoadingTokens,
+    error: tokensError,
+  } = useHydricTokens({
+    chainId: AppNetworksUtils.wagmiNetwork[network]?.id,
+    search: debouncedSearchQuery,
+  });
+
+  useScrollLock({ enabled: isMobile });
 
   const handleSelect = (asset: SelectableAsset) => {
     inputRef.current?.blur();
@@ -88,7 +96,13 @@ export function AssetSelectorView({
   };
 
   const isAssetDisabled = (asset: SelectableAsset) => {
-    return asset === otherSelectedAsset && asset.type !== "basket";
+    if (asset.type === "basket" || !otherSelectedAsset) return false;
+
+    if (JSON.stringify(asset) === JSON.stringify(otherSelectedAsset)) {
+      return true;
+    }
+
+    return false;
   };
 
   const headerProps = {
@@ -100,6 +114,15 @@ export function AssetSelectorView({
     onDeselect,
     inputRef,
   };
+
+  // Combine data for display
+  const allTokens = React.useMemo(() => tokensData?.tokens ?? [], [tokensData]);
+
+  const isEmpty =
+    !isLoadingTokens &&
+    !isLoadingBaskets &&
+    allTokens.length === 0 &&
+    (debouncedSearchQuery ? true : (baskets ?? []).length === 0);
 
   return (
     <>
@@ -143,22 +166,31 @@ export function AssetSelectorView({
             )}
           >
             <AnimatePresence mode="wait">
-              {filteredAssets ? (
-                filteredAssets.length > 0 ? (
-                  <SearchResultsView
-                    assets={filteredAssets}
-                    onSelect={handleSelect}
-                    isAssetDisabled={isAssetDisabled}
-                    parentRef={parentRef}
-                  />
-                ) : (
-                  <EmptySearchStateView searchQuery={searchQuery} />
-                )
+              {tokensError ? (
+                <div className="p-4 text-center text-red-500">
+                  Something went wrong. Please try again later.
+                </div>
+              ) : isEmpty ? (
+                <EmptySearchStateView searchQuery={searchQuery} />
               ) : (
-                <DefaultView
+                <AssetListView
+                  baskets={debouncedSearchQuery ? [] : (baskets ?? [])}
+                  tokens={allTokens}
                   onSelect={handleSelect}
                   isAssetDisabled={isAssetDisabled}
                   parentRef={parentRef}
+                  onEndClose={() => {
+                    if (hasNextPage && !isFetchingNextPage) {
+                      fetchNextPage();
+                    }
+                  }}
+                  isLoading={
+                    debouncedSearchQuery
+                      ? isLoadingTokens
+                      : isLoadingBaskets || isLoadingTokens
+                  }
+                  showBaskets={!debouncedSearchQuery}
+                  isFetchingMore={isFetchingNextPage}
                 />
               )}
             </AnimatePresence>
@@ -172,38 +204,82 @@ export function AssetSelectorView({
   );
 }
 
-function SearchResultsView({
-  assets,
+function AssetListView({
+  baskets,
+  tokens,
   onSelect,
   isAssetDisabled,
   parentRef,
+  onEndClose,
+  isLoading,
+  showBaskets,
+  isFetchingMore,
 }: {
-  assets: SelectableAsset[];
+  baskets: SelectableAsset[];
+  tokens: SelectableAsset[];
   onSelect: (asset: SelectableAsset) => void;
   isAssetDisabled: (asset: SelectableAsset) => boolean;
   parentRef: React.RefObject<HTMLDivElement | null>;
+  onEndClose: () => void;
+  isLoading: boolean;
+  showBaskets: boolean;
+  isFetchingMore: boolean;
 }) {
   const { translate } = useTranslation();
 
-  const items = React.useMemo(
-    () => [
-      {
-        type: "header" as const,
-        title: translate(
-          AppTranslationsKeys.ASSET_SELECTOR_SEARCH_RESULTS_TITLE,
-        ),
-      },
-      ...assets.map((asset) => ({ type: "asset" as const, asset })),
-    ],
-    [assets, translate],
-  );
+  const items = React.useMemo(() => {
+    const list: any[] = [];
 
-  const headerHeight = 32;
-  const itemHeight = 108;
+    if (isLoading) {
+      if (showBaskets) {
+        list.push({
+          type: "header",
+          title: translate(AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE),
+        });
+        list.push({ type: "skeleton" });
+        list.push({ type: "skeleton" });
+      }
+
+      list.push({
+        type: "header",
+        title: translate(AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE),
+        isSecondary: showBaskets,
+      });
+      list.push({ type: "skeleton" });
+      list.push({ type: "skeleton" });
+      list.push({ type: "skeleton" });
+
+      return list;
+    }
+
+    if (baskets.length > 0) {
+      list.push({
+        type: "header",
+        title: translate(AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE),
+      });
+      baskets.forEach((basket) => list.push({ type: "basket", asset: basket }));
+    }
+
+    if (tokens.length > 0) {
+      list.push({
+        type: "header",
+        title: translate(AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE),
+        isSecondary: baskets.length > 0,
+      });
+      tokens.forEach((token) => list.push({ type: "token", asset: token }));
+    }
+
+    if (isFetchingMore) {
+      list.push({ type: "skeleton" });
+      list.push({ type: "skeleton" });
+    }
+
+    return list;
+  }, [baskets, tokens, translate, isLoading, showBaskets, isFetchingMore]);
 
   return (
     <m.div
-      key="search-results"
+      key="asset-list"
       variants={containerVariants}
       initial="hidden"
       animate="show"
@@ -213,25 +289,41 @@ function SearchResultsView({
       <VirtualizedList
         items={items}
         parentRef={parentRef}
+        onEndClose={onEndClose}
         estimateSize={(index) => {
-          return items[index].type === "header" ? headerHeight : itemHeight;
+          const item = items[index];
+          if (item.type === "header") return item.isSecondary ? 72 : 56;
+          return 108;
         }}
         renderItem={(item) => (
           <m.div
             initial="hidden"
             animate="show"
             variants={itemVariants}
-            className="px-0 h-full"
+            className="h-full"
           >
             {item.type === "header" ? (
-              <h3 className="text-sm font-semibold text-mutated-text py-2">
+              <h3
+                className={cn(
+                  "font-semibold text-mutated-text pb-4 text-[16px]",
+                  item.isSecondary ? "pt-8" : "pt-4",
+                )}
+              >
                 {item.title}
               </h3>
-            ) : item.asset.type === "basket" ? (
+            ) : item.type === "basket" ? (
               <BasketListItem
                 basket={item.asset}
                 onClick={() => onSelect(item.asset)}
               />
+            ) : item.type === "skeleton" ? (
+              <div className="flex items-center gap-3 p-4">
+                <Skeleton className="w-10 h-10 rounded-full" />
+                <div className="flex flex-col gap-2">
+                  <Skeleton className="w-24 h-4" />
+                  <Skeleton className="w-16 h-3" />
+                </div>
+              </div>
             ) : (
               <TokenListItem
                 token={item.asset}
@@ -264,87 +356,6 @@ function EmptySearchStateView({ searchQuery }: { searchQuery: string }) {
         description={translate(
           AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION,
         ).replace("{query}", searchQuery)}
-      />
-    </m.div>
-  );
-}
-
-function DefaultView({
-  onSelect,
-  isAssetDisabled,
-  parentRef,
-}: {
-  onSelect: (asset: SelectableAsset) => void;
-  isAssetDisabled: (asset: SelectableAsset) => boolean;
-  parentRef: React.RefObject<HTMLDivElement | null>;
-}) {
-  const { translate } = useTranslation();
-
-  const items = React.useMemo(
-    () => [
-      {
-        type: "header" as const,
-        title: translate(AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE),
-      },
-      ...TOKEN_BASKETS.map((basket) => ({ type: "basket" as const, basket })),
-      {
-        type: "header" as const,
-        title: translate(AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE),
-        isSecondary: true,
-      },
-      ...POPULAR_TOKENS.map((token) => ({ type: "token" as const, token })),
-    ],
-    [translate],
-  );
-
-  return (
-    <m.div
-      key="default-view"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      exit={{ opacity: 0, y: -10 }}
-      className="flex flex-col flex-1 min-h-0"
-    >
-      <VirtualizedList
-        items={items}
-        parentRef={parentRef}
-        estimateSize={(index) => {
-          const item = items[index];
-          if (item.type === "header") return item.isSecondary ? 72 : 56;
-
-          return 108;
-        }}
-        renderItem={(item) => (
-          <m.div
-            initial="hidden"
-            animate="show"
-            variants={itemVariants}
-            className="h-full"
-          >
-            {item.type === "header" ? (
-              <h3
-                className={cn(
-                  "font-semibold text-mutated-text pb-4 text-[16px]",
-                  item.isSecondary ? "pt-8" : "pt-4",
-                )}
-              >
-                {item.title}
-              </h3>
-            ) : item.type === "basket" ? (
-              <BasketListItem
-                basket={item.basket}
-                onClick={() => onSelect(item.basket)}
-              />
-            ) : (
-              <TokenListItem
-                token={item.token}
-                onClick={() => onSelect(item.token)}
-                disabled={isAssetDisabled(item.token)}
-              />
-            )}
-          </m.div>
-        )}
       />
     </m.div>
   );

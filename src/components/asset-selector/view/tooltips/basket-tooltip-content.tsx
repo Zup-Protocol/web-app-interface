@@ -1,5 +1,6 @@
 "use client";
 
+import { AssetLogo } from "@/components/ui/asset-logo";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
 import type { TokenBasket } from "@/core/types/token.types";
 import { AddressFormatter } from "@/lib/address-formatter";
@@ -75,19 +76,11 @@ export function BasketTooltipContent({
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="relative w-8 h-8 shrink-0">
-                  <div className="w-full h-full rounded-full overflow-hidden border border-border/10 bg-background/50 backdrop-blur-sm">
-                    {token.logoUrl ? (
-                      <img
-                        src={token.logoUrl}
-                        alt={token.symbol}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-sm font-medium bg-foreground/5">
-                        {token.symbol[0]}
-                      </div>
-                    )}
-                  </div>
+                  <AssetLogo
+                    url={token.logoUrl}
+                    symbol={token.symbol}
+                    size={32}
+                  />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-background border border-background shadow-xs flex items-center justify-center overflow-hidden z-10">
                     <img
                       src={networkIconSrc}

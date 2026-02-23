@@ -1,8 +1,8 @@
 "use client";
 
 import type {
-  MultiChainToken,
-  SingleChainToken,
+    MultiChainToken,
+    SingleChainToken,
 } from "@/core/types/token.types";
 import { TokenTooltipContent } from "./tooltips/token-tooltip-content";
 
@@ -40,7 +40,8 @@ export function TokenListItem({
       title={token.symbol}
       subtitle={subtitle}
       logoUrl={token.logoUrl}
-      logoFallback={token.symbol[0]}
+      assetName={token.name}
+      assetSymbol={token.symbol}
       tooltipContent={<TokenTooltipContent token={token} />}
       onClick={onClick}
       disabled={disabled}

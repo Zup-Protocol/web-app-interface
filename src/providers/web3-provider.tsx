@@ -2,6 +2,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { WagmiProvider } from "wagmi";
+import { HydricProvider } from "./hydric-provider";
 import { config, initializeAppKit } from "./wagmi-config";
 
 const queryClient = new QueryClient();
@@ -18,7 +19,11 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   return (
     <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <HydricProvider>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </HydricProvider>
     </WagmiProvider>
   );
 }

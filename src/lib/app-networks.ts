@@ -1,14 +1,14 @@
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import type { ImageMetadata } from "astro";
 import {
-    base,
-    hyperEvm,
-    mainnet,
-    monad,
-    plasma,
-    scroll,
-    unichain,
-    type Chain,
+  base,
+  hyperEvm,
+  mainnet,
+  monad,
+  plasma,
+  scroll,
+  unichain,
+  type Chain,
 } from "viem/chains";
 import allNetworksIcon from "../assets/icons/all-networks.svg";
 import baseLogoWhite from "../assets/logos/blockchains/base-white.svg";
@@ -151,8 +151,8 @@ export abstract class AppNetworksUtils {
     [AppNetworks.HYPER_EVM]: "https://explorer.hyperevm.xyz",
     [AppNetworks.UNICHAIN]: "https://unichain.blockscout.com",
     [AppNetworks.SCROLL]: "https://scrollscan.com",
-    [AppNetworks.PLASMA]: "https://explorer.plasma.org", // Placeholder
-    [AppNetworks.MONAD]: "https://explorer.monad.xyz", // Placeholder
+    [AppNetworks.PLASMA]: "https://plasmascan.to/",
+    [AppNetworks.MONAD]: "https://monadscan.com",
   };
 
   static getExplorerUrl(chainId: number): string {

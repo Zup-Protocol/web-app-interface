@@ -40,7 +40,7 @@ export function BasketListItem({
       title={basket.name}
       subtitle={subtitle}
       logoUrl={basket.logoUrl}
-      logoFallback={basket.name[0]}
+      assetName={basket.name}
       tooltipContent={<BasketTooltipContent basket={basket} />}
       onClick={onClick}
       className={className}

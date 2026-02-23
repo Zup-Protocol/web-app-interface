@@ -1,14 +1,11 @@
 "use client";
+import { AppProviders } from "@/providers/app-providers";
 
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { useRef } from "react";
 import { useConnection } from "wagmi";
-import { AnimationProvider } from "../providers/animation-provider";
-import { ThemeProvider } from "../providers/theme-provider";
-import { Web3Provider } from "../providers/web3-provider";
 import { BrandLogo } from "./brand-logo";
 import { NetworkSelector } from "./network-selector";
 import { ConnectWalletButton } from "./ui/buttons/connect-wallet-button";
@@ -80,16 +77,8 @@ function HeaderContent() {
 
 export function Header() {
   return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme={ThemeMode.SYSTEM}
-      enableSystem
-    >
-      <Web3Provider>
-        <AnimationProvider>
-          <HeaderContent />
-        </AnimationProvider>
-      </Web3Provider>
-    </ThemeProvider>
+    <AppProviders>
+      <HeaderContent />
+    </AppProviders>
   );
 }

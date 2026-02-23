@@ -1,8 +1,8 @@
 "use client";
 
 import {
-  CursorClickIcon,
-  type CursorClickIconHandle,
+    CursorClickIcon,
+    type CursorClickIconHandle,
 } from "@/components/ui/icons/cursor-click";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
@@ -11,6 +11,7 @@ import { m } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
+import { AssetLogo } from "@/components/ui/asset-logo";
 import type { SelectableAsset } from "@/core/types/token.types";
 import { AnimatePresence } from "framer-motion";
 
@@ -40,6 +41,10 @@ export function AssetSelectorButton({
     : label;
 
   const displayLogo = selectedAsset?.logoUrl;
+  // .replaceAll(
+  //   "https://logos.hydric.org/",
+  //   "http://localhost:8787/",
+  // );
 
   return (
     <m.button
@@ -78,20 +83,20 @@ export function AssetSelectorButton({
         exit={{ opacity: 0, transition: { duration: 0.1 } }}
       >
         <AnimatePresence mode="wait">
-          {displayLogo ? (
-            <m.div
+          {selectedAsset ? (
+            <AssetLogo
               key="asset-logo"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="w-10 h-10 rounded-full bg-foreground/5 overflow-hidden flex items-center justify-center"
-            >
-              <img
-                src={displayLogo}
-                alt={displayLabel}
-                className="w-full h-full object-cover"
-              />
-            </m.div>
+              url={selectedAsset.logoUrl}
+              name={
+                selectedAsset.type === "basket" ? selectedAsset.name : undefined
+              }
+              symbol={
+                selectedAsset.type !== "basket"
+                  ? selectedAsset.symbol
+                  : undefined
+              }
+              size={40}
+            />
           ) : (
             <m.div
               key="default-icon"
