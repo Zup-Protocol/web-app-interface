@@ -13,8 +13,8 @@ import { InfoTooltip } from "../ui/info-tooltip";
 
 import { SlidersHorizontalIcon } from "@/components/ui/icons/sliders";
 import {
-  DEFAULT_SEARCH_SETTINGS,
-  type SearchSettingsConfig,
+    DEFAULT_SEARCH_SETTINGS,
+    type SearchSettingsConfig,
 } from "@/core/DTOs/search-settings-config.dto";
 import { Badge } from "../ui/badge";
 import { PrimaryButton } from "../ui/buttons/primary-button";
@@ -123,6 +123,8 @@ export function SearchSettingsContent({
             enterKeyHint="done"
             onKeyDown={(e) => {
               if (e.key === KeyboardEventKey.Enter) {
+                e.preventDefault();
+                e.currentTarget.blur();
                 onDone?.();
               }
             }}

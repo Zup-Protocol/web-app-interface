@@ -2,6 +2,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
+// Mock ResizeObserver
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
 // Mock dependencies at the top level
 vi.mock("@/hooks/use-media-query", () => ({
   useMediaQuery: () => false,
@@ -22,15 +29,18 @@ vi.mock("@/hooks/tokens/use-hydric-baskets", () => ({
   }),
 }));
 
+const mockUseHydricTokens = vi.fn().mockReturnValue({
+  data: { tokens: [] },
+  isLoading: false,
+  fetchNextPage: vi.fn(),
+  hasNextPage: false,
+  isFetchingNextPage: false,
+  error: null,
+  refetch: vi.fn(),
+});
+
 vi.mock("@/hooks/tokens/use-hydric-tokens", () => ({
-  useHydricTokens: vi.fn().mockReturnValue({
-    data: { tokens: [] },
-    isLoading: false,
-    fetchNextPage: vi.fn(),
-    hasNextPage: false,
-    isFetchingNextPage: false,
-    error: null,
-  }),
+  useHydricTokens: (params: any) => mockUseHydricTokens(params),
 }));
 
 vi.mock("@/hooks/use-network", () => ({
@@ -56,6 +66,11 @@ vi.mock("@/i18n/app-translations-keys", () => ({
     ASSET_SELECTOR_EMPTY_DESCRIPTION: "assetSelector.empty.description",
     ASSET_SELECTOR_SEARCH_PLACEHOLDER: "assetSelector.searchPlaceholder",
     ASSET_SELECTOR_SEARCH_RESULTS_TITLE: "assetSelector.searchResults.title",
+    ASSET_SELECTOR_ERROR_TITLE: "assetSelector.error.title",
+    ASSET_SELECTOR_ERROR_DESCRIPTION: "assetSelector.error.description",
+    ASSET_SELECTOR_ERROR_RETRY: "assetSelector.error.retry",
+    ASSET_SELECTOR_BASKETS_TITLE: "assetSelector.baskets.title",
+    ASSET_SELECTOR_TOKENS_TITLE: "assetSelector.tokens.title",
   },
 }));
 
@@ -65,17 +80,38 @@ vi.mock("lucide-react", () => ({
   X: () => <div data-testid="x-icon" />,
 }));
 
-vi.mock("framer-motion", () => ({
-  m: {
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-    button: ({ children, onClick, ...props }: any) => (
-      <button onClick={onClick} {...props}>
-        {children}
-      </button>
+vi.mock("framer-motion", () => {
+  const motionComponent = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  const m = {
+    div: motionComponent,
+    button: motionComponent,
+    span: motionComponent,
+    svg: motionComponent,
+    circle: motionComponent,
+    path: motionComponent,
+    img: ({ src, alt, ...props }: any) => (
+      <img src={src} alt={alt} {...props} />
     ),
-  },
-  AnimatePresence: ({ children }: any) => children,
-}));
+  };
+  return {
+    motion: m,
+    m: m,
+    AnimatePresence: ({ children }: any) => children,
+    useAnimation: () => ({
+      start: vi.fn(() => new Promise((resolve) => setTimeout(resolve, 0))),
+      stop: vi.fn(),
+      subscribe: vi.fn(() => () => {}),
+    }),
+    useReducedMotion: () => false,
+    useScroll: () => ({
+      scrollYProgress: { get: () => 0, onChange: () => {} },
+    }),
+    useSpring: (v: any) => v,
+    useTransform: (v: any) => v,
+  };
+});
 
 // Now import the component
 import { AssetSelectorView } from "./asset-selector-view";
@@ -117,5 +153,56 @@ describe("AssetSelectorView", () => {
     expect(
       screen.getByText(`No results found for "${query}".`),
     ).toBeInTheDocument();
+  });
+
+  it("renders loading state correctly", () => {
+    mockUseHydricTokens.mockReturnValueOnce({
+      data: { tokens: [] },
+      isLoading: true,
+      fetchNextPage: vi.fn(),
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      error: null,
+      refetch: vi.fn(),
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssetSelectorView side={"A"} {...defaultProps} />
+      </QueryClientProvider>,
+    );
+
+    // Should show skeletons (there is one in header and some in list)
+    expect(screen.getAllByTestId("skeleton").length).toBeGreaterThan(0);
+  });
+
+  it("renders error state and handles retry", () => {
+    const error = new Error("Failed to fetch");
+    const refetch = vi.fn();
+    mockUseHydricTokens.mockReturnValueOnce({
+      data: { tokens: [] },
+      isLoading: false,
+      fetchNextPage: vi.fn(),
+      hasNextPage: false,
+      isFetchingNextPage: false,
+      error: error,
+      refetch: refetch,
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <AssetSelectorView side={"A"} {...defaultProps} />
+      </QueryClientProvider>,
+    );
+
+    expect(screen.getByText("assetSelector.error.title")).toBeInTheDocument();
+    expect(
+      screen.getByText("assetSelector.error.description"),
+    ).toBeInTheDocument();
+
+    const retryButton = screen.getByText("assetSelector.error.retry");
+    fireEvent.click(retryButton);
+
+    expect(refetch).toHaveBeenCalled();
   });
 });

@@ -1,6 +1,6 @@
 import type {
-  MultiChainToken,
-  SingleChainToken,
+    MultiChainToken,
+    SingleChainToken,
 } from "@/core/types/token.types";
 import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { setLocale } from "@/stores/i18n";
@@ -9,17 +9,28 @@ import { describe, expect, it, vi } from "vitest";
 import { TokenListItem } from "./token-list-item";
 
 // Mock framer-motion to avoid animation issues in tests
-vi.mock("framer-motion", () => ({
-  m: {
-    button: ({ children, onClick, ...props }: any) => (
-      <button onClick={onClick} {...props}>
-        {children}
-      </button>
-    ),
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }: any) => children,
-}));
+vi.mock("framer-motion", () => {
+  const motionComponent = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  return {
+    m: {
+      button: ({ children, onClick, ...props }: any) => (
+        <button onClick={onClick} {...props}>
+          {children}
+        </button>
+      ),
+      div: motionComponent,
+      svg: motionComponent,
+      path: motionComponent,
+      circle: motionComponent,
+      img: ({ src, alt, ...props }: any) => (
+        <img src={src} alt={alt} {...props} />
+      ),
+    },
+    AnimatePresence: ({ children }: any) => children,
+  };
+});
 
 // Mock ScaleHoverAnimation as it's not critical for this test
 vi.mock("../../ui/animations/scale-hover-animation", () => ({

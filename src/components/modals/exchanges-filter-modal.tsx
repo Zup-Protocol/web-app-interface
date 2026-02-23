@@ -7,9 +7,9 @@ import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { CustomEvent } from "@/lib/custom-event";
 import { LocalStorageKey } from "@/lib/local-storage-key";
 import {
-  SupportedDexs,
-  SupportedDexsUtils,
-  type DexMetadata,
+    SupportedDexs,
+    SupportedDexsUtils,
+    type DexMetadata,
 } from "@/lib/supported-dexs";
 import { AnimatePresence, m, type Variants } from "framer-motion";
 import { Ban, CheckIcon, XIcon } from "lucide-react";
@@ -367,6 +367,7 @@ function RenderItem({
     >
       <ScaleClickAnimation
         scale={0.96}
+        data-testid="dex-card"
         className="relative flex flex-col items-center justify-center gap-4 p-6 w-full aspect-square rounded-[22px] cursor-pointer group border border-outline-button-border-on-modal transition-[background-color,color,border-color] duration-300"
         style={{
           backgroundColor: meta.logoBackgroundColor,

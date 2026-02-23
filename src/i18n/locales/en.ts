@@ -72,4 +72,8 @@ export const en: Record<AppTranslationsKeys, string> = {
     "{count} network",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]:
     "{count} networks",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE]: "Something went wrong",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
+    "An error happened while trying to load the assets. Please try again.",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Try again",
 };

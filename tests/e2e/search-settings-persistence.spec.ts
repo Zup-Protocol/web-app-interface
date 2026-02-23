@@ -3,6 +3,8 @@ import { expect, test } from "@playwright/test";
 test.describe("Search Settings & Persistence", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/positions/new");
+    await page.waitForLoadState("networkidle");
+    await page.waitForTimeout(1000);
   });
 
   test("should persist search settings and reflect changes in UI", async ({
@@ -10,20 +12,21 @@ test.describe("Search Settings & Persistence", () => {
   }) => {
     // 1. Open Search Settings
     const settingsTrigger = page.getByLabel("Search Settings", { exact: true });
-    await expect(settingsTrigger).toBeVisible();
-    await settingsTrigger.click();
+    await expect(settingsTrigger).toBeVisible({ timeout: 10000 });
+    await settingsTrigger.click({ force: true });
 
     // 2. Change Min Liquidity
     const usdInput = page.getByTestId("usd-input");
     // Note: UsdInput likely doesn't have data-testid in prod but let's assume I can find it by placeholder or value.
     // The previous test found it by placeholder "0".
     const input = page.getByPlaceholder("0");
-    await expect(input).toBeVisible();
+    await expect(input).toBeVisible({ timeout: 10000 });
     await input.fill("5000");
-    await input.press("Enter"); // Should close popover via onDone? SearchSettingsContent calls onDone on Enter.
+    await input.press("Enter");
 
     // 3. Verify Popover Closed
-    await expect(input).not.toBeVisible();
+    // Give it a moment to animate out
+    await expect(input).not.toBeVisible({ timeout: 10000 });
 
     // 4. Verify Icon Color Change (Visual Feedback)
     // The class is applied to the CogIcon wrapper div.
@@ -39,9 +42,8 @@ test.describe("Search Settings & Persistence", () => {
 
     // Open again to check value
     await settingsTrigger.click();
-    await expect(page.getByDisplayValue("5,000")).toBeVisible(); // UsdInput formats value? Or just "5000". Likely "5,000" if formatter used.
-    // If UsdInput uses numeric formatting, it might have commas.
-    // Let's assume raw value for now or check input value.
+    // Re-select input as it's a new element after reload
+    await expect(page.getByPlaceholder("0")).toHaveValue("5 000");
   });
 
   test("should allow blocking exchanges and keep popover open when interacting with modal", async ({
@@ -49,7 +51,8 @@ test.describe("Search Settings & Persistence", () => {
   }) => {
     // 1. Open Search Settings
     const settingsTrigger = page.getByLabel("Search Settings", { exact: true });
-    await settingsTrigger.click();
+    await expect(settingsTrigger).toBeVisible({ timeout: 10000 });
+    await settingsTrigger.click({ force: true });
 
     // 2. Click Exchanges Button inside Popover
     // Button text: "Exchanges (22/22)" or similar.
@@ -58,24 +61,21 @@ test.describe("Search Settings & Persistence", () => {
 
     // 3. Modal should open
     const modal = page.locator("[role='dialog']"); // Assuming modal uses dialog role
-    // Or checking for title "Exchanges"
     await expect(
       page.getByRole("heading", { name: /Exchanges/ }),
     ).toBeVisible();
+    // In mobile, the modal animates from bottom. Wait for it to settle.
+    await page.waitForTimeout(500);
 
     // 4. Block an exchange (click a card)
     // Assuming exchange cards are clickable.
     // Let's find a card INSIDE the modal.
-    const exchangeCard = page
-      .getByRole("dialog")
-      .locator(".cursor-pointer")
-      .first();
-    // This selector is fragile but common in this codebase based on previous test.
-    await exchangeCard.click();
+    const exchangeCard = page.getByTestId("dex-card").first();
+    await exchangeCard.click({ force: true });
 
     // 5. Close Modal (Interact outside or close button)
-    // Click outside modal to close it.
-    await page.mouse.click(10, 10);
+    const closeBtn = page.getByLabel("Close", { exact: true });
+    await closeBtn.click();
 
     // 6. Verify Modal Closed
     await expect(

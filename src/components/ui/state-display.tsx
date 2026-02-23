@@ -8,6 +8,7 @@ interface StateDisplayProps {
   image?: string | { src: string };
   title: React.ReactNode;
   description?: React.ReactNode;
+  button?: React.ReactNode;
   className?: string;
   imageClassName?: string;
 }
@@ -16,6 +17,7 @@ export function StateDisplay({
   image,
   title,
   description,
+  button,
   className,
   imageClassName,
 }: StateDisplayProps) {
@@ -48,6 +50,7 @@ export function StateDisplay({
       {description && (
         <p className="text-[#9CA3AF] text-base max-w-[280px]">{description}</p>
       )}
+      {button && <div className="mt-6">{button}</div>}
     </motion.div>
   );
 }

@@ -73,4 +73,8 @@ export const pt: Record<AppTranslationsKeys, string> = {
     "{count} redes",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK]: "{count} rede",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]: "{count} redes",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE]: "Algo deu errado",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
+    "Não conseguimos carregar os ativos. Por favor, tente novamente.",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Tentar novamente",
 };

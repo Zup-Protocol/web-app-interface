@@ -6,17 +6,28 @@ import { describe, expect, it, vi } from "vitest";
 import { BasketListItem } from "./basket-list-item";
 
 // Mock dependencies
-vi.mock("framer-motion", () => ({
-  m: {
-    button: ({ children, onClick, ...props }: any) => (
-      <button onClick={onClick} {...props}>
-        {children}
-      </button>
-    ),
-    div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-  },
-  AnimatePresence: ({ children }: any) => children,
-}));
+vi.mock("framer-motion", () => {
+  const motionComponent = ({ children, ...props }: any) => (
+    <div {...props}>{children}</div>
+  );
+  return {
+    m: {
+      button: ({ children, onClick, ...props }: any) => (
+        <button onClick={onClick} {...props}>
+          {children}
+        </button>
+      ),
+      div: motionComponent,
+      svg: motionComponent,
+      path: motionComponent,
+      circle: motionComponent,
+      img: ({ src, alt, ...props }: any) => (
+        <img src={src} alt={alt} {...props} />
+      ),
+    },
+    AnimatePresence: ({ children }: any) => children,
+  };
+});
 
 vi.mock("../../ui/animations/scale-hover-animation", () => ({
   ScaleHoverAnimation: ({ children }: any) => children,

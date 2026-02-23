@@ -107,6 +107,8 @@ export function Modal({
                 damping: 25,
                 stiffness: 200,
               }}
+              role="dialog"
+              aria-modal="true"
               className={cn(
                 "bg-modal pointer-events-auto border-modal-outline flex flex-col shadow-2xl overflow-hidden relative",
                 isDesktop

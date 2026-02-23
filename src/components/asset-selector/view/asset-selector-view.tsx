@@ -1,9 +1,12 @@
 "use client";
 
+import EscalerinDeadImage from "@/assets/escalerin/escalerin-dead.svg";
 import UnknownTokenImage from "@/assets/escalerin/escalerin-unknown-token.svg";
 import { AssetSelectorHeader } from "@/components/asset-selector/view/asset-selector-header";
 import { BasketListItem } from "@/components/asset-selector/view/basket-list-item";
 import { TokenListItem } from "@/components/asset-selector/view/token-list-item";
+import { TextButton } from "@/components/ui/buttons/text-button";
+import { RefreshIcon } from "@/components/ui/icons/refresh";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StateDisplay } from "@/components/ui/state-display";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
@@ -66,6 +69,7 @@ export function AssetSelectorView({
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const parentRef = React.useRef<HTMLDivElement>(null);
+  const { translate } = useTranslation();
 
   const { network } = useAppNetwork();
   const activeChainId = AppNetworksUtils.chainId[network];
@@ -80,6 +84,7 @@ export function AssetSelectorView({
     isFetchingNextPage,
     isLoading: isLoadingTokens,
     error: tokensError,
+    refetch: refetchTokens,
   } = useHydricTokens({
     chainId: activeChainId,
     search: debouncedSearchQuery,
@@ -169,8 +174,26 @@ export function AssetSelectorView({
           >
             <AnimatePresence mode="wait">
               {tokensError ? (
-                <div className="p-4 text-center text-red-500">
-                  Something went wrong. Please try again later.
+                <div className="py-12 flex items-center justify-center">
+                  <StateDisplay
+                    image={EscalerinDeadImage}
+                    title={translate(
+                      AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE,
+                    )}
+                    description={translate(
+                      AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION,
+                    )}
+                    button={
+                      <TextButton
+                        icon={<RefreshIcon />}
+                        onClick={() => refetchTokens()}
+                      >
+                        {translate(
+                          AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY,
+                        )}
+                      </TextButton>
+                    }
+                  />
                 </div>
               ) : isEmpty ? (
                 <EmptySearchStateView searchQuery={searchQuery} />
@@ -228,7 +251,6 @@ function AssetListView({
   isFetchingMore: boolean;
 }) {
   const { translate } = useTranslation();
-
   const items = React.useMemo(() => {
     const list: any[] = [];
 

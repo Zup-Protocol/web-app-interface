@@ -57,6 +57,11 @@ vi.mock("framer-motion", async () => {
       button: ({ children, ...props }: any) => (
         <button {...props}>{children}</button>
       ),
+      img: ({ src, alt, ...props }: any) => (
+        <img src={src} alt={alt} {...props} />
+      ),
+      svg: ({ children, ...props }: any) => <svg {...props}>{children}</svg>,
+      path: ({ children, ...props }: any) => <path {...props}>{children}</path>,
     },
   };
 });
@@ -118,6 +123,10 @@ vi.mock("@/components/ui/icons/sparkles", () => {
 
 vi.mock("@/providers/animation-provider", () => ({
   AnimationProvider: ({ children }: any) => <div>{children}</div>,
+}));
+
+vi.mock("@/providers/app-providers", () => ({
+  AppProviders: ({ children }: any) => <>{children}</>,
 }));
 
 vi.mock("../ui/badge", () => ({

@@ -54,4 +54,7 @@ export enum AppTranslationsKeys {
   ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS = "assetSelector.basket.subtitle.networks",
   ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK = "assetSelector.token.subtitle.network",
   ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS = "assetSelector.token.subtitle.networks",
+  ASSET_SELECTOR_ERROR_TITLE = "assetSelector.error.title",
+  ASSET_SELECTOR_ERROR_DESCRIPTION = "assetSelector.error.description",
+  ASSET_SELECTOR_ERROR_RETRY = "assetSelector.error.retry",
 }

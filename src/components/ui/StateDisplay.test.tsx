@@ -38,3 +38,14 @@ describe("StateDisplay", () => {
     expect(img).toHaveAttribute("src", "test-obj.png");
   });
 });
+
+it("renders button if provided", () => {
+  render(
+    <StateDisplay
+      title="Button State"
+      button={<button data-testid="test-button">Click me</button>}
+    />,
+  );
+  expect(screen.getByTestId("test-button")).toBeInTheDocument();
+  expect(screen.getByText("Click me")).toBeInTheDocument();
+});
