@@ -51,6 +51,17 @@ export abstract class AppNetworksUtils {
     [AppNetworks.MONAD]: monad,
   };
 
+  static chainId: Record<AppNetworks, number | undefined> = {
+    [AppNetworks.ALL_NETWORKS]: undefined,
+    [AppNetworks.ETHEREUM]: mainnet.id,
+    [AppNetworks.BASE]: base.id,
+    [AppNetworks.HYPER_EVM]: hyperEvm.id,
+    [AppNetworks.UNICHAIN]: unichain.id,
+    [AppNetworks.SCROLL]: scroll.id,
+    [AppNetworks.PLASMA]: plasma.id,
+    [AppNetworks.MONAD]: monad.id,
+  };
+
   static logoSvg: Record<
     AppNetworks,
     { light: ImageMetadata | string; dark: ImageMetadata | string }

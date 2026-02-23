@@ -1,6 +1,6 @@
 import {
-    type MultiChainToken,
-    type SingleChainToken,
+  type MultiChainToken,
+  type SingleChainToken,
 } from "@/core/types/token.types";
 import { useHydric } from "@/providers/hydric-provider";
 import { type HydricGateway } from "@hydric/gateway";

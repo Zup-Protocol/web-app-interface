@@ -68,8 +68,10 @@ export function AssetSelectorView({
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const { network } = useAppNetwork();
+  const activeChainId = AppNetworksUtils.chainId[network];
 
-  const { data: baskets, isLoading: isLoadingBaskets } = useHydricBaskets();
+  const { data: baskets, isLoading: isLoadingBaskets } =
+    useHydricBaskets(activeChainId);
 
   const {
     data: tokensData,
@@ -79,7 +81,7 @@ export function AssetSelectorView({
     isLoading: isLoadingTokens,
     error: tokensError,
   } = useHydricTokens({
-    chainId: AppNetworksUtils.wagmiNetwork[network]?.id,
+    chainId: activeChainId,
     search: debouncedSearchQuery,
   });
 
