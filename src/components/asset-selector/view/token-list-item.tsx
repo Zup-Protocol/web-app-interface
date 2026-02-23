@@ -1,13 +1,14 @@
 "use client";
 
 import type {
-    MultiChainToken,
-    SingleChainToken,
+  MultiChainToken,
+  SingleChainToken,
 } from "@/core/types/token.types";
 import { TokenTooltipContent } from "./tooltips/token-tooltip-content";
 
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
+import { AppNetworksUtils } from "@/lib/app-networks";
 import { AssetListItem } from "./asset-list-item";
 
 interface TokenListItemProps {
@@ -26,12 +27,16 @@ export function TokenListItem({
   const { translate } = useTranslation();
   const isMultiChain = token.type === "multi-chain";
   const networkCount = isMultiChain ? token.chainIds.length : 1;
+  const tokenNetwork = isMultiChain ? token.chainIds[0] : token.chainId;
 
-  const networkInfo = translate(
+  const networkInfo =
     networkCount === 1
-      ? AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK
-      : AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS,
-  ).replace("{count}", networkCount.toString());
+      ? AppNetworksUtils.networkName[
+          AppNetworksUtils.chainIdToNetwork[tokenNetwork]
+        ]
+      : translate(
+          AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS,
+        ).replace("{count}", networkCount.toString());
 
   const subtitle = `${token.name} • ${networkInfo}`;
 

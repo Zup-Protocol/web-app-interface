@@ -1,11 +1,11 @@
 import {
-    base,
-    hyperEvm,
-    mainnet,
-    monad,
-    plasma,
-    scroll,
-    unichain,
+  base,
+  hyperEvm,
+  mainnet,
+  monad,
+  plasma,
+  scroll,
+  unichain,
 } from "viem/chains";
 import { describe, expect, it } from "vitest";
 import { AppNetworks, AppNetworksUtils } from "./app-networks";
@@ -36,6 +36,38 @@ describe("AppNetworksUtils.chainId", () => {
       } else {
         expect(chainId).toBe(wagmiChain?.id);
       }
+    });
+  });
+});
+
+describe("AppNetworksUtils.chainIdToNetwork", () => {
+  it("should correctly map chain IDs to AppNetworks", () => {
+    expect(AppNetworksUtils.chainIdToNetwork[mainnet.id]).toBe(
+      AppNetworks.ETHEREUM,
+    );
+    expect(AppNetworksUtils.chainIdToNetwork[base.id]).toBe(AppNetworks.BASE);
+    expect(AppNetworksUtils.chainIdToNetwork[hyperEvm.id]).toBe(
+      AppNetworks.HYPER_EVM,
+    );
+    expect(AppNetworksUtils.chainIdToNetwork[unichain.id]).toBe(
+      AppNetworks.UNICHAIN,
+    );
+    expect(AppNetworksUtils.chainIdToNetwork[scroll.id]).toBe(
+      AppNetworks.SCROLL,
+    );
+    expect(AppNetworksUtils.chainIdToNetwork[plasma.id]).toBe(
+      AppNetworks.PLASMA,
+    );
+    expect(AppNetworksUtils.chainIdToNetwork[monad.id]).toBe(AppNetworks.MONAD);
+  });
+
+  it("should have a mapping for every supported chain ID", () => {
+    AppNetworksUtils.values.forEach((network) => {
+      if (network === AppNetworks.ALL_NETWORKS) return;
+
+      const chainId = AppNetworksUtils.chainId[network];
+      expect(chainId).toBeDefined();
+      expect(AppNetworksUtils.chainIdToNetwork[chainId!]).toBe(network);
     });
   });
 });

@@ -100,7 +100,7 @@ describe("BasketListItem i18n", () => {
     });
   });
 
-  it("correctly handles singular network translation with {count}", () => {
+  it("displays network name when there is only one network", () => {
     const singularBasket: TokenBasket = {
       ...mockBasket,
       chainIds: [1],
@@ -117,9 +117,9 @@ describe("BasketListItem i18n", () => {
         <BasketListItem basket={singularBasket} onClick={() => {}} />,
       );
 
-      // Subtitle should contain "3" (tokens) and "1" (network)
+      // Subtitle should contain "3" (tokens) and "Ethereum" (network name for chainId 1)
       const subtitle = screen.getByText(
-        (content) => content.includes("3") && content.includes("1"),
+        (content) => content.includes("3") && content.includes("Ethereum"),
       );
 
       expect(subtitle).toBeInTheDocument();

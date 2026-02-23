@@ -1,6 +1,6 @@
 import type {
-    MultiChainToken,
-    SingleChainToken,
+  MultiChainToken,
+  SingleChainToken,
 } from "@/core/types/token.types";
 import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { setLocale } from "@/stores/i18n";
@@ -60,7 +60,7 @@ const mockMultiToken: MultiChainToken = {
 };
 
 describe("TokenListItem i18n", () => {
-  it("replaces {count} placeholder in all supported languages for single-chain tokens", () => {
+  it("displays network name for single-chain tokens", () => {
     const languages = AppLanguagesUtils.values.filter(
       (lang) => lang !== AppLanguages.SYSTEM,
     );
@@ -72,10 +72,11 @@ describe("TokenListItem i18n", () => {
         <TokenListItem token={mockSingleToken} onClick={() => {}} />,
       );
 
-      // Check description (subtitle) to ensure {count} is replaced
+      // Check description (subtitle) to ensure network name "Ethereum" is shown
       const subtitle = screen.getByText(
         (content) =>
-          content.includes(mockSingleToken.name) && content.includes("1"),
+          content.includes(mockSingleToken.name) &&
+          content.includes("Ethereum"),
       );
 
       expect(subtitle).toBeInTheDocument();
@@ -101,6 +102,40 @@ describe("TokenListItem i18n", () => {
       const subtitle = screen.getByText(
         (content) =>
           content.includes(mockMultiToken.name) && content.includes("2"),
+      );
+
+      expect(subtitle).toBeInTheDocument();
+      expect(subtitle.textContent).not.toContain("{count}");
+
+      unmount();
+    });
+  });
+
+  it("displays network name for multi-chain tokens with only one network", () => {
+    const singleNetworkMultiToken: MultiChainToken = {
+      ...mockMultiToken,
+      chainIds: [1],
+      addresses: [
+        { chainId: 1, address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
+      ],
+    };
+
+    const languages = AppLanguagesUtils.values.filter(
+      (lang) => lang !== AppLanguages.SYSTEM,
+    );
+
+    languages.forEach((lang) => {
+      setLocale({ locale: lang, persist: false });
+
+      const { unmount } = render(
+        <TokenListItem token={singleNetworkMultiToken} onClick={() => {}} />,
+      );
+
+      // Check description (subtitle) to ensure network name "Ethereum" is shown
+      const subtitle = screen.getByText(
+        (content) =>
+          content.includes(singleNetworkMultiToken.name) &&
+          content.includes("Ethereum"),
       );
 
       expect(subtitle).toBeInTheDocument();

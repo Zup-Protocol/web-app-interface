@@ -5,6 +5,7 @@ import { BasketTooltipContent } from "./tooltips/basket-tooltip-content";
 
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
+import { AppNetworksUtils } from "@/lib/app-networks";
 import { AssetListItem } from "./asset-list-item";
 
 interface BasketListItemProps {
@@ -27,11 +28,14 @@ export function BasketListItem({
     AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS,
   ).replace("{count}", tokensCount);
 
-  const networksPart = translate(
+  const networksPart =
     basket.chainIds.length === 1
-      ? AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORK
-      : AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS,
-  ).replace("{count}", networksCount);
+      ? AppNetworksUtils.networkName[
+          AppNetworksUtils.chainIdToNetwork[basket.chainIds[0]]
+        ]
+      : translate(
+          AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS,
+        ).replace("{count}", networksCount);
 
   const subtitle = `${tokensPart} • ${networksPart}`;
 
