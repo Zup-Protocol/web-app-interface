@@ -6,10 +6,8 @@ import type {
 } from "@/core/types/token.types";
 import { AddressFormatter } from "@/lib/address-formatter";
 import { AppNetworksUtils } from "@/lib/app-networks";
-import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { useTheme } from "next-themes";
 import { AssetTooltipContent } from "./asset-tooltip-content";
 
 interface TokenTooltipContentProps {
@@ -21,11 +19,10 @@ export function TokenTooltipContent({
   token,
   onClose,
 }: TokenTooltipContentProps) {
-  const { resolvedTheme } = useTheme();
   const isMultiChain = token.type === "multi-chain";
 
   const rows = isMultiChain
-    ? (token as any).addresses || []
+    ? token.addresses || []
     : [
         {
           chainId: token.chainId,
@@ -37,7 +34,7 @@ export function TokenTooltipContent({
 
   return (
     <AssetTooltipContent title="Contracts" onClose={onClose}>
-      {rows.map((row: any) => {
+      {rows.map((row) => {
         const networkValue = AppNetworksUtils.values.find(
           (n) => AppNetworksUtils.wagmiNetwork[n]?.id === row.chainId,
         );
@@ -45,11 +42,13 @@ export function TokenTooltipContent({
         if (networkValue === undefined) return null;
 
         const networkName = AppNetworksUtils.networkName[networkValue];
-        const Logo = AppNetworksUtils.logoSvg[networkValue];
-        const activeIcon =
-          resolvedTheme === ThemeMode.DARK ? Logo.dark : Logo.light;
-        const iconSrc =
-          typeof activeIcon === "string" ? activeIcon : (activeIcon as any).src;
+        const logos = AppNetworksUtils.logoSvg[networkValue];
+        const lightIcon = logos.light;
+        const darkIcon = logos.dark;
+        const lightSrc =
+          typeof lightIcon === "string" ? lightIcon : (lightIcon as any).src;
+        const darkSrc =
+          typeof darkIcon === "string" ? darkIcon : (darkIcon as any).src;
         const explorerUrl = AppNetworksUtils.getExplorerUrl(row.chainId);
 
         return (
@@ -77,9 +76,14 @@ export function TokenTooltipContent({
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center p-0.5">
                 <img
-                  src={iconSrc}
+                  src={lightSrc}
                   alt={networkName}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain dark:hidden"
+                />
+                <img
+                  src={darkSrc}
+                  alt={networkName}
+                  className="w-full h-full object-contain hidden dark:block"
                 />
               </div>
               <div className="flex flex-col">

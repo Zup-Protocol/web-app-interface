@@ -3,9 +3,9 @@
 import { InfoIcon, type InfoIconHandle } from "@/components/ui/icons/info";
 import { Modal } from "@/components/ui/modal";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { KeyboardEventKey } from "@/lib/keyboard-event-keys";
@@ -56,6 +56,7 @@ export function InfoTooltip({
     <button
       type="button"
       tabIndex={-1}
+      aria-label="More information"
       className={cn(
         "inline-flex items-center justify-center text-mutated-text hover:text-foreground transition-colors cursor-help outline-none",
         className,
@@ -125,6 +126,7 @@ export function InfoTooltip({
           <button
             ref={triggerRef}
             type="button"
+            aria-label="More information"
             className={cn(
               "inline-flex items-center justify-center text-mutated-text hover:text-foreground transition-colors cursor-help outline-none",
               className,

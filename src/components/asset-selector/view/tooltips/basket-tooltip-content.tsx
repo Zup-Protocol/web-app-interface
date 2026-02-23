@@ -5,10 +5,8 @@ import { VirtualizedList } from "@/components/ui/virtualized-list";
 import type { TokenBasket } from "@/core/types/token.types";
 import { AddressFormatter } from "@/lib/address-formatter";
 import { AppNetworksUtils } from "@/lib/app-networks";
-import { ThemeMode } from "@/lib/theme-mode";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
-import { useTheme } from "next-themes";
 import * as React from "react";
 import { AssetTooltipContent } from "./asset-tooltip-content";
 
@@ -19,7 +17,6 @@ export function BasketTooltipContent({
   basket: TokenBasket;
   onClose?: () => void;
 }) {
-  const { resolvedTheme } = useTheme();
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const sortedTokens = React.useMemo(
@@ -52,14 +49,14 @@ export function BasketTooltipContent({
           if (networkValue === undefined) return null;
 
           const networkName = AppNetworksUtils.networkName[networkValue];
-          const logo = AppNetworksUtils.logoSvg[networkValue];
-          const activeIcon =
-            resolvedTheme === ThemeMode.DARK ? logo.dark : logo.light;
+          const logos = AppNetworksUtils.logoSvg[networkValue];
+          const lightIcon = logos.light;
+          const darkIcon = logos.dark;
 
-          const networkIconSrc =
-            typeof activeIcon === "string"
-              ? activeIcon
-              : (activeIcon as any).src;
+          const lightNetworkSrc =
+            typeof lightIcon === "string" ? lightIcon : (lightIcon as any).src;
+          const darkNetworkSrc =
+            typeof darkIcon === "string" ? darkIcon : (darkIcon as any).src;
           const explorerUrl = AppNetworksUtils.getExplorerUrl(token.chainId);
 
           return (
@@ -83,9 +80,14 @@ export function BasketTooltipContent({
                   />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-background border border-background shadow-xs flex items-center justify-center overflow-hidden z-10">
                     <img
-                      src={networkIconSrc}
+                      src={lightNetworkSrc}
                       alt={networkName}
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover dark:hidden"
+                    />
+                    <img
+                      src={darkNetworkSrc}
+                      alt={networkName}
+                      className="w-full h-full object-cover hidden dark:block"
                     />
                   </div>
                 </div>
