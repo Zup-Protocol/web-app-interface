@@ -85,18 +85,20 @@ export function useHydricTokens({
       // We know the shape, so we can cast `page` to any.
       const allTokens = data.pages.flatMap((page: any) => page.tokens);
 
-      const mappedTokens = allTokens.map((token: any) => {
-        if (chainId) {
+      const mappedTokens = allTokens.map(
+        (token: SingleChainToken | MultiChainToken) => {
+          if (chainId) {
+            return {
+              ...token,
+              type: "single-chain",
+            } as SingleChainToken;
+          }
           return {
             ...token,
-            type: "single-chain",
-          } as SingleChainToken;
-        }
-        return {
-          ...token,
-          type: "multi-chain",
-        } as MultiChainToken;
-      });
+            type: "multi-chain",
+          } as MultiChainToken;
+        },
+      );
 
       return {
         tokens: mappedTokens,
