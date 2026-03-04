@@ -23,6 +23,9 @@ export function StateDisplay({
 }: StateDisplayProps) {
   const imageSrc = React.useMemo(() => {
     if (!image) return null;
+    if (typeof image === "object" && "src" in (image as any)) {
+      return (image as any).src;
+    }
     return image;
   }, [image]);
 

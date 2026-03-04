@@ -20,7 +20,10 @@ export function NetworkSelector({}: NetworkSelectorProps) {
 
   const Icon = AppNetworksUtils.logoSvg[network];
   const activeIcon = resolvedTheme === ThemeMode.DARK ? Icon.dark : Icon.light;
-  const iconSrc = activeIcon;
+  const iconSrc =
+    typeof activeIcon === "object" && "src" in (activeIcon as any)
+      ? (activeIcon as any).src
+      : activeIcon;
 
   return (
     <>

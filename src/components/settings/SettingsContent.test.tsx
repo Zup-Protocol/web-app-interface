@@ -55,7 +55,10 @@ describe("SettingsContent", () => {
     } as any);
 
     // Default document.startViewTransition
-    (document as any).startViewTransition = vi.fn((cb) => cb());
+    (document as any).startViewTransition = vi.fn((cb) => {
+      cb();
+      return { finished: Promise.resolve() };
+    });
   });
 
   afterEach(() => {

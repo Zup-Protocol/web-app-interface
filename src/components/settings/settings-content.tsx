@@ -44,7 +44,10 @@ export function SettingsContent() {
       }
 
       const flag = AppLanguagesUtils.flag[lang];
-      const flagSrc = flag;
+      const flagSrc =
+        typeof flag === "object" && "src" in (flag as any)
+          ? (flag as any).src
+          : flag;
 
       return {
         value: lang,
