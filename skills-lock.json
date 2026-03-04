@@ -1,6 +1,11 @@
 {
   "version": 1,
   "skills": {
+    "hydric-gateway-js-ts-sdk-user": {
+      "source": "hydric-org/skills",
+      "sourceType": "github",
+      "computedHash": "b05fe9264e2910717421e9b5b24ab10f9a20bbf78f1ce97d14989aa69bfdb5d7"
+    },
     "tanstack-start": {
       "source": "jezweb/claude-skills",
       "sourceType": "github",
