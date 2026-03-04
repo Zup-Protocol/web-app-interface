@@ -4,7 +4,7 @@ import { AppProviders } from "@/providers/app-providers";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { motion } from "framer-motion";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useConnection } from "wagmi";
 import { BrandLogo } from "./brand-logo";
 import { NetworkSelector } from "./network-selector";
@@ -28,7 +28,15 @@ const groupVariants = {
   visible: { transition: { staggerChildren: 0.2 } },
 };
 
+let hasHeaderMounted = false;
+
 function HeaderContent() {
+  const isFirstMount = !hasHeaderMounted;
+
+  useEffect(() => {
+    hasHeaderMounted = true;
+  }, []);
+
   const plusRef = useRef<PlusIconHandle>(null);
   const { isConnected } = useConnection();
   const { translate } = useTranslation();
@@ -37,7 +45,7 @@ function HeaderContent() {
     <header className="sticky top-0 z-50 w-full bg-background/0 backdrop-blur-md">
       <motion.div
         className="w-full px-[20px] py-[15px] flex items-center justify-between"
-        initial="hidden"
+        initial={isFirstMount ? "hidden" : "visible"}
         animate="visible"
         variants={groupVariants}
       >

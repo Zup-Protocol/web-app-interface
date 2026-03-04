@@ -403,7 +403,7 @@ function RenderItem({
 
         <div className="w-22 h-22 rounded-full overflow-hidden flex items-center justify-center shrink-0">
           <img
-            src={meta.logo.src}
+            src={meta.logo}
             alt={meta.name}
             className="w-full h-full object-cover"
           />

@@ -50,13 +50,8 @@ export function BasketTooltipContent({
 
           const networkName = AppNetworksUtils.networkName[networkValue];
           const logos = AppNetworksUtils.logoSvg[networkValue];
-          const lightIcon = logos.light;
-          const darkIcon = logos.dark;
-
-          const lightNetworkSrc =
-            typeof lightIcon === "string" ? lightIcon : (lightIcon as any).src;
-          const darkNetworkSrc =
-            typeof darkIcon === "string" ? darkIcon : (darkIcon as any).src;
+          const lightNetworkSrc = logos.light;
+          const darkNetworkSrc = logos.dark;
           const explorerUrl = AppNetworksUtils.getExplorerUrl(token.chainId);
 
           return (

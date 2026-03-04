@@ -44,7 +44,7 @@ export function SettingsContent() {
       }
 
       const flag = AppLanguagesUtils.flag[lang];
-      const flagSrc = typeof flag === "string" ? flag : flag.src;
+      const flagSrc = flag;
 
       return {
         value: lang,
@@ -81,8 +81,13 @@ export function SettingsContent() {
         return;
       }
 
-      (document as any).startViewTransition(() => {
+      document.documentElement.classList.add("theme-transitioning");
+      const transition = document.startViewTransition(() => {
         setTheme(newTheme);
+      });
+
+      transition.finished.finally(() => {
+        document.documentElement.classList.remove("theme-transitioning");
       });
     }, 300);
   };

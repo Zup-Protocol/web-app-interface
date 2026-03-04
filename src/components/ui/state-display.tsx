@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import * as React from "react";
 
 interface StateDisplayProps {
-  image?: string | { src: string };
+  image?: string;
   title: React.ReactNode;
   description?: React.ReactNode;
   button?: React.ReactNode;
@@ -23,7 +23,7 @@ export function StateDisplay({
 }: StateDisplayProps) {
   const imageSrc = React.useMemo(() => {
     if (!image) return null;
-    return typeof image === "string" ? image : image.src;
+    return image;
   }, [image]);
 
   return (

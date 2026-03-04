@@ -1,5 +1,8 @@
 "use client";
 
+import { funEmoji } from "@dicebear/collection";
+import { createAvatar } from "@dicebear/core";
+
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { AddressFormatter } from "@/lib/address-formatter";
@@ -7,7 +10,6 @@ import { cn } from "@/lib/utils";
 import { useAppKit } from "@reown/appkit/react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import Avatar, { genConfig } from "react-nice-avatar";
 import { useConnection, useEnsName } from "wagmi";
 import { CheckIcon } from "../icons/check";
 import { PrimaryButton } from "./primary-button";
@@ -38,13 +40,17 @@ export function ConnectedWalletButton({
 
   const formattedAddress = AddressFormatter.truncateAddress(address || "");
 
-  const config = genConfig(address || "");
+  const avatar = createAvatar(funEmoji, {
+    seed: address || "default",
+  });
+  const svg = avatar.toString();
+
   const isSuccess = phase === "success";
 
   return (
     <PrimaryButton
       className={cn(
-        "group transition-all duration-500 overflow-hidden",
+        "group transition-colors duration-500 overflow-hidden",
         isSuccess
           ? "bg-[#10B981] hover:bg-[#059669] text-white border-transparent"
           : "border-outline-button-border",
@@ -64,7 +70,7 @@ export function ConnectedWalletButton({
           </span>
         </div>
 
-        <AnimatePresence mode="popLayout" initial={false}>
+        <AnimatePresence mode="wait" initial={false}>
           {isSuccess ? (
             <motion.div
               key="success-content"
@@ -90,8 +96,12 @@ export function ConnectedWalletButton({
               transition={transition}
               className="flex items-center gap-2 whitespace-nowrap absolute"
             >
-              <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-full ring-1 ring-white/10 shadow-sm">
-                <Avatar className="w-full h-full translate-y-px" {...config} />
+              <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-[50%] ring-1 ring-white/10 shadow-sm">
+                <img
+                  src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
+                  className="w-full h-full scale-[1.2]"
+                  alt="Avatar"
+                />
               </div>
               <span className="text-base font-medium hidden sm:inline">
                 {ensName || formattedAddress}

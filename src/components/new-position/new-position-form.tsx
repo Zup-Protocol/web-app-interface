@@ -6,13 +6,13 @@ import { ExchangesFilterModal } from "@/components/modals/exchanges-filter-modal
 import { SearchSettingsContent } from "@/components/new-position/search-settings-content";
 import { type SlidersHorizontalIconHandle } from "@/components/ui/icons/sliders";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import {
-    DEFAULT_SEARCH_SETTINGS,
-    type SearchSettingsConfig,
+  DEFAULT_SEARCH_SETTINGS,
+  type SearchSettingsConfig,
 } from "@/core/DTOs/search-settings-config.dto";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
@@ -20,6 +20,7 @@ import { CustomEvent } from "@/lib/custom-event";
 import { LocalStorageKey } from "@/lib/local-storage-key";
 import { SupportedDexsUtils } from "@/lib/supported-dexs";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "../ui/badge";
@@ -29,11 +30,12 @@ import { SparklesIcon, type SparklesIconHandle } from "../ui/icons/sparkles";
 
 import { AssetSelectorView } from "@/components/asset-selector/view/asset-selector-view";
 import {
-    type AssetSelectorSide,
-    type SelectableAsset,
+  type AssetSelectorSide,
+  type SelectableAsset,
 } from "@/core/types/token.types";
 
 export function NewPositionForm() {
+  const navigate = useNavigate();
   const { translate } = useTranslation();
   const searchSettingsIconRef = useRef<SlidersHorizontalIconHandle>(null);
   const sparklesIconRef = useRef<SparklesIconHandle>(null);
@@ -253,6 +255,7 @@ export function NewPositionForm() {
                 className="h-12 text-base"
                 onMouseEnter={() => sparklesIconRef.current?.startAnimation()}
                 onMouseLeave={() => sparklesIconRef.current?.stopAnimation()}
+                onClick={() => {}}
                 icon={<SparklesIcon ref={sparklesIconRef} size={18} />}
                 alwaysIcon
               >

@@ -1,45 +1,29 @@
----
-import { ClientRouter } from "astro:transitions";
-import "../styles/global.css";
-
-import { ThemeMode } from "@/lib/theme-mode";
-import { LocalStorageKey } from "@/lib/local-storage-key";
-import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
-import { Header } from "@/components/header";
-import { LocaleInitializer } from "@/components/common/locale-initializer";
-
-interface Props {
-  title: string;
-}
-
-const { title } = Astro.props;
-
-const supportedLanguages = AppLanguagesUtils.values.filter(
-  (v) => v !== AppLanguages.SYSTEM,
-);
----
-
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="description" content="Zup Protocol - The best dApp in Web3" />
-    <meta name="viewport" content="width=device-width" />
+    <meta
+      name="description"
+      content="Zup Protocol - Find & Deposit Liquidity in a minute"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="" id="theme-color-meta" />
-    <title>{title} | Zup Protocol</title>
-    <ClientRouter />
-    <script
-      is:inline
-      define:vars={{
-        ThemeMode,
-        LocalStorageKey,
+    <title>Zup Protocol</title>
+
+    <script type="module">
+      import { ThemeMode } from "/src/lib/theme-mode.ts";
+      import { LocalStorageKey } from "/src/lib/local-storage-key.ts";
+      import {
         AppLanguages,
-        supportedLanguages,
-      }}
-    >
+        AppLanguagesUtils,
+      } from "/src/lib/app-languages.ts";
+
+      const supportedLanguages = AppLanguagesUtils.values.filter(
+        (v) => v !== AppLanguages.SYSTEM,
+      );
+
       (function () {
         function getTheme() {
           if (
@@ -91,11 +75,6 @@ const supportedLanguages = AppLanguagesUtils.values.filter(
           attributeFilter: ["class"],
         });
 
-        document.addEventListener("astro:after-swap", () => {
-          const theme = getTheme();
-          setClass(theme);
-        });
-
         window
           .matchMedia("(prefers-color-scheme: dark)")
           .addEventListener("change", () => {
@@ -113,7 +92,6 @@ const supportedLanguages = AppLanguagesUtils.values.filter(
 
           if (typeof navigator !== "undefined") {
             const sys = navigator.language.split("-")[0];
-
             if (supportedLanguages.includes(sys)) return sys;
           }
           return AppLanguages.ENGLISH;
@@ -125,10 +103,9 @@ const supportedLanguages = AppLanguagesUtils.values.filter(
     </script>
   </head>
   <body
-    class="bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground"
+    class="bg-background text-foreground antialiased selection:bg-primary selection:text-primary-foreground min-h-screen"
   >
-    <LocaleInitializer client:only="react" />
-    <Header client:only="react" />
-    <slot />
+    <div id="root"></div>
+    <script type="module" src="/src/client.tsx"></script>
   </body>
 </html>

@@ -205,27 +205,215 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    scrollbar-gutter: stable;
+  }
   body {
     @apply bg-background text-foreground font-sans leading-5.5 text-base;
+  }
+
+  .transition-cloud-layer-1,
+  .transition-cloud-layer-2,
+  .transition-cloud-layer-3 {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0;
   }
 }
 
 ::view-transition-old(root),
 ::view-transition-new(root) {
+  animation: none !important;
+  mix-blend-mode: normal !important;
+}
+
+.theme-transitioning::view-transition-old(root) {
+  animation: none !important;
+  z-index: 1;
+}
+
+.theme-transitioning::view-transition-new(root) {
+  animation: 1.2s cubic-bezier(0.65, 0, 0.35, 1) theme-wipe forwards !important;
+  z-index: 2;
+  mix-blend-mode: normal !important;
+}
+
+@keyframes theme-wipe {
+  0% {
+    clip-path: circle(0% at 50% 50%);
+  }
+  100% {
+    clip-path: circle(125% at 50% 50%);
+  }
+}
+
+::view-transition-group(clouds-route),
+::view-transition-image-pair(clouds-route) {
   animation: none;
   mix-blend-mode: normal;
 }
 
-::view-transition-new(root) {
-  animation: 1.5s ease-in-out theme-wipe forwards;
+::view-transition-old(clouds-route) {
+  animation: clouds-wipe-out 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  mix-blend-mode: normal;
 }
 
-@keyframes theme-wipe {
-  from {
-    clip-path: circle(0% at 0 0);
+::view-transition-new(clouds-route) {
+  animation: clouds-wipe-in 1.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  mix-blend-mode: normal;
+}
+
+@keyframes clouds-wipe-out {
+  0% {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
   }
-  to {
-    clip-path: circle(200% at 0 0);
+  100% {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+@keyframes clouds-wipe-in {
+  0% {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  100% {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      white 20%,
+      white 80%,
+      transparent
+    );
+    -webkit-mask-size: 300% 100%;
+    mask-size: 300% 100%;
+    -webkit-mask-position: 0% 0;
+    mask-position: 0% 0;
+  }
+}
+
+::view-transition-group(cloud-layer-1),
+::view-transition-group(cloud-layer-2),
+::view-transition-group(cloud-layer-3) {
+  z-index: 10000;
+}
+
+::view-transition-old(cloud-layer-1),
+::view-transition-old(cloud-layer-2),
+::view-transition-old(cloud-layer-3) {
+  animation: none;
+  opacity: 0;
+}
+
+/* Clouds Passage - Optimized Monochrome Sweep */
+::view-transition-new(cloud-layer-1) {
+  animation: 1.6s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
+  background: linear-gradient(
+    to right,
+    transparent 20%,
+    rgba(59, 130, 246, 0.3) 50%,
+    transparent 80%
+  );
+  background-size: 300% 100%;
+}
+
+::view-transition-new(cloud-layer-2) {
+  animation: 1.7s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
+  animation-delay: 0.05s;
+  background: linear-gradient(
+    to right,
+    transparent 10%,
+    #3b82f6 50%,
+    transparent 90%
+  );
+  background-size: 300% 100%;
+}
+
+::view-transition-new(cloud-layer-3) {
+  animation: 1.8s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
+  animation-delay: 0.1s;
+  background: linear-gradient(
+    to right,
+    transparent 20%,
+    rgba(59, 130, 246, 0.5) 50%,
+    transparent 80%
+  );
+  background-size: 300% 100%;
+}
+
+@keyframes clouds-blue-sweep {
+  0% {
+    background-position: 100% 0;
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 0% 0;
+    opacity: 0;
   }
 }
 

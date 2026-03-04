@@ -18,7 +18,7 @@ export abstract class AppLanguagesUtils {
     (v) => typeof v === "string",
   ) as AppLanguages[];
 
-  static flag: Record<AppLanguages, ImageMetadata | string> = {
+  static flag: Record<AppLanguages, string> = {
     [AppLanguages.SYSTEM]: "",
     [AppLanguages.ENGLISH]: usaFlag,
     [AppLanguages.SPANISH]: spainFlag,

@@ -55,7 +55,7 @@ export function NetworkCard({
         {Icon ? (
           <div className="w-full h-full">
             <img
-              src={typeof Icon === "string" ? Icon : Icon.src}
+              src={Icon}
               alt={name}
               className="w-full h-full object-contain"
             />

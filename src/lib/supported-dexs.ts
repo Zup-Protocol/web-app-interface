@@ -1,5 +1,3 @@
-import type { ImageMetadata } from "astro";
-
 import aerodromeLogo from "@/assets/logos/dexs/aerodrome.svg";
 import alienbaseLogo from "@/assets/logos/dexs/alienbase.svg";
 import atlantisLogo from "@/assets/logos/dexs/atlantis.svg";
@@ -22,7 +20,7 @@ import velodromeLogo from "@/assets/logos/dexs/velodrome.svg";
 export interface DexMetadata {
   name: string;
   url: string;
-  logo: ImageMetadata;
+  logo: string;
   logoBackgroundColor: string;
   textColorOnBackground: string;
 }

@@ -1,5 +1,4 @@
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import type { ImageMetadata } from "astro";
 import {
   base,
   hyperEvm,
@@ -72,10 +71,7 @@ export abstract class AppNetworksUtils {
     [monad.id]: AppNetworks.MONAD,
   };
 
-  static logoSvg: Record<
-    AppNetworks,
-    { light: ImageMetadata | string; dark: ImageMetadata | string }
-  > = {
+  static logoSvg: Record<AppNetworks, { light: string; dark: string }> = {
     [AppNetworks.ALL_NETWORKS]: {
       light: allNetworksIcon,
       dark: allNetworksIcon,
@@ -110,7 +106,7 @@ export abstract class AppNetworksUtils {
     },
   };
 
-  static logoOnBrandColor: Record<AppNetworks, ImageMetadata | string> = {
+  static logoOnBrandColor: Record<AppNetworks, string> = {
     [AppNetworks.ALL_NETWORKS]: allNetworksIcon,
     [AppNetworks.ETHEREUM]: ethereumLogo,
     [AppNetworks.BASE]: baseLogoWhite,

@@ -1,8 +1,8 @@
 "use client";
 
 import type {
-  MultiChainToken,
-  SingleChainToken,
+    MultiChainToken,
+    SingleChainToken,
 } from "@/core/types/token.types";
 import { AddressFormatter } from "@/lib/address-formatter";
 import { AppNetworksUtils } from "@/lib/app-networks";
@@ -43,12 +43,8 @@ export function TokenTooltipContent({
 
         const networkName = AppNetworksUtils.networkName[networkValue];
         const logos = AppNetworksUtils.logoSvg[networkValue];
-        const lightIcon = logos.light;
-        const darkIcon = logos.dark;
-        const lightSrc =
-          typeof lightIcon === "string" ? lightIcon : (lightIcon as any).src;
-        const darkSrc =
-          typeof darkIcon === "string" ? darkIcon : (darkIcon as any).src;
+        const lightSrc = logos.light;
+        const darkSrc = logos.dark;
         const explorerUrl = AppNetworksUtils.getExplorerUrl(row.chainId);
 
         return (

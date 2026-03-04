@@ -1,7 +1,18 @@
 /// <reference types="vitest" />
-import { getViteConfig } from "astro/config";
+import tailwindcss from "@tailwindcss/vite";
+import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+import { defineConfig } from "vite";
 
-export default getViteConfig({
+export default defineConfig({
+  plugins: [tailwindcss(), tanstackRouter({ target: "react" }), react()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+  envPrefix: ["VITE_", "PUBLIC_"],
   test: {
     globals: true,
     environment: "jsdom",
@@ -20,12 +31,10 @@ export default getViteConfig({
       exclude: [
         "node_modules/**",
         "dist/**",
-        "src/env.d.ts",
         "**/*.test.tsx",
         "**/*.test.ts",
         "src/setupTests.ts",
         "**/*.config.*",
-        "**/*.astro",
         "src/providers/**",
         "tests/**",
         "**/*.d.ts",

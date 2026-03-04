@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "skills": {
+    "tanstack-start": {
+      "source": "jezweb/claude-skills",
+      "sourceType": "github",
+      "computedHash": "6113ae88e7f62e19c30622fb5689bfb30be9fab927eb5105c710fb1d55b0eea4"
+    }
+  }
+}
