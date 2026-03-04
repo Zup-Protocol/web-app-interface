@@ -2,16 +2,52 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "command": "./node_modules/.bin/astro dev",
-      "name": "Development server (Local)",
+      "type": "node-terminal",
       "request": "launch",
-      "type": "node-terminal"
+      "name": "Start TanStack Development Server",
+      "command": "npm run dev"
     },
     {
-      "command": "./node_modules/.bin/astro dev --host",
-      "name": "Development server (Network)",
+      "type": "chrome",
       "request": "launch",
-      "type": "node-terminal"
+      "name": "Debug Web Application in Chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    },
+    {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Build & Preview Production",
+      "command": "npm run build && npm run preview"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "View Production Build in Chrome",
+      "url": "http://localhost:4173",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": false,
+      "smartStep": true,
+      "skipFiles": ["<node_internals>/**", "**/node_modules/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch App and Debug",
+      "configurations": [
+        "Start TanStack Development Server",
+        "Debug Web Application in Chrome"
+      ]
+    },
+    {
+      "name": "Launch Production Preview",
+      "configurations": [
+        "Build & Preview Production",
+        "View Production Build in Chrome"
+      ]
     }
   ]
 }
