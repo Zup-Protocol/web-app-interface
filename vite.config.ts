@@ -6,7 +6,14 @@ import path from "path";
 import { defineConfig } from "vite";
 
 export default defineConfig({
-  plugins: [tailwindcss(), tanstackRouter({ target: "react" }), react()],
+  plugins: [
+    tailwindcss(),
+    tanstackRouter({
+      target: "react",
+      routeFileIgnorePattern: ".*\\.(test|spec)\\.(js|ts|jsx|tsx)$",
+    }),
+    react(),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
