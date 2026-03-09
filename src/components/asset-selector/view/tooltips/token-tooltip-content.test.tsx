@@ -1,13 +1,11 @@
-import type { SingleChainToken } from "@/core/types/token.types";
+import type { SingleChainToken } from "@/core/types/asset.types";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { TokenTooltipContent } from "./token-tooltip-content";
 
 // Mock framer-motion
 vi.mock("framer-motion", () => {
-  const motionComponent = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  );
+  const motionComponent = ({ children, ...props }: any) => <div {...props}>{children}</div>;
   return {
     motion: {
       a: motionComponent,
@@ -49,12 +47,8 @@ describe("TokenTooltipContent", () => {
     // Should have 2 images: one with dark:hidden and one with hidden dark:block
     expect(images).toHaveLength(2);
 
-    const lightLogo = images.find((img) =>
-      img.className?.includes("dark:hidden"),
-    );
-    const darkLogo = images.find((img) =>
-      img.className?.includes("dark:block"),
-    );
+    const lightLogo = images.find((img) => img.className?.includes("dark:hidden"));
+    const darkLogo = images.find((img) => img.className?.includes("dark:block"));
 
     expect(lightLogo).toBeInTheDocument();
     expect(darkLogo).toBeInTheDocument();

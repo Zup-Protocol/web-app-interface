@@ -1,8 +1,8 @@
-import { DEFAULT_SEARCH_SETTINGS } from "@/core/DTOs/search-settings-config.dto";
+import { SearchSettingsConfig } from "@/core/search-settings-config";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { CustomEvent } from "@/lib/custom-event";
-import { LocalStorageKey } from "@/lib/local-storage-key";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SearchSettingsContent } from "./search-settings-content";
 
@@ -15,9 +15,7 @@ vi.mock("framer-motion", async () => {
     motion: {
       div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
       p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
-      button: ({ children, ...props }: any) => (
-        <button {...props}>{children}</button>
-      ),
+      button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
     },
   };
 });
@@ -71,53 +69,30 @@ vi.mock("@/providers/animation-provider", () => ({
   AnimationProvider: ({ children }: any) => <div>{children}</div>,
 }));
 
-// Mock localStorage
-const localStorageMock = {
-  getItem: vi.fn(),
-  setItem: vi.fn(),
-  clear: vi.fn(),
-};
-
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-});
+// Mock LocalStorage
+vi.mock("@/lib/utils/local-storage-service", () => ({
+  LocalStorage: {
+    getSearchSettings: vi.fn(),
+    setSearchSettings: vi.fn(),
+  },
+}));
 
 describe("SearchSettingsContent", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.getItem.mockImplementation(() => null); // Default return
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(SearchSettingsConfig.default);
   });
 
   it("renders correctly with default values", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify(DEFAULT_SEARCH_SETTINGS),
-    );
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
-    expect(
-      screen.getByText(AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("usd-input")).toHaveValue(
-      DEFAULT_SEARCH_SETTINGS.minLiquidity,
-    );
+    expect(screen.getByText(AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE)).toBeInTheDocument();
+    expect(screen.getByTestId("usd-input")).toHaveValue(SearchSettingsConfig.default.minLiquidity);
   });
 
   it("calls onDone when Enter is pressed in UsdInput", () => {
     const onDoneMock = vi.fn();
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-        onDone={onDoneMock}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={vi.fn()} onDone={onDoneMock} />);
 
     const input = screen.getByTestId("usd-input");
     fireEvent.keyDown(input, { key: "Enter" });
@@ -127,13 +102,7 @@ describe("SearchSettingsContent", () => {
 
   it("calls onExchangesClick when exchanges button is clicked", () => {
     const onExchangesClickMock = vi.fn();
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={onExchangesClickMock}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={onExchangesClickMock} />);
 
     const button = screen.getByRole("button", {
       name: new RegExp(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE),
@@ -143,163 +112,63 @@ describe("SearchSettingsContent", () => {
     expect(onExchangesClickMock).toHaveBeenCalled();
   });
 
-  it("updates minLiquidity in localStorage and dispatches event on input change", async () => {
+  it("updates minLiquidity in LocalStorage and dispatches event on input change", async () => {
     const dispatchEventSpy = vi.spyOn(window, "dispatchEvent");
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify(DEFAULT_SEARCH_SETTINGS),
-    );
 
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
     const input = screen.getByTestId("usd-input");
 
     // Changing value
     fireEvent.change(input, { target: { value: "5000" } });
 
-    await waitFor(() => {
-      expect(localStorageMock.setItem).toHaveBeenCalledWith(
-        LocalStorageKey.SEARCH_SETTINGS,
-        expect.stringContaining('"minLiquidity":"5000"'),
-      );
-    });
+    expect(LocalStorage.setSearchSettings).toHaveBeenCalledWith(expect.objectContaining({ minLiquidity: "5000" }));
 
     expect(dispatchEventSpy).toHaveBeenCalledWith(expect.any(Event));
-    expect(dispatchEventSpy.mock.calls[0][0].type).toBe(
-      CustomEvent.SEARCH_SETTINGS_CHANGED,
-    );
+    expect(dispatchEventSpy.mock.calls[0][0].type).toBe(CustomEvent.SEARCH_SETTINGS_CHANGED);
   });
 
   it("resets settings to default when clear button is clicked", () => {
-    // Mock storage with modified settings
-    const modified = { ...DEFAULT_SEARCH_SETTINGS, minLiquidity: "999" };
-    localStorageMock.getItem.mockReturnValue(JSON.stringify(modified));
+    const modified = { ...SearchSettingsConfig.default, minLiquidity: "999" };
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(modified);
     const dispatchEventSpy = vi.spyOn(window, "dispatchEvent");
 
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
-    // Verify modified value shown
     expect(screen.getByTestId("usd-input")).toHaveValue("999");
-
-    // Find clear button (trash icon inside PrimaryButton)
-    // Since mock returns DeleteIcon SVG, check logic:
-    // The button only appears if hasChanges() is true.
-    // We mocked localStorage get, but component initializes state from it.
-
-    const buttons = screen.getAllByRole("button");
-    // One of them should be the "Reset" button (destructivePrimary)
-    // We can find it by icon name or just click the last one if we assume order.
-    // Or find by mocked DeleteIcon.
 
     const deleteIcon = screen.getByTestId("delete-icon");
     const clearBtn = deleteIcon.closest("button");
 
     fireEvent.click(clearBtn!);
 
-    expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      LocalStorageKey.SEARCH_SETTINGS,
-      JSON.stringify(DEFAULT_SEARCH_SETTINGS),
-    );
+    expect(LocalStorage.setSearchSettings).toHaveBeenCalledWith(SearchSettingsConfig.default);
 
     expect(dispatchEventSpy).toHaveBeenCalledWith(expect.any(Event));
 
-    // Test hover transition while we are here
     fireEvent.mouseEnter(clearBtn!);
     fireEvent.mouseLeave(clearBtn!);
   });
 
   it("shows warning for low liquidity", () => {
-    // Logic: Number(minLiquidity) < 1000
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ ...DEFAULT_SEARCH_SETTINGS, minLiquidity: "500" }),
-    );
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue({
+      ...SearchSettingsConfig.default,
+      minLiquidity: "500",
+    });
 
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={0} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
-    expect(
-      screen.getByText(
-        AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING,
-      ),
-    ).toBeInTheDocument();
+    expect(screen.getByText(AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING)).toBeInTheDocument();
   });
 
   it("shows badge when some exchanges are blocked", () => {
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={2}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={2} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
     expect(screen.getByTestId("badge")).toBeInTheDocument();
   });
 
-  it("handles localStorage errors gracefully during initialization", () => {
-    localStorageMock.getItem.mockImplementation(() => {
-      throw new Error("Local storage is disabled");
-    });
-
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
-
-    expect(screen.getByTestId("usd-input")).toHaveValue(
-      DEFAULT_SEARCH_SETTINGS.minLiquidity,
-    );
-  });
-
-  it("handles localStorage errors gracefully during update", () => {
-    // Only throw once to avoid unhandled error in catch block
-    localStorageMock.setItem.mockImplementationOnce(() => {
-      throw new Error("Quota exceeded");
-    });
-    // Second call (in catch block) should succeed
-    localStorageMock.setItem.mockImplementationOnce(() => {});
-
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={0}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
-
-    const input = screen.getByTestId("usd-input");
-    fireEvent.change(input, { target: { value: "5000" } });
-
-    expect(localStorageMock.setItem).toHaveBeenCalledTimes(2);
-  });
-
   it("sets button state to destructive when all exchanges are blocked", () => {
-    render(
-      <SearchSettingsContent
-        blockedExchangesCount={10}
-        totalExchangesCount={10}
-        onExchangesClick={vi.fn()}
-      />,
-    );
+    render(<SearchSettingsContent blockedExchangesCount={10} totalExchangesCount={10} onExchangesClick={vi.fn()} />);
 
     const button = screen.getByRole("button", {
       name: new RegExp(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE),

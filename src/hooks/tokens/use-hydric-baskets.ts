@@ -1,4 +1,4 @@
-import type { TokenBasket } from "@/core/types/token.types";
+import type { TokenBasket } from "@/core/types/asset.types";
 import { useHydric } from "@/providers/hydric-provider";
 import { useQuery } from "@tanstack/react-query";
 

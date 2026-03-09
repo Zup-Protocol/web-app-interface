@@ -1,14 +1,16 @@
 import { AppLanguages } from "@/lib/app-languages";
-import { LocalStorageKey } from "@/lib/local-storage-key";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { $currentLocale, defaultLocale, initLocale, setLocale } from "./i18n";
 
 describe("i18n store", () => {
   beforeEach(() => {
-    vi.stubGlobal("localStorage", {
-      getItem: vi.fn(),
-      setItem: vi.fn(),
-    });
+    vi.mock("@/lib/utils/local-storage-service", () => ({
+      LocalStorage: {
+        getLocale: vi.fn(),
+        setLocale: vi.fn(),
+      },
+    }));
     vi.stubGlobal("navigator", {
       language: "en-US",
     });
@@ -24,10 +26,7 @@ describe("i18n store", () => {
     setLocale({ locale: AppLanguages.SPANISH });
     expect($currentLocale.get()).toBe(AppLanguages.SPANISH);
     expect(document.documentElement.lang).toBe(AppLanguages.SPANISH);
-    expect(localStorage.setItem).toHaveBeenCalledWith(
-      LocalStorageKey.LOCALE,
-      AppLanguages.SPANISH,
-    );
+    expect(LocalStorage.setLocale).toHaveBeenCalledWith(AppLanguages.SPANISH);
   });
 
   it("handles system locale", () => {
@@ -52,13 +51,19 @@ describe("i18n store", () => {
   });
 
   it("inits from localStorage", () => {
-    vi.mocked(localStorage.getItem).mockReturnValue(AppLanguages.PORTUGUESE);
+    vi.mocked(LocalStorage.getLocale).mockReturnValue(AppLanguages.PORTUGUESE);
     initLocale();
     expect($currentLocale.get()).toBe(AppLanguages.PORTUGUESE);
   });
 
   it("inits default to system if no localStorage", () => {
-    vi.mocked(localStorage.getItem).mockReturnValue(null);
+    vi.mocked(LocalStorage.getLocale).mockReturnValue(AppLanguages.SYSTEM);
+    initLocale();
+    expect($currentLocale.get()).toBe(AppLanguages.SYSTEM);
+  });
+
+  it("inits to system if localStorage returns null", () => {
+    vi.mocked(LocalStorage.getLocale).mockReturnValue(null as any);
     initLocale();
     expect($currentLocale.get()).toBe(AppLanguages.SYSTEM);
   });

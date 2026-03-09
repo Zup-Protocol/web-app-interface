@@ -1,18 +1,12 @@
 import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
-import { LocalStorageKey } from "@/lib/local-storage-key";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
 import { atom } from "nanostores";
 
 export const defaultLocale: AppLanguages = AppLanguagesUtils.defaultLanguage;
 export const supportedAppLanguages: AppLanguages[] = AppLanguagesUtils.values;
 export const $currentLocale = atom<AppLanguages>(defaultLocale);
 
-export function setLocale({
-  locale,
-  persist = true,
-}: {
-  locale: AppLanguages;
-  persist?: boolean;
-}) {
+export function setLocale({ locale, persist = true }: { locale: AppLanguages; persist?: boolean }) {
   $currentLocale.set(locale);
 
   let langAttribute = locale;
@@ -32,23 +26,17 @@ export function setLocale({
   }
 
   document.documentElement.lang = langAttribute;
-  if (persist && typeof localStorage !== "undefined") {
-    localStorage.setItem(LocalStorageKey.LOCALE, locale);
+  if (persist) {
+    LocalStorage.setLocale(locale);
   }
 }
 
 export function initLocale() {
-  if (typeof localStorage === "undefined") return;
-
-  const savedLocale = localStorage.getItem(
-    LocalStorageKey.LOCALE,
-  ) as AppLanguages;
+  const savedLocale = LocalStorage.getLocale();
 
   if (savedLocale && supportedAppLanguages.includes(savedLocale)) {
     setLocale({ locale: savedLocale, persist: false });
-
-    return;
+  } else {
+    setLocale({ locale: AppLanguages.SYSTEM, persist: false });
   }
-
-  setLocale({ locale: AppLanguages.SYSTEM, persist: false });
 }

@@ -1,329 +1,268 @@
-import { DEFAULT_SEARCH_SETTINGS } from "@/core/DTOs/search-settings-config.dto";
+import { SearchSettingsConfig } from "@/core/search-settings-config";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import { LocalStorageKey } from "@/lib/local-storage-key";
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { CustomEvent } from "@/lib/custom-event";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { NewPositionForm } from "./new-position-form";
 
-// Mock dependencies
-vi.mock("@/components/ui/popover", () => {
-  const React = require("react");
-  return {
-    Popover: ({ children, open, onOpenChange }: any) => (
-      <div data-testid="popover-root" data-open={open}>
-        {React.Children.map(children, (child: any) => {
-          if (child?.type?.name === "PopoverTrigger" || child?.props?.asChild) {
-            return React.cloneElement(child, {
-              onClick: () => onOpenChange?.(!open),
-            });
-          }
-          return child;
-        })}
-      </div>
-    ),
-    PopoverTrigger: ({ children, onClick }: any) => (
-      <div data-testid="popover-trigger" onClick={onClick}>
-        {children}
-      </div>
-    ),
-    PopoverContent: ({ children, onInteractOutside }: any) => (
-      <div data-testid="popover-content">
-        {children}
-        <button
-          data-testid="popover-interact-outside"
-          onClick={(e) => onInteractOutside?.(e)}
-        >
-          Interact Outside
-        </button>
-      </div>
-    ),
-  };
-});
+// ─── Module Mocks ────────────────────────────────────────────────────────────
+
+const mockNavigateToPoolsSearch = vi.fn();
+vi.mock("@/lib/zup-navigator", () => ({
+  useZupNavigator: () => ({ navigateToPoolsSearch: mockNavigateToPoolsSearch }),
+}));
+
+vi.mock("@/hooks/use-network", () => ({
+  useAppNetwork: () => ({ network: "ethereum" }),
+}));
 
 vi.mock("@/hooks/use-translation", () => ({
-  useTranslation: () => ({
-    translate: (key: string) => key,
-  }),
+  useTranslation: () => ({ translate: (key: string) => key }),
 }));
 
-vi.mock("framer-motion", async () => {
-  const actual = await vi.importActual("framer-motion");
-  return {
-    ...actual,
-    AnimatePresence: ({ children }: any) => <>{children}</>,
-    motion: {
-      div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
-      p: ({ children, ...props }: any) => <p {...props}>{children}</p>,
-      button: ({ children, ...props }: any) => (
-        <button {...props}>{children}</button>
-      ),
-      img: ({ src, alt, ...props }: any) => (
-        <img src={src} alt={alt} {...props} />
-      ),
-      svg: ({ children, ...props }: any) => <svg {...props}>{children}</svg>,
-      path: ({ children, ...props }: any) => <path {...props}>{children}</path>,
-    },
-  };
-});
-
-vi.mock("@/components/modals/exchanges-filter-modal", () => ({
-  ExchangesFilterModal: ({ isOpen, onClose }: any) =>
-    isOpen ? (
-      <div role="dialog">
-        ExchangesFilterModal <button onClick={onClose}>Close</button>
-      </div>
-    ) : null,
-}));
-
-vi.mock("@/components/new-position/search-settings-content", () => ({
-  SearchSettingsContent: ({ onDone, onExchangesClick }: any) => {
-    return (
-      <div data-testid="search-settings-content">
-        SearchSettingsContent
-        <button onClick={onDone}>Done</button>
-        <button onClick={onExchangesClick}>Exchanges</button>
-      </div>
-    );
-  },
-}));
-
-vi.mock("@/components/asset-selector/asset-selector-button", () => ({
-  AssetSelectorButton: ({ label }: any) => <button>{label}</button>,
-}));
-
-vi.mock("@/components/ui/buttons/primary-button", () => ({
-  PrimaryButton: (props: any) => <button {...props}>{props.children}</button>,
-}));
-
-vi.mock("@/components/ui/icons/cog", () => {
-  const React = require("react");
-  return {
-    CogIcon: React.forwardRef(({ className }: any, ref: any) => {
-      React.useImperativeHandle(ref, () => ({
-        startAnimation: vi.fn(),
-        stopAnimation: vi.fn(),
-      }));
-      return <svg className={className} data-testid="cog-icon" />;
-    }),
-  };
-});
-
-vi.mock("@/components/ui/icons/sparkles", () => {
-  const React = require("react");
-  return {
-    SparklesIcon: React.forwardRef((props: any, ref: any) => {
-      React.useImperativeHandle(ref, () => ({
-        startAnimation: vi.fn(),
-        stopAnimation: vi.fn(),
-      }));
-      return <svg data-testid="sparkles-icon" {...props} />;
-    }),
-  };
-});
-
-vi.mock("@/providers/animation-provider", () => ({
-  AnimationProvider: ({ children }: any) => <div>{children}</div>,
+vi.mock("@/lib/utils/local-storage-service", () => ({
+  LocalStorage: { getSearchSettings: vi.fn() },
 }));
 
 vi.mock("@/providers/app-providers", () => ({
   AppProviders: ({ children }: any) => <>{children}</>,
 }));
 
-vi.mock("../ui/badge", () => ({
-  Badge: () => <div data-testid="badge" />,
-}));
-vi.mock("@radix-ui/react-tooltip", () => ({
-  TooltipProvider: ({ children }: any) => <>{children}</>,
-  Tooltip: ({ children }: any) => <>{children}</>,
-  TooltipTrigger: ({ children }: any) => <>{children}</>,
-  TooltipContent: ({ children }: any) => <div role="tooltip">{children}</div>,
+// framer-motion — export both `m` and `motion` via Proxy so child components work
+vi.mock("framer-motion", () => {
+  const el = (tag: string) =>
+    // eslint-disable-next-line react/display-name
+    React.forwardRef((props: any, ref: any) => React.createElement(tag, { ...props, ref }));
+  const motion = new Proxy({} as any, { get: (_t, p: string) => el(p) });
+  return {
+    motion,
+    m: motion,
+    AnimatePresence: ({ children }: any) => <>{children}</>,
+  };
+});
+
+// Popover — toggle open state via trigger click, render content when open
+vi.mock("@/components/ui/popover", () => ({
+  Popover: ({ children, open, onOpenChange }: any) => {
+    const kids = React.Children.toArray(children) as React.ReactElement[];
+    const trigger = kids.find((c) => c.props?.asChild);
+    const content = kids.find((c) => !c.props?.asChild);
+    return (
+      <div>
+        <div onClick={() => onOpenChange?.(!open)}>{trigger}</div>
+        {open && <div data-testid="popover-content">{content}</div>}
+      </div>
+    );
+  },
+  PopoverTrigger: ({ children }: any) => <>{children}</>,
+  PopoverContent: ({ children }: any) => <>{children}</>,
 }));
 
-// Mock localStorage
-const localStorageMock = (() => {
-  let store: Record<string, string> = {};
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value.toString();
-    }),
-    clear: vi.fn(() => {
-      store = {};
-    }),
-  };
-})();
-Object.defineProperty(window, "localStorage", {
-  value: localStorageMock,
-});
+// AssetSelectorView — functional mock that fires all callbacks
+vi.mock("@/components/asset-selector/view/asset-selector-view", () => ({
+  AssetSelectorView: ({ onSelect, onDeselect, onBack, side, currentSelectedAsset }: any) => (
+    <div data-testid="asset-selector-view">
+      <span data-testid="selector-side">{side}</span>
+      {currentSelectedAsset && <span data-testid="current-selected">{currentSelectedAsset.symbol}</span>}
+      <button data-testid="btn-select" onClick={() => onSelect({ id: "eth", symbol: "ETH", type: "single-chain-token" })}>
+        Select
+      </button>
+      <button data-testid="btn-deselect" onClick={() => onDeselect()}>
+        Deselect
+      </button>
+      <button data-testid="btn-back" onClick={() => onBack()}>
+        Back
+      </button>
+    </div>
+  ),
+}));
+
+// AssetSelectorButton — shows label or selected asset symbol
+vi.mock("@/components/asset-selector/asset-selector-button", () => ({
+  AssetSelectorButton: ({ label, onClick, selectedAsset, "data-testid": testId }: any) => (
+    <button onClick={onClick} data-testid={testId ?? "asset-btn"}>
+      {selectedAsset ? selectedAsset.symbol : label}
+    </button>
+  ),
+}));
+
+vi.mock("@/components/new-position/search-settings-content", () => ({
+  SearchSettingsContent: ({ onDone, onExchangesClick }: any) => (
+    <div data-testid="search-settings-content">
+      <button data-testid="btn-done" onClick={onDone}>
+        Done
+      </button>
+      <button data-testid="btn-exchanges" onClick={onExchangesClick}>
+        Exchanges
+      </button>
+    </div>
+  ),
+}));
+
+vi.mock("@/components/modals/exchanges-filter-modal", () => ({
+  ExchangesFilterModal: ({ isOpen, onClose }: any) =>
+    isOpen ? (
+      <div role="dialog">
+        <button onClick={onClose}>Close Modal</button>
+      </div>
+    ) : null,
+}));
+
+vi.mock("@/components/ui/icons/cog", () => ({
+  CogIcon: React.forwardRef(({ className }: any, ref: any) => {
+    React.useImperativeHandle(ref, () => ({ startAnimation: vi.fn(), stopAnimation: vi.fn() }));
+    return <svg data-testid="cog-icon" className={className} />;
+  }),
+}));
+
+vi.mock("@/components/ui/icons/sparkles", () => ({
+  SparklesIcon: React.forwardRef((props: any, ref: any) => {
+    React.useImperativeHandle(ref, () => ({ startAnimation: vi.fn(), stopAnimation: vi.fn() }));
+    return <svg data-testid="sparkles-icon" {...props} />;
+  }),
+}));
+
+vi.mock("@/components/ui/buttons/primary-button", () => ({
+  PrimaryButton: ({ children, onClick, onMouseEnter, onMouseLeave, ...rest }: any) => (
+    <button data-testid="primary-button" onClick={onClick} onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave} {...rest}>
+      {children}
+    </button>
+  ),
+}));
+
+vi.mock("../ui/badge", () => ({ Badge: () => <div data-testid="badge" /> }));
+
+// ─── Tests ───────────────────────────────────────────────────────────────────
 
 describe("NewPositionForm", () => {
   beforeEach(() => {
-    localStorageMock.clear();
     vi.clearAllMocks();
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(SearchSettingsConfig.default);
+    window.scrollTo = vi.fn();
   });
 
-  it("renders correctly", () => {
+  it("renders title and settings button", () => {
     render(<NewPositionForm />);
-    expect(
-      screen.getByText(AppTranslationsKeys.NEW_POSITION_TITLE),
-    ).toBeInTheDocument();
-  });
-
-  it("opens search settings popover on trigger click", async () => {
-    render(<NewPositionForm />);
-    const trigger = screen.getByLabelText("Search Settings");
-
-    fireEvent.click(trigger);
-
-    expect(screen.getByTestId("search-settings-content")).toBeInTheDocument();
-  });
-
-  it("changes icon color and shows badge when settings are modified", async () => {
-    const modifiedSettings = {
-      ...DEFAULT_SEARCH_SETTINGS,
-      minLiquidity: "5000",
-    };
-    localStorageMock.getItem.mockImplementation((key) => {
-      if (key === LocalStorageKey.SEARCH_SETTINGS) {
-        return JSON.stringify(modifiedSettings);
-      }
-      return null;
-    });
-
-    render(<NewPositionForm />);
-
-    await waitFor(() => {
-      const icon = screen.getByTestId("cog-icon");
-      expect(icon).toHaveClass("text-orange-400");
-    });
-  });
-
-  it("changes icon color and shows badge when blocked exchanges exist", async () => {
-    const modifiedSettings = {
-      ...DEFAULT_SEARCH_SETTINGS,
-      blockedExchanges: ["some-dex"],
-    };
-    localStorageMock.getItem.mockImplementation((key) => {
-      if (key === LocalStorageKey.SEARCH_SETTINGS) {
-        return JSON.stringify(modifiedSettings);
-      }
-      return null;
-    });
-
-    render(<NewPositionForm />);
-
-    await waitFor(() => {
-      const icon = screen.getByTestId("cog-icon");
-      expect(icon).toHaveClass("text-orange-400");
-    });
-  });
-
-  it("triggers icon animations on hover", () => {
-    render(<NewPositionForm />);
-
-    const searchSettingsBtn = screen.getByLabelText("Search Settings");
-    fireEvent.mouseEnter(searchSettingsBtn);
-    fireEvent.mouseLeave(searchSettingsBtn);
-
-    const searchBtn = screen.getByRole("button", {
-      name: new RegExp(AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON),
-    });
-    fireEvent.pointerEnter(searchBtn);
-    fireEvent.pointerLeave(searchBtn);
-  });
-
-  it("handles localStorage errors gracefully", async () => {
-    localStorageMock.getItem.mockImplementation(() => {
-      throw new Error("Local Storage Error");
-    });
-
-    render(<NewPositionForm />);
-
-    await waitFor(() => {
-      const icon = screen.getByTestId("cog-icon");
-      expect(icon).not.toHaveClass("text-orange-400");
-    });
-  });
-
-  it("prevents popover closing when exchanges modal is open", async () => {
-    render(<NewPositionForm />);
-
-    const trigger = screen.getByLabelText("Search Settings");
-    fireEvent.click(trigger);
-
-    const exchangesBtn = screen.getByText("Exchanges");
-    fireEvent.click(exchangesBtn);
-
-    expect(screen.getByRole("dialog")).toBeInTheDocument();
-
-    const interactOutsideBtn = screen.getByTestId("popover-interact-outside");
-
-    const event = new MouseEvent("click", {
-      bubbles: true,
-      cancelable: true,
-    });
-    const preventDefaultSpy = vi.spyOn(event, "preventDefault");
-
-    fireEvent(interactOutsideBtn, event);
-
-    await waitFor(() => {
-      expect(preventDefaultSpy).toHaveBeenCalled();
-    });
-  });
-
-  it("handles missing blockedExchanges in search settings", async () => {
-    localStorageMock.getItem.mockImplementation((key) => {
-      if (key === LocalStorageKey.SEARCH_SETTINGS) {
-        // Return config with no blockedExchanges property
-        return JSON.stringify({ minLiquidity: "0" });
-      }
-      return null;
-    });
-
-    render(<NewPositionForm />);
-
-    // Should not crash and should show 0 blocked
+    expect(screen.getByText(AppTranslationsKeys.NEW_POSITION_TITLE)).toBeInTheDocument();
     expect(screen.getByLabelText("Search Settings")).toBeInTheDocument();
+    expect(screen.getByTestId("cog-icon")).toBeInTheDocument();
   });
 
-  it("handles onDone and onClose callbacks", async () => {
+  it("opens asset selector for side A and selects an asset", async () => {
     render(<NewPositionForm />);
 
-    // Open Popover
+    // Click the Asset A button (first unselected)
+    fireEvent.click(screen.getByTestId("asset-selector-A"));
+    expect(screen.getByTestId("asset-selector-view")).toBeInTheDocument();
+    expect(screen.getByTestId("selector-side")).toHaveTextContent("A");
+
+    // Select an asset
+    fireEvent.click(screen.getByTestId("btn-select"));
+
+    // Selector closes, Asset A shows symbol
+    await waitFor(() => expect(screen.queryByTestId("asset-selector-view")).not.toBeInTheDocument());
+    expect(screen.getByTestId("asset-selector-A")).toHaveTextContent("ETH");
+  });
+
+  it("opens asset selector for side B and selects an asset", async () => {
+    render(<NewPositionForm />);
+
+    fireEvent.click(screen.getByTestId("asset-selector-B"));
+    expect(screen.getByTestId("selector-side")).toHaveTextContent("B");
+
+    fireEvent.click(screen.getByTestId("btn-select"));
+    await waitFor(() => expect(screen.queryByTestId("asset-selector-view")).not.toBeInTheDocument());
+    expect(screen.getByTestId("asset-selector-B")).toHaveTextContent("ETH");
+  });
+
+  it("deselects an asset via the selector view", async () => {
+    render(<NewPositionForm />);
+
+    // Select A first
+    fireEvent.click(screen.getByTestId("asset-selector-A"));
+    fireEvent.click(screen.getByTestId("btn-select"));
+    await waitFor(() => expect(screen.getByTestId("asset-selector-A")).toHaveTextContent("ETH"));
+
+    // Re-open and deselect
+    fireEvent.click(screen.getByTestId("asset-selector-A"));
+    expect(screen.getByTestId("current-selected")).toHaveTextContent("ETH");
+    fireEvent.click(screen.getByTestId("btn-deselect"));
+
+    await waitFor(() => expect(screen.getByTestId("asset-selector-A")).toHaveTextContent(AppTranslationsKeys.NEW_POSITION_SELECT_ASSET));
+  });
+
+  it("closes the selector via the Back button", async () => {
+    render(<NewPositionForm />);
+
+    fireEvent.click(screen.getByTestId("asset-selector-A"));
+    expect(screen.getByTestId("asset-selector-view")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("btn-back"));
+    await waitFor(() => expect(screen.queryByTestId("asset-selector-view")).not.toBeInTheDocument());
+  });
+
+  it("enables search button and navigates when both assets are selected", async () => {
+    render(<NewPositionForm />);
+
+    fireEvent.click(screen.getByTestId("asset-selector-A"));
+    fireEvent.click(screen.getByTestId("btn-select"));
+    await waitFor(() => expect(screen.queryByTestId("asset-selector-view")).not.toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId("asset-selector-B"));
+    fireEvent.click(screen.getByTestId("btn-select"));
+    await waitFor(() => expect(screen.queryByTestId("asset-selector-view")).not.toBeInTheDocument());
+
+    const searchBtn = screen.getByTestId("primary-button");
+    fireEvent.mouseEnter(searchBtn);
+    fireEvent.mouseLeave(searchBtn);
+    fireEvent.click(searchBtn);
+
+    expect(mockNavigateToPoolsSearch).toHaveBeenCalledWith(expect.objectContaining({ assetA: expect.anything(), assetB: expect.anything() }));
+  });
+
+  it("highlights settings icon when search settings differ from defaults", async () => {
+    render(<NewPositionForm />);
+
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue({
+      ...SearchSettingsConfig.default,
+      minLiquidity: "9999",
+    });
+
+    act(() => {
+      window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
+    });
+
+    await waitFor(() => expect(screen.getByTestId("cog-icon")).toHaveClass("text-orange-400"));
+  });
+
+  it("opens settings popover, opens exchanges modal, then closes both", async () => {
+    render(<NewPositionForm />);
+
+    // Open popover via settings button
     fireEvent.click(screen.getByLabelText("Search Settings"));
     expect(screen.getByTestId("search-settings-content")).toBeInTheDocument();
 
-    // Test onDone (closes popover)
-    const doneBtn = screen.getByText("Done");
-    fireEvent.click(doneBtn);
-    // Our mock Popover handles onOpenChange
-    expect(screen.getByTestId("popover-root")).toHaveAttribute(
-      "data-open",
-      "false",
-    );
-
-    // Open again to click Exchanges
-    fireEvent.click(screen.getByLabelText("Search Settings"));
-    fireEvent.click(screen.getByText("Exchanges"));
+    // Open exchanges modal
+    fireEvent.click(screen.getByTestId("btn-exchanges"));
     expect(screen.getByRole("dialog")).toBeInTheDocument();
 
-    // Test onClose (closes modal)
-    fireEvent.click(screen.getByText("Close"));
+    // Close exchanges modal
+    fireEvent.click(screen.getByText("Close Modal"));
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+
+    // Close popover via Done
+    fireEvent.click(screen.getByTestId("btn-done"));
+    expect(screen.queryByTestId("search-settings-content")).not.toBeInTheDocument();
   });
 
-  it("allows interaction outside when modal is closed", async () => {
+  it("handles settings icon hover animations", () => {
     render(<NewPositionForm />);
-    fireEvent.click(screen.getByLabelText("Search Settings"));
 
-    const interactOutsideBtn = screen.getByTestId("popover-interact-outside");
-    const event = new MouseEvent("mousedown", {
-      bubbles: true,
-      cancelable: true,
-    });
-    const preventDefaultSpy = vi.spyOn(event, "preventDefault");
-
-    fireEvent(interactOutsideBtn, event);
-    expect(preventDefaultSpy).not.toHaveBeenCalled();
+    const settingsBtn = screen.getByLabelText("Search Settings");
+    fireEvent.pointerEnter(settingsBtn);
+    fireEvent.pointerLeave(settingsBtn);
+    // No error = pass; icon ref startAnimation/stopAnimation called
   });
 });

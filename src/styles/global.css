@@ -61,8 +61,6 @@
 :root {
   --background: hsl(250 100% 99.5%);
   --foreground: hsl(250 18% 7%);
-  --card: hsl(250 100% 96%);
-  --card-foreground: hsl(250 18% 7%);
   --primary: hsl(250 100% 67.1%);
   --primary-hover: hsl(250 100% 67.1% / 0.8);
 
@@ -105,6 +103,12 @@
 
   /* Text */
   --mutated-text: hsl(240, 10%, 60%);
+
+  /* Components */
+  --card: hsl(250 100% 99.5%);
+  --card-foreground: hsl(250 18% 7%);
+  --card-border-color: var(--divider);
+  --page-counter-background: hsl(240 20% 93%);
 }
 
 .dark {
@@ -138,6 +142,12 @@
 
   /* Text */
   --mutated-text: hsl(240, 3%, 40%);
+
+  /* Components */
+  --card: hsl(240 5% 8%);
+  --card-foreground: hsl(240 9% 85%);
+  --card-border-color: var(--card);
+  --page-counter-background: hsl(240 6% 8%);
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -145,15 +155,13 @@
 @theme inline {
   --font-sans: "SNPro", ui-sans-serif, system-ui, sans-serif;
   --text-base: 1rem;
-  --color-destructive-secondary-button-background: var(
-    --destructive-secondary-button-background
-  );
-  --color-destructive-secondary-button-background-hover: var(
-    --destructive-secondary-button-background-hover
-  );
+  --color-page-counter-background: var(--page-counter-background);
+  --color-destructive-secondary-button-background: var(--destructive-secondary-button-background);
+  --color-destructive-secondary-button-background-hover: var(--destructive-secondary-button-background-hover);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
+  --color-card-border: var(--card-border-color);
   --color-card-foreground: var(--card-foreground);
   --color-modal: var(--modal);
   --color-modal-foreground: var(--modal-foreground);
@@ -167,19 +175,11 @@
   --color-mutated-text: var(--mutated-text);
   --color-disabled-button-background: var(--disabled-button-background);
   --color-disabled-button-foreground: var(--disabled-button-foreground);
-  --color-secondary-button-background-hover: var(
-    --secondary-button-background-hover
-  );
-  --color-tertiary-button-on-modal-background: var(
-    --tertiary-button-on-modal-background
-  );
-  --color-tertiary-button-on-modal-background-hover: var(
-    --tertiary-button-on-modal-background-hover
-  );
+  --color-secondary-button-background-hover: var(--secondary-button-background-hover);
+  --color-tertiary-button-on-modal-background: var(--tertiary-button-on-modal-background);
+  --color-tertiary-button-on-modal-background-hover: var(--tertiary-button-on-modal-background-hover);
   --color-tertiary-button-background: var(--tertiary-button-background);
-  --color-tertiary-button-background-hover: var(
-    --tertiary-button-background-hover
-  );
+  --color-tertiary-button-background-hover: var(--tertiary-button-background-hover);
   --color-outline-button-border: var(--outline-button-border);
   --color-primary-foreground: var(--primary-foreground);
   --color-secondary: var(--secondary);
@@ -199,6 +199,16 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --animate-shimmer: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% center;
+  }
+  to {
+    background-position: -200% center;
+  }
 }
 
 @layer base {
@@ -267,40 +277,16 @@
 
 @keyframes clouds-wipe-out {
   0% {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
     -webkit-mask-size: 300% 100%;
     mask-size: 300% 100%;
     -webkit-mask-position: 100% 0;
     mask-position: 100% 0;
   }
   100% {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
     -webkit-mask-size: 300% 100%;
     mask-size: 300% 100%;
     -webkit-mask-position: 0% 0;
@@ -310,40 +296,16 @@
 
 @keyframes clouds-wipe-in {
   0% {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
     -webkit-mask-size: 300% 100%;
     mask-size: 300% 100%;
     -webkit-mask-position: 100% 0;
     mask-position: 100% 0;
   }
   100% {
-    -webkit-mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
-    mask-image: linear-gradient(
-      to right,
-      transparent,
-      white 20%,
-      white 80%,
-      transparent
-    );
+    -webkit-mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
+    mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent);
     -webkit-mask-size: 300% 100%;
     mask-size: 300% 100%;
     -webkit-mask-position: 0% 0;
@@ -367,36 +329,21 @@
 /* Clouds Passage - Optimized Monochrome Sweep */
 ::view-transition-new(cloud-layer-1) {
   animation: 1.6s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
-  background: linear-gradient(
-    to right,
-    transparent 20%,
-    rgba(59, 130, 246, 0.3) 50%,
-    transparent 80%
-  );
+  background: linear-gradient(to right, transparent 20%, rgba(59, 130, 246, 0.3) 50%, transparent 80%);
   background-size: 300% 100%;
 }
 
 ::view-transition-new(cloud-layer-2) {
   animation: 1.7s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
   animation-delay: 0.05s;
-  background: linear-gradient(
-    to right,
-    transparent 10%,
-    #3b82f6 50%,
-    transparent 90%
-  );
+  background: linear-gradient(to right, transparent 10%, #3b82f6 50%, transparent 90%);
   background-size: 300% 100%;
 }
 
 ::view-transition-new(cloud-layer-3) {
   animation: 1.8s cubic-bezier(0.4, 0, 0.2, 1) clouds-blue-sweep forwards;
   animation-delay: 0.1s;
-  background: linear-gradient(
-    to right,
-    transparent 20%,
-    rgba(59, 130, 246, 0.5) 50%,
-    transparent 80%
-  );
+  background: linear-gradient(to right, transparent 20%, rgba(59, 130, 246, 0.5) 50%, transparent 80%);
   background-size: 300% 100%;
 }
 

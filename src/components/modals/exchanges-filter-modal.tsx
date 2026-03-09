@@ -1,16 +1,10 @@
 "use client";
 
-import type { SearchSettingsConfig } from "@/core/DTOs/search-settings-config.dto";
-import { DEFAULT_SEARCH_SETTINGS } from "@/core/DTOs/search-settings-config.dto";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { CustomEvent } from "@/lib/custom-event";
-import { LocalStorageKey } from "@/lib/local-storage-key";
-import {
-    SupportedDexs,
-    SupportedDexsUtils,
-    type DexMetadata,
-} from "@/lib/supported-dexs";
+import { SupportedDexs, SupportedDexsUtils, type DexMetadata } from "@/lib/supported-dexs";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
 import { AnimatePresence, m, type Variants } from "framer-motion";
 import { Ban, CheckIcon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -28,16 +22,9 @@ interface ExchangesFilterModalProps {
   onClose: () => void;
 }
 
-export function ExchangesFilterModal({
-  isOpen,
-  onClose,
-}: ExchangesFilterModalProps) {
+export function ExchangesFilterModal({ isOpen, onClose }: ExchangesFilterModalProps) {
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={onClose}
-      className="h-[90vh] sm:h-[600px] sm:max-h-[85vh] sm:max-w-[700px]"
-    >
+    <Modal isOpen={isOpen} onClose={onClose} className="h-[90vh] sm:h-[600px] sm:max-h-[85vh] sm:max-w-[700px]">
       {isOpen && <ExchangesFilterContent onClose={onClose} />}
     </Modal>
   );
@@ -46,9 +33,7 @@ export function ExchangesFilterModal({
 function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
   const { translate } = useTranslation();
   const [search, setSearch] = useState("");
-  const [viewFilter, setViewFilter] = useState<"all" | "enabled" | "disabled">(
-    "all",
-  );
+  const [viewFilter, setViewFilter] = useState<"all" | "enabled" | "disabled">("all");
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -56,33 +41,18 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
   }, [search]);
 
   const [blockedExchanges, setBlockedExchanges] = useState<string[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      const stored = localStorage.getItem(LocalStorageKey.SEARCH_SETTINGS);
-      if (stored) {
-        const config = JSON.parse(stored) as SearchSettingsConfig;
-        return config.blockedExchanges || [];
-      }
-    } catch {}
-    return [];
+    const config = LocalStorage.getSearchSettings();
+    return config.blockedExchanges || [];
   });
 
-  const allDexs = useMemo(
-    () =>
-      Object.entries(SupportedDexsUtils.metadata).sort(([, a], [, b]) =>
-        a.name.localeCompare(b.name),
-      ),
-    [],
-  );
+  const allDexs = useMemo(() => Object.entries(SupportedDexsUtils.metadata).sort(([, a], [, b]) => a.name.localeCompare(b.name)), []);
 
   const filteredDexs = useMemo(() => {
     let result = allDexs;
 
     if (search) {
       const lowerSearch = search.toLowerCase();
-      result = result.filter(([, meta]) =>
-        meta.name.toLowerCase().includes(lowerSearch),
-      );
+      result = result.filter(([, meta]) => meta.name.toLowerCase().includes(lowerSearch));
     }
 
     if (viewFilter === "enabled") {
@@ -97,20 +67,11 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
   const updateSettings = (newBlocked: string[]) => {
     setBlockedExchanges(newBlocked);
 
-    try {
-      const stored = localStorage.getItem(LocalStorageKey.SEARCH_SETTINGS);
-      const config: SearchSettingsConfig = stored
-        ? JSON.parse(stored)
-        : { ...DEFAULT_SEARCH_SETTINGS };
+    const config = LocalStorage.getSearchSettings();
+    config.blockedExchanges = newBlocked;
 
-      config.blockedExchanges = newBlocked;
-
-      localStorage.setItem(
-        LocalStorageKey.SEARCH_SETTINGS,
-        JSON.stringify(config),
-      );
-      window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
-    } catch {}
+    LocalStorage.setSearchSettings(config);
+    window.dispatchEvent(new Event(CustomEvent.SEARCH_SETTINGS_CHANGED));
   };
 
   const handleToggle = (dexId: string) => {
@@ -126,20 +87,14 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
   };
 
   const visibleDexIds = filteredDexs.map(([id]) => id);
-  const isAllVisibleSelected =
-    visibleDexIds.length > 0 &&
-    visibleDexIds.every((id) => !blockedExchanges.includes(id));
+  const isAllVisibleSelected = visibleDexIds.length > 0 && visibleDexIds.every((id) => !blockedExchanges.includes(id));
 
   const handleToggleAll = () => {
     if (isAllVisibleSelected) {
-      const uniqueNewBlocked = Array.from(
-        new Set([...blockedExchanges, ...visibleDexIds]),
-      );
+      const uniqueNewBlocked = Array.from(new Set([...blockedExchanges, ...visibleDexIds]));
       updateSettings(uniqueNewBlocked);
     } else {
-      const newBlocked = blockedExchanges.filter(
-        (id) => !visibleDexIds.includes(id),
-      );
+      const newBlocked = blockedExchanges.filter((id) => !visibleDexIds.includes(id));
       updateSettings(newBlocked);
     }
   };
@@ -178,10 +133,7 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
         <CloseButton onClick={onClose} aria-label="Close" />
       </div>
 
-      <div
-        ref={listRef}
-        className="h-full overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-modal/80"
-      >
+      <div ref={listRef} className="h-full overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] bg-modal/80">
         {/* Header */}
         <div className="sticky top-0 z-20 flex flex-col gap-1.5 pt-8 px-6 pb-6 bg-modal/80 backdrop-blur-md w-full">
           <h2 className="text-xl font-bold text-foreground flex items-center">
@@ -193,9 +145,7 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
 
           <div className="mt-4 flex flex-col gap-3">
             <SearchInput
-              placeholder={translate(
-                AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER,
-              )}
+              placeholder={translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER)}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onClear={() => setSearch("")}
@@ -212,14 +162,8 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
                   {
                     label: (
                       <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                        <span className="leading-none">
-                          {translate(
-                            AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL,
-                          )}
-                        </span>
-                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">
-                          {allDexs.length}
-                        </span>
+                        <span className="leading-none">{translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL)}</span>
+                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">{allDexs.length}</span>
                       </div>
                     ),
                     value: "all",
@@ -227,14 +171,8 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
                   {
                     label: (
                       <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                        <span className="leading-none">
-                          {translate(
-                            AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED,
-                          )}
-                        </span>
-                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">
-                          {allDexs.length - blockedExchanges.length}
-                        </span>
+                        <span className="leading-none">{translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED)}</span>
+                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">{allDexs.length - blockedExchanges.length}</span>
                       </div>
                     ),
                     value: "enabled",
@@ -242,14 +180,8 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
                   {
                     label: (
                       <div className="flex items-center justify-center gap-1.5 whitespace-nowrap">
-                        <span className="leading-none">
-                          {translate(
-                            AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED,
-                          )}
-                        </span>
-                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">
-                          {blockedExchanges.length}
-                        </span>
+                        <span className="leading-none">{translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED)}</span>
+                        <span className="opacity-70 text-[11px] font-bold leading-none translate-y-[0.5px]">{blockedExchanges.length}</span>
                       </div>
                     ),
                     value: "disabled",
@@ -263,19 +195,9 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
                   onClick={handleToggleAll}
                   className="flex items-center justify-center gap-2 px-4 h-[40px] w-full min-[500px]:w-auto rounded-[12px] bg-tertiary-button-on-modal-background hover:bg-tertiary-button-on-modal-background-hover text-foreground outline-none group cursor-pointer whitespace-nowrap transition-colors"
                 >
-                  {isAllVisibleSelected ? (
-                    <XIcon size={14} className="text-foreground" />
-                  ) : (
-                    <CheckIcon size={14} className="text-foreground" />
-                  )}
+                  {isAllVisibleSelected ? <XIcon size={14} className="text-foreground" /> : <CheckIcon size={14} className="text-foreground" />}
                   <span className="font-medium">
-                    {isAllVisibleSelected
-                      ? translate(
-                          AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL,
-                        )
-                      : translate(
-                          AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL,
-                        )}
+                    {isAllVisibleSelected ? translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL) : translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL)}
                   </span>
                 </button>
               </ScaleClickAnimation>
@@ -284,9 +206,7 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="px-6 pt-2 pb-12">
-          <p className="text text-mutated-text mb-6">
-            {translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION)}
-          </p>
+          <p className="text text-mutated-text mb-6">{translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION)}</p>
           <AnimatePresence mode="wait" initial={false}>
             {filteredDexs.length > 0 ? (
               <m.div
@@ -299,13 +219,7 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {filteredDexs.map(([dex, meta]) => (
-                    <RenderItem
-                      key={dex}
-                      meta={meta}
-                      isChecked={isChecked(dex)}
-                      onToggle={() => handleToggle(dex as SupportedDexs)}
-                      variants={itemVariants}
-                    />
+                    <RenderItem key={dex} meta={meta} isChecked={isChecked(dex)} onToggle={() => handleToggle(dex as SupportedDexs)} variants={itemVariants} />
                   ))}
                 </AnimatePresence>
               </m.div>
@@ -323,12 +237,8 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
               >
                 <StateDisplay
                   image={searchingBox}
-                  title={translate(
-                    AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE,
-                  )}
-                  description={translate(
-                    AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION,
-                  )}
+                  title={translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE)}
+                  description={translate(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION)}
                 />
               </m.div>
             )}
@@ -339,17 +249,7 @@ function ExchangesFilterContent({ onClose }: { onClose: () => void }) {
   );
 }
 
-function RenderItem({
-  meta,
-  isChecked,
-  onToggle,
-  variants,
-}: {
-  meta: DexMetadata;
-  isChecked: boolean;
-  onToggle: () => void;
-  variants: Variants;
-}) {
+function RenderItem({ meta, isChecked, onToggle, variants }: { meta: DexMetadata; isChecked: boolean; onToggle: () => void; variants: Variants }) {
   return (
     <m.div
       layout="position"
@@ -402,16 +302,10 @@ function RenderItem({
         </div>
 
         <div className="w-22 h-22 rounded-full overflow-hidden flex items-center justify-center shrink-0">
-          <img
-            src={meta.logo}
-            alt={meta.name}
-            className="w-full h-full object-cover"
-          />
+          <img src={meta.logo} alt={meta.name} className="w-full h-full object-cover" />
         </div>
         <div className="h-10 flex items-center justify-center w-full">
-          <span className="text-sm font-semibold text-center line-clamp-2 leading-tight">
-            {meta.name}
-          </span>
+          <span className="text-sm font-semibold text-center line-clamp-2 leading-tight">{meta.name}</span>
         </div>
       </ScaleClickAnimation>
     </m.div>

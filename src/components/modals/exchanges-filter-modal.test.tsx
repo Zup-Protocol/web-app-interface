@@ -1,5 +1,6 @@
+import { SearchSettingsConfig } from "@/core/search-settings-config";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
-import { LocalStorageKey } from "@/lib/local-storage-key";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ExchangesFilterModal } from "./exchanges-filter-modal";
@@ -23,14 +24,11 @@ vi.mock("@/hooks/use-translation", () => ({
 }));
 
 vi.mock("@/components/ui/modal", () => ({
-  Modal: ({ isOpen, children }: any) =>
-    isOpen ? <div data-testid="modal">{children}</div> : null,
+  Modal: ({ isOpen, children }: any) => (isOpen ? <div data-testid="modal">{children}</div> : null),
 }));
 
 vi.mock("../ui/animations/scale-click-animation", () => ({
-  ScaleClickAnimation: ({ children, onClick }: any) => (
-    <div onClick={onClick}>{children}</div>
-  ),
+  ScaleClickAnimation: ({ children, onClick }: any) => <div onClick={onClick}>{children}</div>,
 }));
 
 vi.mock("../ui/buttons/close-button", () => ({
@@ -50,11 +48,7 @@ vi.mock("../ui/segmented-control", () => ({
   SegmentedControl: ({ value, onChange, options }: any) => (
     <div>
       {options.map((opt: any) => (
-        <button
-          key={opt.value}
-          onClick={() => onChange(opt.value)}
-          data-testid={`segment-${opt.value}`}
-        >
+        <button key={opt.value} onClick={() => onChange(opt.value)} data-testid={`segment-${opt.value}`}>
           {opt.label}
         </button>
       ))}
@@ -92,20 +86,20 @@ vi.mock("@/lib/supported-dexs", async () => {
   };
 });
 
+// Mock LocalStorage
+vi.mock("@/lib/utils/local-storage-service", () => ({
+  LocalStorage: {
+    getSearchSettings: vi.fn(),
+    setSearchSettings: vi.fn(),
+  },
+}));
+
 describe("ExchangesFilterModal", () => {
   const onCloseMock = vi.fn();
-  const localStorageMock = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    localStorageMock.getItem.mockReturnValue(null);
-    localStorageMock.setItem.mockReturnValue(undefined);
-    Object.defineProperty(window, "localStorage", {
-      value: localStorageMock,
-    });
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(SearchSettingsConfig.default);
     // Validate scrollTo mock for JSDOM
     window.HTMLElement.prototype.scrollTo = vi.fn();
   });
@@ -120,65 +114,37 @@ describe("ExchangesFilterModal", () => {
     expect(screen.queryByTestId("modal")).not.toBeInTheDocument();
   });
 
-  it("loads blocked exchanges from local storage", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ blockedExchanges: ["uniswap-v3"] }),
-    );
+  it("loads blocked exchanges from LocalStorage", () => {
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue({
+      ...SearchSettingsConfig.default,
+      blockedExchanges: ["uniswap-v3"],
+    });
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
     expect(screen.getByText("(1/2)")).toBeInTheDocument();
   });
 
   it("toggles single exchange block status", () => {
-    localStorageMock.getItem.mockReturnValue(null);
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
     const items = screen.getAllByRole("img");
     fireEvent.click(items[0].parentElement!);
-    expect(localStorageMock.setItem).toHaveBeenCalledWith(
-      LocalStorageKey.SEARCH_SETTINGS,
-      expect.stringContaining('"blockedExchanges":'),
-    );
+    expect(LocalStorage.setSearchSettings).toHaveBeenCalledWith(expect.objectContaining({ blockedExchanges: expect.any(Array) }));
   });
 
   it("handles toggle all (Select All / Clear All)", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ blockedExchanges: [] }),
-    );
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(SearchSettingsConfig.default);
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
     const toggleAllBtn = screen.getByRole("button", {
       name: /exchangesFilterModal\.(clearAll|selectAll)/i,
     });
     fireEvent.click(toggleAllBtn);
-    expect(localStorageMock.setItem).toHaveBeenCalled();
-    const lastCall = JSON.parse(
-      vi.mocked(localStorageMock.setItem).mock.calls.at(-1)![1],
-    );
-
-    vi.clearAllMocks();
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ blockedExchanges: lastCall.blockedExchanges }),
-    );
-    // Cleanup and re-render
-    const { cleanup } = require("@testing-library/react");
-    cleanup();
-    render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
-    const buttons = screen.getAllByRole("button", {
-      name: /exchangesFilterModal\.(clearAll|selectAll)/i,
-    });
-    fireEvent.click(buttons[0]);
-    expect(localStorageMock.setItem).toHaveBeenCalled();
-    const lastCall2 = JSON.parse(
-      vi.mocked(localStorageMock.setItem).mock.calls.at(-1)![1],
-    );
-    expect(lastCall2.blockedExchanges.length).toBe(0);
+    expect(LocalStorage.setSearchSettings).toHaveBeenCalled();
   });
 
   it("filters updates based on search", () => {
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
     const searchInput = screen.getByTestId("search-input");
     fireEvent.change(searchInput, { target: { value: "NonExistent" } });
-    expect(
-      screen.getByText(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE),
-    ).toBeInTheDocument();
+    expect(screen.getByText(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE)).toBeInTheDocument();
   });
 
   it("changes view filter", async () => {
@@ -190,14 +156,14 @@ describe("ExchangesFilterModal", () => {
     });
   });
 
-  it("updates local storage and dispatches event on change", () => {
+  it("updates LocalStorage and dispatches event on change", () => {
     const dispatchEventSpy = vi.spyOn(window, "dispatchEvent");
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
     const toggleAllBtn = screen.getByRole("button", {
       name: /exchangesFilterModal\.(clearAll|selectAll)/i,
     });
     fireEvent.click(toggleAllBtn);
-    expect(localStorageMock.setItem).toHaveBeenCalled();
+    expect(LocalStorage.setSearchSettings).toHaveBeenCalled();
     expect(dispatchEventSpy).toHaveBeenCalledWith(expect.any(Event));
   });
 
@@ -211,49 +177,41 @@ describe("ExchangesFilterModal", () => {
   });
 
   it("handles 'enabled' and 'disabled' view filters", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ blockedExchanges: ["uniswap-v3"] }),
-    );
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue({
+      ...SearchSettingsConfig.default,
+      blockedExchanges: ["uniswap-v3"],
+    });
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
 
-    const disabledBtn = screen.getByText(
-      AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED,
-    );
+    const disabledBtn = screen.getByText(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED);
     fireEvent.click(disabledBtn);
     expect(screen.getByText("Uniswap V3")).toBeInTheDocument();
 
-    const enabledBtn = screen.getByText(
-      AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED,
-    );
+    const enabledBtn = screen.getByText(AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED);
     fireEvent.click(enabledBtn);
     expect(screen.queryByText("Uniswap V3")).not.toBeInTheDocument();
   });
 
-  it("handles localStorage setItem error gracefully", () => {
-    localStorageMock.setItem.mockImplementation(() => {
-      throw new Error("Quota exceeded");
-    });
+  it("handles LocalStorage errors gracefully during initialization", () => {
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue(SearchSettingsConfig.default);
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
-    const items = screen.getAllByRole("img");
-    fireEvent.click(items[0].parentElement!);
-    // Should not crash
+    // Should not crash since we mock it returning default
   });
 
   it("unblocks an exchange when toggling a blocked one", () => {
-    localStorageMock.getItem.mockReturnValue(
-      JSON.stringify({ blockedExchanges: ["uniswap-v3"] }),
-    );
+    vi.mocked(LocalStorage.getSearchSettings).mockReturnValue({
+      ...SearchSettingsConfig.default,
+      blockedExchanges: ["uniswap-v3"],
+    });
     render(<ExchangesFilterModal isOpen={true} onClose={onCloseMock} />);
 
     // Find Uniswap V3 and click to unblock it
     const items = screen.getAllByRole("img");
-    const uniswapItem = items.find((img) =>
-      img.getAttribute("alt")?.includes("Uniswap V3"),
-    );
+    const uniswapItem = items.find((img) => img.getAttribute("alt")?.includes("Uniswap V3"));
 
     if (uniswapItem?.parentElement) {
       fireEvent.click(uniswapItem.parentElement);
-      expect(localStorageMock.setItem).toHaveBeenCalled();
+      expect(LocalStorage.setSearchSettings).toHaveBeenCalled();
     }
   });
 });

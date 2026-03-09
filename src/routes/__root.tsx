@@ -8,15 +8,13 @@ export const Route = createRootRoute({
   component: RootComponent,
 });
 
-function RootComponent() {
+export function RootComponent() {
   return (
     <React.Fragment>
       <LocaleInitializer />
       <Header />
       <Outlet />
-      {import.meta.env.DEV && (
-        <TanStackRouterDevtools position="bottom-right" />
-      )}
+      {import.meta.env.DEV && <TanStackRouterDevtools position="bottom-right" />}
     </React.Fragment>
   );
 }

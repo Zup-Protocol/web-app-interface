@@ -1,11 +1,5 @@
-import type {
-  MultiChainTokenMetadata,
-  BlockchainAddress as SDKBlockchainAddress,
-  TokenBasket as SDKTokenBasket,
-  SingleChainTokenMetadata,
-} from "@hydric/gateway";
-
-export type ChainId = number;
+import type { MultiChainTokenMetadata, BlockchainAddress as SDKBlockchainAddress, TokenBasket as SDKTokenBasket, SingleChainTokenMetadata } from "@hydric/gateway";
+import { IBasketUrlParam, IMultiChainTokenUrlParam, ISingleChainTokenUrlParam } from "../interfaces/asset-url-param.interface";
 
 export type BlockchainAddress = SDKBlockchainAddress;
 
@@ -22,5 +16,7 @@ export interface TokenBasket extends SDKTokenBasket {
 }
 
 export type SelectableAsset = SingleChainToken | MultiChainToken | TokenBasket;
+
+export type AssetUrlParam = IBasketUrlParam | IMultiChainTokenUrlParam | ISingleChainTokenUrlParam;
 
 export type AssetSelectorSide = "A" | "B";

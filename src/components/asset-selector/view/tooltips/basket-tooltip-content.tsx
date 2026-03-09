@@ -2,7 +2,7 @@
 
 import { AssetLogo } from "@/components/ui/asset-logo";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
-import type { TokenBasket } from "@/core/types/token.types";
+import type { TokenBasket } from "@/core/types/asset.types";
 import { AddressFormatter } from "@/lib/address-formatter";
 import { AppNetworksUtils } from "@/lib/app-networks";
 import { motion } from "framer-motion";
@@ -10,31 +10,13 @@ import { ExternalLink } from "lucide-react";
 import * as React from "react";
 import { AssetTooltipContent } from "./asset-tooltip-content";
 
-export function BasketTooltipContent({
-  basket,
-  onClose,
-}: {
-  basket: TokenBasket;
-  onClose?: () => void;
-}) {
+export function BasketTooltipContent({ basket, onClose }: { basket: TokenBasket; onClose?: () => void }) {
   const parentRef = React.useRef<HTMLDivElement>(null);
 
-  const sortedTokens = React.useMemo(
-    () =>
-      [...basket.tokens].sort(
-        (a, b) =>
-          a.symbol.localeCompare(b.symbol) || a.name.localeCompare(b.name),
-      ),
-    [basket.tokens],
-  );
+  const sortedTokens = React.useMemo(() => [...basket.tokens].sort((a, b) => a.symbol.localeCompare(b.symbol) || a.name.localeCompare(b.name)), [basket.tokens]);
 
   return (
-    <AssetTooltipContent
-      title={basket.name}
-      description={basket.description}
-      onClose={onClose}
-      containerRef={parentRef}
-    >
+    <AssetTooltipContent title={basket.name} description={basket.description} onClose={onClose} containerRef={parentRef}>
       <VirtualizedList
         items={sortedTokens}
         parentRef={parentRef}
@@ -42,9 +24,7 @@ export function BasketTooltipContent({
         forceInternalScroll
         className="relative w-full"
         renderItem={(token, index, virtualItem) => {
-          const networkValue = AppNetworksUtils.values.find(
-            (n) => AppNetworksUtils.wagmiNetwork[n]?.id === token.chainId,
-          );
+          const networkValue = AppNetworksUtils.values.find((n) => AppNetworksUtils.wagmiNetwork[n]?.id === token.chainId);
 
           if (networkValue === undefined) return null;
 
@@ -68,46 +48,25 @@ export function BasketTooltipContent({
             >
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="relative w-8 h-8 shrink-0">
-                  <AssetLogo
-                    url={token.logoUrl}
-                    symbol={token.symbol}
-                    size={32}
-                  />
+                  <AssetLogo url={token.logoUrl} symbol={token.symbol} size={32} />
                   <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full bg-background border border-background shadow-xs flex items-center justify-center overflow-hidden z-10">
-                    <img
-                      src={lightNetworkSrc}
-                      alt={networkName}
-                      className="w-full h-full object-cover dark:hidden"
-                    />
-                    <img
-                      src={darkNetworkSrc}
-                      alt={networkName}
-                      className="w-full h-full object-cover hidden dark:block"
-                    />
+                    <img src={lightNetworkSrc} alt={networkName} className="w-full h-full object-cover dark:hidden" />
+                    <img src={darkNetworkSrc} alt={networkName} className="w-full h-full object-cover hidden dark:block" />
                   </div>
                 </div>
 
                 <div className="flex flex-col min-w-0 flex-1">
-                  <span className="text-base font-semibold text-foreground leading-tight truncate group-hover:text-primary transition-colors">
-                    {token.symbol}
-                  </span>
-                  <span className="text-sm text-mutated-text mt-0.5 truncate group-hover:text-primary transition-colors">
-                    {networkName}
-                  </span>
+                  <span className="text-base font-semibold text-foreground leading-tight truncate group-hover:text-primary transition-colors">{token.symbol}</span>
+                  <span className="text-sm text-mutated-text mt-0.5 truncate group-hover:text-primary transition-colors">{networkName}</span>
                 </div>
               </div>
 
               <div className="flex items-center gap-2 shrink-0">
                 <div className="relative">
-                  <span className="text-sm text-mutated-text group-hover:text-primary transition-colors">
-                    {AddressFormatter.truncateAddress(token.address)}
-                  </span>
+                  <span className="text-sm text-mutated-text group-hover:text-primary transition-colors">{AddressFormatter.truncateAddress(token.address)}</span>
                   <div className="absolute -bottom-0.5 left-0 w-full h-px bg-primary scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
                 </div>
-                <ExternalLink
-                  size={14}
-                  className="text-mutated-text/40 group-hover:text-primary transition-colors"
-                />
+                <ExternalLink size={14} className="text-mutated-text/40 group-hover:text-primary transition-colors" />
               </div>
             </motion.a>
           );

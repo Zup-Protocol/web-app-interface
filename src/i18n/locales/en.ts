@@ -8,11 +8,9 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE]: "Select Network",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION]:
     'Select your preferred network. Choose a specific chain to filter data, or select "All Networks" for a multi-chain overview',
-  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER]:
-    "Find a network",
+  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER]: "Find a network",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_TITLE]: "No networks found",
-  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION]:
-    "We couldn't find any network matching your search. Try adjusting your keywords.",
+  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION]: "We couldn't find any network matching your search. Try adjusting your keywords.",
   [AppTranslationsKeys.SETTINGS_THEME_TITLE]: "Theme Mode",
   [AppTranslationsKeys.SETTINGS_THEME_LIGHT]: "Light",
   [AppTranslationsKeys.SETTINGS_THEME_DARK]: "Dark",
@@ -27,8 +25,7 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.SETTINGS_LANGUAGE_SYSTEM]: "System",
 
   [AppTranslationsKeys.NEW_POSITION_TITLE]: "New Position",
-  [AppTranslationsKeys.NEW_POSITION_DESCRIPTION]:
-    "Pick the tokens you want to provide liquidity for. We'll hunt down the best pools across every exchange we support.",
+  [AppTranslationsKeys.NEW_POSITION_DESCRIPTION]: "Pick the tokens you want to provide liquidity for. We'll hunt down the best pools across every exchange we support.",
   [AppTranslationsKeys.NEW_POSITION_ASSET_A_LABEL]: "Asset A",
   [AppTranslationsKeys.NEW_POSITION_ASSET_B_LABEL]: "Asset B",
   [AppTranslationsKeys.NEW_POSITION_BASKET_LABEL]: "Basket",
@@ -36,47 +33,65 @@ export const en: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "Show me the money!",
   [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]: "Search Settings",
 
-  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]:
-    "Minimum Pool Liquidity",
-  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
-    "Pools with liquidity below this amount will be excluded from results.",
-  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
-    "Low liquidity can make yields look misleading, be careful out there",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]: "Minimum Pool Liquidity",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]: "Pools with liquidity below this amount will be excluded from results.",
+  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]: "Low liquidity can make yields look misleading, be careful out there",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE]: "Exchanges",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]:
-    "Search exchanges by name",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]: "Search exchanges by name",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL]: "Disable All",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL]: "Enable All",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL]: "All",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED]: "Enabled",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED]: "Disabled",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]:
-    "Don't want to see certain exchanges? Just turn them off here. They'll stay hidden until you enable them again.",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]:
-    "No exchanges found",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
-    "No exchanges match your filters. Try adjusting your search or checking a different category.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]: "Don't want to see certain exchanges? Just turn them off here. They'll stay hidden until you enable them again.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]: "No exchanges found",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]: "No exchanges match your filters. Try adjusting your search or checking a different category.",
   [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_PLACEHOLDER]: "Search asset",
   [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_RESULTS_TITLE]: "Search Results",
   [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_TITLE]: "No assets found",
-  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION]:
-    'We couldn\'t find any results for "{query}". Try searching for something else.',
+  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION]: 'We couldn\'t find any results for "{query}". Try searching for something else.',
   [AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE]: "Token baskets",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE]: "Tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS]: "{count} tokens",
-  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORK]:
-    "{count} network",
-  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS]:
-    "{count} networks",
-  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK]:
-    "{count} network",
-  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]:
-    "{count} networks",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORK]: "{count} network",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS]: "{count} networks",
+  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK]: "{count} network",
+  [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]: "{count} networks",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE]: "Something went wrong",
-  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
-    "An error happened while trying to load the assets. Please try again.",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]: "An error happened while trying to load the assets. Please try again.",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Try again",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_ALL]: "All",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_TOKENS]: "Tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_BASKETS]: "Baskets",
+
+  [AppTranslationsKeys.POOLS_LIST_BACK_BUTTON]: "Select Pair",
+  [AppTranslationsKeys.POOLS_LIST_TITLE]: "Choose a pool for you",
+  [AppTranslationsKeys.POOLS_LIST_DESCRIPTION]: "Select the yield that most suits your needs and deposit to start earning",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_IN]: "Best yields in",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_TOOLTIP_P1]:
+    "Each time frame shows yields based on past performance. Shorter windows (24h, 7d) highlight recent trends for quick moves.",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_TOOLTIP_P2]: "Longer windows (30d, 90d) provide a broader view for mid to long-term decisions",
+
+  [AppTranslationsKeys.POOLS_LIST_FILTER_ACTIVE]: "Displaying only liquidity pools with more than {amount} Deposited.",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_SEARCH_ALL]: "Search all pools",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_INACTIVE]: "Showing all liquidity pools.",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_SEARCH_MORE]: "Search only with more than {amount} Deposited",
+
+  [AppTranslationsKeys.POOLS_CAROUSEL_LOADING]: "Getting pools for you...",
+  [AppTranslationsKeys.POOLS_CAROUSEL_ERROR_TITLE]: "Something went wrong",
+  [AppTranslationsKeys.POOLS_CAROUSEL_ERROR_DESCRIPTION]: "An error happened while trying to load the pools. Please try again.",
+  [AppTranslationsKeys.POOLS_CAROUSEL_TRY_AGAIN]: "Try again",
+  [AppTranslationsKeys.POOLS_CAROUSEL_EMPTY_TITLE]: "No pools found",
+  [AppTranslationsKeys.POOLS_CAROUSEL_EMPTY_DESCRIPTION]: "We couldn't find any liquidity pools matching your current search criteria.",
+  [AppTranslationsKeys.POOLS_CAROUSEL_LOADING_MORE]: "Loading more...",
+  [AppTranslationsKeys.POOLS_CAROUSEL_END_TITLE]: "No more pools found",
+  [AppTranslationsKeys.POOLS_CAROUSEL_END_DESCRIPTION]: "You've reached the end of the pools list for the selected assets and filters.",
+
+  [AppTranslationsKeys.POOL_CARD_YIELD_TOOLTIP_DESC]: "Estimated annual yield based on {period} of data from fees distributed to liquidity providers.",
+  [AppTranslationsKeys.POOL_CARD_N_YIELD]: "{label} Yield",
+  [AppTranslationsKeys.POOL_CARD_YEARLY_YIELD]: "Yearly Yield {period}",
+  [AppTranslationsKeys.POOL_CARD_DEPOSITED]: "Deposited",
+  [AppTranslationsKeys.POOL_CARD_PROTOCOL]: "Protocol",
+  [AppTranslationsKeys.POOL_CARD_BLOCKCHAIN]: "Blockchain",
+  [AppTranslationsKeys.POOL_CARD_DEPOSIT_BUTTON]: "Deposit",
 };

@@ -1,7 +1,4 @@
-import {
-  type MultiChainToken,
-  type SingleChainToken,
-} from "@/core/types/token.types";
+import { type MultiChainToken, type SingleChainToken } from "@/core/types/asset.types";
 import { useHydric } from "@/providers/hydric-provider";
 import { type HydricGateway } from "@hydric/gateway";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -15,19 +12,14 @@ const PAGE_SIZE = 50;
 
 type HydricChainId = Parameters<HydricGateway["singleChainTokens"]["list"]>[0];
 
-export function useHydricTokens({
-  chainId,
-  search,
-}: UseHydricTokensParams = {}) {
+export function useHydricTokens({ chainId, search }: UseHydricTokensParams = {}) {
   const hydric = useHydric();
 
   return useInfiniteQuery({
     queryKey: ["hydric-tokens", chainId, search],
     enabled: !!hydric,
     initialPageParam: undefined as string | undefined,
-    getNextPageParam: (lastPage: {
-      nextCursor?: string | null | Record<string, unknown>;
-    }) => {
+    getNextPageParam: (lastPage: { nextCursor?: string | null | Record<string, unknown> }) => {
       if (typeof lastPage.nextCursor === "string") return lastPage.nextCursor;
       return undefined;
     },
@@ -42,24 +34,18 @@ export function useHydricTokens({
       if (chainId) {
         // Single Chain Mode
         if (search) {
-          const result = await hydric.singleChainTokens.search(
-            chainId as HydricChainId,
-            {
-              search,
-              config,
-            },
-          );
+          const result = await hydric.singleChainTokens.search(chainId as HydricChainId, {
+            search,
+            config,
+          });
           return { ...result, nextCursor: result.nextCursor as string | null };
         }
-        const result = await hydric.singleChainTokens.list(
-          chainId as HydricChainId,
-          {
-            config: {
-              ...config,
-              orderBy: { field: "tvl", direction: "desc" },
-            },
+        const result = await hydric.singleChainTokens.list(chainId as HydricChainId, {
+          config: {
+            ...config,
+            orderBy: { field: "tvl", direction: "desc" },
           },
-        );
+        });
         return { ...result, nextCursor: result.nextCursor as string | null };
       }
 
@@ -85,20 +71,18 @@ export function useHydricTokens({
       // We know the shape, so we can cast `page` to any.
       const allTokens = data.pages.flatMap((page: any) => page.tokens);
 
-      const mappedTokens = allTokens.map(
-        (token: SingleChainToken | MultiChainToken) => {
-          if (chainId) {
-            return {
-              ...token,
-              type: "single-chain",
-            } as SingleChainToken;
-          }
+      const mappedTokens = allTokens.map((token: SingleChainToken | MultiChainToken) => {
+        if (chainId) {
           return {
             ...token,
-            type: "multi-chain",
-          } as MultiChainToken;
-        },
-      );
+            type: "single-chain",
+          } as SingleChainToken;
+        }
+        return {
+          ...token,
+          type: "multi-chain",
+        } as MultiChainToken;
+      });
 
       return {
         tokens: mappedTokens,

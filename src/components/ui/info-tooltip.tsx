@@ -3,9 +3,9 @@
 import { InfoIcon, type InfoIconHandle } from "@/components/ui/icons/info";
 import { Modal } from "@/components/ui/modal";
 import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
 } from "@/components/ui/popover";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { KeyboardEventKey } from "@/lib/keyboard-event-keys";
@@ -13,6 +13,11 @@ import { ScreenBreakpoints } from "@/lib/screen-breakpoints";
 import { cn } from "@/lib/utils";
 import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import * as React from "react";
+
+export interface InfoTooltipHandle {
+  open: () => void;
+  close: () => void;
+}
 
 interface InfoTooltipProps {
   content: React.ReactNode;
@@ -23,14 +28,20 @@ interface InfoTooltipProps {
   padding?: string | number;
 }
 
-export function InfoTooltip({
-  content,
-  size = 16,
-  className,
-  contentClassName,
-  showModalOnMobile = false,
-  padding = "10px",
-}: InfoTooltipProps) {
+export const InfoTooltip = React.forwardRef<
+  InfoTooltipHandle,
+  InfoTooltipProps
+>(function InfoTooltip(
+  {
+    content,
+    size = 16,
+    className,
+    contentClassName,
+    showModalOnMobile = false,
+    padding = 10,
+  },
+  ref,
+) {
   const isDesktop = useMediaQuery(ScreenBreakpoints.DESKTOP);
   const [isOpen, setIsOpen] = React.useState(false);
   const triggerRef = React.useRef<HTMLButtonElement>(null);
@@ -40,7 +51,6 @@ export function InfoTooltip({
 
   const openTooltip = () => {
     if (closeTimeoutRef.current) clearTimeout(closeTimeoutRef.current);
-
     setIsOpen(true);
     iconRef.current?.startAnimation();
   };
@@ -51,6 +61,11 @@ export function InfoTooltip({
       iconRef.current?.stopAnimation();
     }, 150);
   };
+
+  React.useImperativeHandle(ref, () => ({
+    open: openTooltip,
+    close: closeTooltip,
+  }));
 
   const trigger = (
     <button
@@ -98,7 +113,7 @@ export function InfoTooltip({
     }
 
     return (
-      <Popover>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
         <PopoverContent
           sideOffset={8}
@@ -160,7 +175,7 @@ export function InfoTooltip({
               padding,
             }}
             className={cn(
-              "z-200 overflow-hidden rounded-lg bg-modal text-sm text-modal-foreground outline-1 outline-modal-outline max-w-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 flex flex-col",
+              "z-200 overflow-hidden rounded-lg bg-modal text-base text-modal-foreground outline-1 outline-modal-outline max-w-xs animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 flex flex-col",
               contentClassName,
             )}
             onPointerDownOutside={(e) => {
@@ -187,4 +202,4 @@ export function InfoTooltip({
       </TooltipPrimitive.Root>
     </TooltipPrimitive.Provider>
   );
-}
+});

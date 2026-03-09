@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PositionsNewRouteImport } from './routes/positions/new'
+import { Route as PositionsNewPoolsRouteImport } from './routes/positions/new/pools'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,31 +23,39 @@ const PositionsNewRoute = PositionsNewRouteImport.update({
   path: '/positions/new',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PositionsNewPoolsRoute = PositionsNewPoolsRouteImport.update({
+  id: '/pools',
+  path: '/pools',
+  getParentRoute: () => PositionsNewRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/positions/new': typeof PositionsNewRoute
+  '/positions/new': typeof PositionsNewRouteWithChildren
+  '/positions/new/pools': typeof PositionsNewPoolsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/positions/new': typeof PositionsNewRoute
+  '/positions/new': typeof PositionsNewRouteWithChildren
+  '/positions/new/pools': typeof PositionsNewPoolsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/positions/new': typeof PositionsNewRoute
+  '/positions/new': typeof PositionsNewRouteWithChildren
+  '/positions/new/pools': typeof PositionsNewPoolsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/positions/new'
+  fullPaths: '/' | '/positions/new' | '/positions/new/pools'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/positions/new'
-  id: '__root__' | '/' | '/positions/new'
+  to: '/' | '/positions/new' | '/positions/new/pools'
+  id: '__root__' | '/' | '/positions/new' | '/positions/new/pools'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  PositionsNewRoute: typeof PositionsNewRoute
+  PositionsNewRoute: typeof PositionsNewRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +74,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PositionsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/positions/new/pools': {
+      id: '/positions/new/pools'
+      path: '/pools'
+      fullPath: '/positions/new/pools'
+      preLoaderRoute: typeof PositionsNewPoolsRouteImport
+      parentRoute: typeof PositionsNewRoute
+    }
   }
 }
 
+interface PositionsNewRouteChildren {
+  PositionsNewPoolsRoute: typeof PositionsNewPoolsRoute
+}
+
+const PositionsNewRouteChildren: PositionsNewRouteChildren = {
+  PositionsNewPoolsRoute: PositionsNewPoolsRoute,
+}
+
+const PositionsNewRouteWithChildren = PositionsNewRoute._addFileChildren(
+  PositionsNewRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  PositionsNewRoute: PositionsNewRoute,
+  PositionsNewRoute: PositionsNewRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -1,9 +1,0 @@
-export interface SearchSettingsConfig {
-  minLiquidity: string;
-  blockedExchanges?: string[];
-}
-
-export const DEFAULT_SEARCH_SETTINGS: SearchSettingsConfig = {
-  minLiquidity: "10000",
-  blockedExchanges: [],
-};

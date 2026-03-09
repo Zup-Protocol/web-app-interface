@@ -65,6 +65,8 @@ export interface PrimaryButtonProps
   alwaysIcon?: boolean;
   onRevealComplete?: () => void;
   state?: PrimaryButtonState;
+  layout?: boolean | "position" | "size" | "content";
+  disableInitialAnimation?: boolean;
 }
 
 const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
@@ -79,6 +81,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
       alwaysIcon = false,
       onRevealComplete,
       children,
+      disableInitialAnimation = false,
       ...props
     },
     ref,
@@ -126,7 +129,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
     const buttonContent = (
       <Comp
         {...props}
-        {...(asChild ? {} : { layout: true })}
+        {...(asChild ? {} : { layout: props.layout ?? true })}
         className={cn(
           buttonVariants({ variant: finalVariant, size, className }),
         )}
@@ -206,7 +209,7 @@ const PrimaryButton = React.forwardRef<HTMLButtonElement, PrimaryButtonProps>(
             <AnimatePresence mode="popLayout" initial={false}>
               <motion.span
                 key={typeof children === "string" ? children : "content"}
-                initial={{ opacity: 0, y: 5 }}
+                initial={disableInitialAnimation ? false : { opacity: 0, y: 5 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -5 }}
                 transition={{ duration: 0.15 }}

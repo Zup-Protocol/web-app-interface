@@ -1,4 +1,4 @@
-import type { TokenBasket } from "@/core/types/token.types";
+import type { TokenBasket } from "@/core/types/asset.types";
 import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { setLocale } from "@/stores/i18n";
 import { render, screen } from "@testing-library/react";
@@ -7,9 +7,7 @@ import { BasketListItem } from "./basket-list-item";
 
 // Mock dependencies
 vi.mock("framer-motion", () => {
-  const motionComponent = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  );
+  const motionComponent = ({ children, ...props }: any) => <div {...props}>{children}</div>;
   return {
     m: {
       button: ({ children, onClick, ...props }: any) => (
@@ -21,9 +19,7 @@ vi.mock("framer-motion", () => {
       svg: motionComponent,
       path: motionComponent,
       circle: motionComponent,
-      img: ({ src, alt, ...props }: any) => (
-        <img src={src} alt={alt} {...props} />
-      ),
+      img: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
     },
     AnimatePresence: ({ children }: any) => children,
   };
@@ -76,22 +72,16 @@ const mockBasket: TokenBasket = {
 
 describe("BasketListItem i18n", () => {
   it("replaces {count} placeholder in all supported languages for tokens and networks", () => {
-    const languages = AppLanguagesUtils.values.filter(
-      (lang) => lang !== AppLanguages.SYSTEM,
-    );
+    const languages = AppLanguagesUtils.values.filter((lang) => lang !== AppLanguages.SYSTEM);
 
     languages.forEach((lang) => {
       setLocale({ locale: lang, persist: false });
 
-      const { unmount } = render(
-        <BasketListItem basket={mockBasket} onClick={() => {}} />,
-      );
+      const { unmount } = render(<BasketListItem basket={mockBasket} onClick={() => {}} />);
 
       // Subtitle should contain "3" (tokens) and "2" (networks)
       // We look for the text content to ensure placeholders are gone
-      const subtitle = screen.getByText(
-        (content) => content.includes("3") && content.includes("2"),
-      );
+      const subtitle = screen.getByText((content) => content.includes("3") && content.includes("2"));
 
       expect(subtitle).toBeInTheDocument();
       expect(subtitle.textContent).not.toContain("{count}");
@@ -106,21 +96,15 @@ describe("BasketListItem i18n", () => {
       chainIds: [1],
     };
 
-    const languages = AppLanguagesUtils.values.filter(
-      (lang) => lang !== AppLanguages.SYSTEM,
-    );
+    const languages = AppLanguagesUtils.values.filter((lang) => lang !== AppLanguages.SYSTEM);
 
     languages.forEach((lang) => {
       setLocale({ locale: lang, persist: false });
 
-      const { unmount } = render(
-        <BasketListItem basket={singularBasket} onClick={() => {}} />,
-      );
+      const { unmount } = render(<BasketListItem basket={singularBasket} onClick={() => {}} />);
 
       // Subtitle should contain "3" (tokens) and "Ethereum" (network name for chainId 1)
-      const subtitle = screen.getByText(
-        (content) => content.includes("3") && content.includes("Ethereum"),
-      );
+      const subtitle = screen.getByText((content) => content.includes("3") && content.includes("Ethereum"));
 
       expect(subtitle).toBeInTheDocument();
       expect(subtitle.textContent).not.toContain("{count}");

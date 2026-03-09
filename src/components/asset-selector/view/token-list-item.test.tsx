@@ -1,7 +1,4 @@
-import type {
-  MultiChainToken,
-  SingleChainToken,
-} from "@/core/types/token.types";
+import type { MultiChainToken, SingleChainToken } from "@/core/types/asset.types";
 import { AppLanguages, AppLanguagesUtils } from "@/lib/app-languages";
 import { setLocale } from "@/stores/i18n";
 import { render, screen } from "@testing-library/react";
@@ -10,9 +7,7 @@ import { TokenListItem } from "./token-list-item";
 
 // Mock framer-motion to avoid animation issues in tests
 vi.mock("framer-motion", () => {
-  const motionComponent = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  );
+  const motionComponent = ({ children, ...props }: any) => <div {...props}>{children}</div>;
   return {
     m: {
       button: ({ children, onClick, ...props }: any) => (
@@ -24,9 +19,7 @@ vi.mock("framer-motion", () => {
       svg: motionComponent,
       path: motionComponent,
       circle: motionComponent,
-      img: ({ src, alt, ...props }: any) => (
-        <img src={src} alt={alt} {...props} />
-      ),
+      img: ({ src, alt, ...props }: any) => <img src={src} alt={alt} {...props} />,
     },
     AnimatePresence: ({ children }: any) => children,
   };
@@ -61,23 +54,15 @@ const mockMultiToken: MultiChainToken = {
 
 describe("TokenListItem i18n", () => {
   it("displays network name for single-chain tokens", () => {
-    const languages = AppLanguagesUtils.values.filter(
-      (lang) => lang !== AppLanguages.SYSTEM,
-    );
+    const languages = AppLanguagesUtils.values.filter((lang) => lang !== AppLanguages.SYSTEM);
 
     languages.forEach((lang) => {
       setLocale({ locale: lang, persist: false });
 
-      const { unmount } = render(
-        <TokenListItem token={mockSingleToken} onClick={() => {}} />,
-      );
+      const { unmount } = render(<TokenListItem token={mockSingleToken} onClick={() => {}} />);
 
       // Check description (subtitle) to ensure network name "Ethereum" is shown
-      const subtitle = screen.getByText(
-        (content) =>
-          content.includes(mockSingleToken.name) &&
-          content.includes("Ethereum"),
-      );
+      const subtitle = screen.getByText((content) => content.includes(mockSingleToken.name) && content.includes("Ethereum"));
 
       expect(subtitle).toBeInTheDocument();
       expect(subtitle.textContent).not.toContain("{count}");
@@ -87,22 +72,15 @@ describe("TokenListItem i18n", () => {
   });
 
   it("replaces {count} placeholder in all supported languages for multi-chain tokens", () => {
-    const languages = AppLanguagesUtils.values.filter(
-      (lang) => lang !== AppLanguages.SYSTEM,
-    );
+    const languages = AppLanguagesUtils.values.filter((lang) => lang !== AppLanguages.SYSTEM);
 
     languages.forEach((lang) => {
       setLocale({ locale: lang, persist: false });
 
-      const { unmount } = render(
-        <TokenListItem token={mockMultiToken} onClick={() => {}} />,
-      );
+      const { unmount } = render(<TokenListItem token={mockMultiToken} onClick={() => {}} />);
 
       // Check description (subtitle) to ensure {count} is replaced with "2"
-      const subtitle = screen.getByText(
-        (content) =>
-          content.includes(mockMultiToken.name) && content.includes("2"),
-      );
+      const subtitle = screen.getByText((content) => content.includes(mockMultiToken.name) && content.includes("2"));
 
       expect(subtitle).toBeInTheDocument();
       expect(subtitle.textContent).not.toContain("{count}");
@@ -115,28 +93,18 @@ describe("TokenListItem i18n", () => {
     const singleNetworkMultiToken: MultiChainToken = {
       ...mockMultiToken,
       chainIds: [1],
-      addresses: [
-        { chainId: 1, address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" },
-      ],
+      addresses: [{ chainId: 1, address: "0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48" }],
     };
 
-    const languages = AppLanguagesUtils.values.filter(
-      (lang) => lang !== AppLanguages.SYSTEM,
-    );
+    const languages = AppLanguagesUtils.values.filter((lang) => lang !== AppLanguages.SYSTEM);
 
     languages.forEach((lang) => {
       setLocale({ locale: lang, persist: false });
 
-      const { unmount } = render(
-        <TokenListItem token={singleNetworkMultiToken} onClick={() => {}} />,
-      );
+      const { unmount } = render(<TokenListItem token={singleNetworkMultiToken} onClick={() => {}} />);
 
       // Check description (subtitle) to ensure network name "Ethereum" is shown
-      const subtitle = screen.getByText(
-        (content) =>
-          content.includes(singleNetworkMultiToken.name) &&
-          content.includes("Ethereum"),
-      );
+      const subtitle = screen.getByText((content) => content.includes(singleNetworkMultiToken.name) && content.includes("Ethereum"));
 
       expect(subtitle).toBeInTheDocument();
       expect(subtitle.textContent).not.toContain("{count}");

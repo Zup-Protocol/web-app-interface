@@ -176,3 +176,17 @@ To keep the codebase clean and avoid signature bloat, follow these typing rules:
 | **Order Sensitivity**  | **Strict.** Swapping breaks logic.            | **Flexible.** Key-value mapping is order-independent. |
 | **Optionality**        | Requires passing `undefined` for middle args. | Simply omit the key from the object.                  |
 | **Self-Documentation** | Requires IDE hover or file navigation.        | Documentation is built directly into the call site.   |
+
+---
+
+## 8. General Object Type Safety & DTOs
+
+The application requires strict structural validation for any complex object passing across boundaries (e.g., URL parameters, Local Storage, API responses, or cross-feature state). **Never** rely on implicit any types, blind `JSON.parse` casting (`as MyType`), or raw unvalidated strings.
+
+- **The Prohibition:** Using `JSON.stringify()` to encode, and blindly using `JSON.parse()` to decode objects without structural validation creates fragile, untyped boundaries that break silently when data shapes change.
+- **The Standard (Zod & DTOs):** All complex objects must be structurally validated via a `Zod` schema. The associated TypeScript type for the object must be directly inferred from the schema (acting as a Data Transfer Object or DTO).
+- **Zod Boundaries:** Use Zod schemas to intercept and validate data at the edges (e.g., TanStack Router `validateSearch`, API fetch wrappers, LocalStorage parsers) before the data ever reaches the component runtime level.
+
+```
+
+```

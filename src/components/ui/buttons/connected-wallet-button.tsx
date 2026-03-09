@@ -1,6 +1,6 @@
 "use client";
 
-import { funEmoji } from "@dicebear/collection";
+import { notionistsNeutral as dicebear } from "@dicebear/collection";
 import { createAvatar } from "@dicebear/core";
 
 import { useTranslation } from "@/hooks/use-translation";
@@ -40,7 +40,7 @@ export function ConnectedWalletButton({
 
   const formattedAddress = AddressFormatter.truncateAddress(address || "");
 
-  const avatar = createAvatar(funEmoji, {
+  const avatar = createAvatar(dicebear, {
     seed: address || "default",
   });
   const svg = avatar.toString();
@@ -96,7 +96,7 @@ export function ConnectedWalletButton({
               transition={transition}
               className="flex items-center gap-2 whitespace-nowrap absolute"
             >
-              <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-[50%] ring-1 ring-white/10 shadow-sm">
+              <div className="flex items-center justify-center w-7 h-7 overflow-hidden rounded-[50%] ring-1 ring-white/10">
                 <img
                   src={`data:image/svg+xml;utf8,${encodeURIComponent(svg)}`}
                   className="w-full h-full scale-[1.2]"

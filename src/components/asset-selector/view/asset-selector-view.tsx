@@ -9,12 +9,9 @@ import { TabButton } from "@/components/ui/buttons/tab-button";
 import { TextButton } from "@/components/ui/buttons/text-button";
 import { RefreshIcon } from "@/components/ui/icons/refresh";
 import { Skeleton } from "@/components/ui/skeleton";
-import { StateDisplay } from "@/components/ui/state-display";
+import { StateDisplayCard } from "@/components/ui/state-display-card";
 import { VirtualizedList } from "@/components/ui/virtualized-list";
-import type {
-  AssetSelectorSide,
-  SelectableAsset,
-} from "@/core/types/token.types";
+import type { AssetSelectorSide, SelectableAsset } from "@/core/types/asset.types";
 import { useHydricBaskets } from "@/hooks/tokens/use-hydric-baskets";
 import { useHydricTokens } from "@/hooks/tokens/use-hydric-tokens";
 import { useMediaQuery } from "@/hooks/use-media-query";
@@ -65,22 +62,14 @@ enum AssetFilter {
   BASKETS = "BASKETS",
 }
 
-export function AssetSelectorView({
-  onBack,
-  onSelect,
-  onDeselect,
-  currentSelectedAsset,
-  otherSelectedAsset,
-}: AssetSelectorViewProps) {
+export function AssetSelectorView({ onBack, onSelect, onDeselect, currentSelectedAsset, otherSelectedAsset }: AssetSelectorViewProps) {
   const isMobile = useMediaQuery(ScreenBreakpoints.MOBILE);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [debouncedSearchQuery] = useDebounce(searchQuery, 300);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const parentRef = React.useRef<HTMLDivElement>(null);
   const { translate } = useTranslation();
-  const [activeFilter, setActiveFilter] = React.useState<AssetFilter>(
-    AssetFilter.ALL,
-  );
+  const [activeFilter, setActiveFilter] = React.useState<AssetFilter>(AssetFilter.ALL);
 
   const filterOptions = React.useMemo(
     () => [
@@ -106,8 +95,7 @@ export function AssetSelectorView({
   const { network } = useAppNetwork();
   const activeChainId = AppNetworksUtils.chainId[network];
 
-  const { data: baskets, isLoading: isLoadingBaskets } =
-    useHydricBaskets(activeChainId);
+  const { data: baskets, isLoading: isLoadingBaskets } = useHydricBaskets(activeChainId);
 
   const {
     data: tokensData,
@@ -164,16 +152,11 @@ export function AssetSelectorView({
   }, [baskets, debouncedSearchQuery, activeFilter]);
 
   const filteredTokens = React.useMemo(() => {
-    if (activeFilter === AssetFilter.BASKETS && !debouncedSearchQuery)
-      return [];
+    if (activeFilter === AssetFilter.BASKETS && !debouncedSearchQuery) return [];
     return allTokens;
   }, [allTokens, debouncedSearchQuery, activeFilter]);
 
-  const isEmpty =
-    !isLoadingTokens &&
-    !isLoadingBaskets &&
-    filteredTokens.length === 0 &&
-    (debouncedSearchQuery ? true : filteredBaskets.length === 0);
+  const isEmpty = !isLoadingTokens && !isLoadingBaskets && filteredTokens.length === 0 && (debouncedSearchQuery ? true : filteredBaskets.length === 0);
 
   return (
     <>
@@ -222,12 +205,7 @@ export function AssetSelectorView({
                 <LayoutGroup>
                   <div className="flex items-center gap-4">
                     {filterOptions.map(({ id, label, Icon }) => (
-                      <TabButton
-                        key={id}
-                        isActive={activeFilter === id}
-                        onClick={() => setActiveFilter(id)}
-                        activeColor="primary"
-                      >
+                      <TabButton key={id} isActive={activeFilter === id} onClick={() => setActiveFilter(id)} activeColor="primary">
                         <Icon size={18} />
                         {translate(label)}
                       </TabButton>
@@ -238,31 +216,17 @@ export function AssetSelectorView({
             )}
           </AnimatePresence>
 
-          <div
-            className={cn(
-              "w-full mx-auto px-6 sm:px-0 pt-0 pb-48",
-              "max-w-[500px]",
-            )}
-          >
+          <div className={cn("w-full mx-auto px-6 sm:px-0 pt-0 pb-48", "max-w-[500px]")}>
             <AnimatePresence mode="wait">
               {tokensError ? (
-                <div className="py-12 flex items-center justify-center">
-                  <StateDisplay
+                <div className="py-0 flex items-center justify-center">
+                  <StateDisplayCard
                     image={EscalerinDeadImage}
-                    title={translate(
-                      AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE,
-                    )}
-                    description={translate(
-                      AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION,
-                    )}
-                    button={
-                      <TextButton
-                        icon={<RefreshIcon />}
-                        onClick={() => refetchTokens()}
-                      >
-                        {translate(
-                          AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY,
-                        )}
+                    title={translate(AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE)}
+                    description={translate(AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION)}
+                    action={
+                      <TextButton icon={<RefreshIcon />} onClick={() => refetchTokens()}>
+                        {translate(AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY)}
                       </TextButton>
                     }
                   />
@@ -282,14 +246,8 @@ export function AssetSelectorView({
                       fetchNextPage();
                     }
                   }}
-                  isLoading={
-                    debouncedSearchQuery
-                      ? isLoadingTokens
-                      : isLoadingBaskets || isLoadingTokens
-                  }
-                  showBaskets={
-                    activeFilter !== AssetFilter.TOKENS && !debouncedSearchQuery
-                  }
+                  isLoading={debouncedSearchQuery ? isLoadingTokens : isLoadingBaskets || isLoadingTokens}
+                  showBaskets={activeFilter !== AssetFilter.TOKENS && !debouncedSearchQuery}
                   isFetchingMore={isFetchingNextPage}
                 />
               )}
@@ -377,13 +335,7 @@ function AssetListView({
   }, [baskets, tokens, translate, isLoading, showBaskets, isFetchingMore]);
 
   return (
-    <m.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      exit={{ opacity: 0, y: -10 }}
-      className="flex flex-col flex-1 min-h-0"
-    >
+    <m.div variants={containerVariants} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }} className="flex flex-col flex-1 min-h-0">
       <VirtualizedList
         items={items}
         parentRef={parentRef}
@@ -394,26 +346,11 @@ function AssetListView({
           return 108;
         }}
         renderItem={(item) => (
-          <m.div
-            initial="hidden"
-            animate="show"
-            variants={itemVariants}
-            className="h-full"
-          >
+          <m.div initial="hidden" animate="show" variants={itemVariants} className="h-full">
             {item.type === "header" ? (
-              <h3
-                className={cn(
-                  "font-semibold text-mutated-text pb-4 text-[16px]",
-                  item.isSecondary ? "pt-8" : "pt-4",
-                )}
-              >
-                {item.title}
-              </h3>
+              <h3 className={cn("font-semibold text-mutated-text pb-4 text-[16px]", item.isSecondary ? "pt-8" : "pt-4")}>{item.title}</h3>
             ) : item.type === "basket" ? (
-              <BasketListItem
-                basket={item.asset}
-                onClick={() => onSelect(item.asset)}
-              />
+              <BasketListItem basket={item.asset} onClick={() => onSelect(item.asset)} data-testid={`basket-${item.asset.id}`} />
             ) : item.type === "skeleton" ? (
               <div className="flex items-center gap-3 p-4">
                 <Skeleton className="w-10 h-10 rounded-full" />
@@ -423,11 +360,7 @@ function AssetListView({
                 </div>
               </div>
             ) : (
-              <TokenListItem
-                token={item.asset}
-                onClick={() => onSelect(item.asset)}
-                disabled={isAssetDisabled(item.asset)}
-              />
+              <TokenListItem token={item.asset} onClick={() => onSelect(item.asset)} disabled={isAssetDisabled(item.asset)} data-testid={`token-${item.asset.symbol}`} />
             )}
           </m.div>
         )}
@@ -440,20 +373,11 @@ function EmptySearchStateView({ searchQuery }: { searchQuery: string }) {
   const { translate } = useTranslation();
 
   return (
-    <m.div
-      key="empty-state"
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      exit={{ opacity: 0, y: -10 }}
-      className="py-12 flex items-center justify-center"
-    >
-      <StateDisplay
+    <m.div key="empty-state" variants={containerVariants} initial="hidden" animate="show" exit={{ opacity: 0, y: -10 }} className="py-12 flex items-center justify-center">
+      <StateDisplayCard
         image={UnknownTokenImage}
         title={translate(AppTranslationsKeys.ASSET_SELECTOR_EMPTY_TITLE)}
-        description={translate(
-          AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION,
-        ).replace("{query}", searchQuery)}
+        description={translate(AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION).replace("{query}", searchQuery)}
       />
     </m.div>
   );

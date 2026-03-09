@@ -5,22 +5,14 @@ import { AssetSelectorButton } from "@/components/asset-selector/asset-selector-
 import { ExchangesFilterModal } from "@/components/modals/exchanges-filter-modal";
 import { SearchSettingsContent } from "@/components/new-position/search-settings-content";
 import { type SlidersHorizontalIconHandle } from "@/components/ui/icons/sliders";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
-  DEFAULT_SEARCH_SETTINGS,
-  type SearchSettingsConfig,
-} from "@/core/DTOs/search-settings-config.dto";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useAppNetwork } from "@/hooks/use-network";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
+import { AppNetworksUtils } from "@/lib/app-networks";
 import { CustomEvent } from "@/lib/custom-event";
-import { LocalStorageKey } from "@/lib/local-storage-key";
 import { SupportedDexsUtils } from "@/lib/supported-dexs";
-import { cn } from "@/lib/utils";
-import { useNavigate } from "@tanstack/react-router";
+import { useZupNavigator } from "@/lib/zup-navigator";
 import { AnimatePresence, m } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { Badge } from "../ui/badge";
@@ -29,18 +21,20 @@ import { CogIcon } from "../ui/icons/cog";
 import { SparklesIcon, type SparklesIconHandle } from "../ui/icons/sparkles";
 
 import { AssetSelectorView } from "@/components/asset-selector/view/asset-selector-view";
-import {
-  type AssetSelectorSide,
-  type SelectableAsset,
-} from "@/core/types/token.types";
+import { ISearchSettingsConfig } from "@/core/interfaces/search-settings-config.interface";
+import { SearchSettingsConfig } from "@/core/search-settings-config";
+import { type AssetSelectorSide, type SelectableAsset } from "@/core/types/asset.types";
+import { cn } from "@/lib/utils";
+import { LocalStorage } from "@/lib/utils/local-storage-service";
 
 export function NewPositionForm() {
-  const navigate = useNavigate();
+  const navigator = useZupNavigator();
   const { translate } = useTranslation();
+  const { network } = useAppNetwork();
+  const activeChainId = AppNetworksUtils.chainId[network];
   const searchSettingsIconRef = useRef<SlidersHorizontalIconHandle>(null);
   const sparklesIconRef = useRef<SparklesIconHandle>(null);
-  const [hasSearchSettingsChanges, setHasSearchSettingsChanges] =
-    useState(false);
+  const [hasSearchSettingsChanges, setHasSearchSettingsChanges] = useState(false);
   const [blockedExchangesCount, setBlockedExchangesCount] = useState(0);
   const [isExchangesModalOpen, setIsExchangesModalOpen] = useState(false);
   const [isSearchSettingsOpen, setIsSearchSettingsOpen] = useState(false);
@@ -51,53 +45,30 @@ export function NewPositionForm() {
   }, []);
 
   const [isAssetSelectorOpen, setIsAssetSelectorOpen] = useState(false);
-  const [selectingSide, setSelectingSide] = useState<AssetSelectorSide | null>(
-    null,
-  );
+  const [selectingSide, setSelectingSide] = useState<AssetSelectorSide | null>(null);
   const [assetA, setAssetA] = useState<SelectableAsset | undefined>();
   const [assetB, setAssetB] = useState<SelectableAsset | undefined>();
 
   useEffect(() => {
     const checkSettings = () => {
-      try {
-        const stored = localStorage.getItem(LocalStorageKey.SEARCH_SETTINGS);
+      const currentConfig = LocalStorage.getSearchSettings();
 
-        if (!stored) {
-          setHasSearchSettingsChanges(false);
-          setBlockedExchangesCount(0);
-          return;
-        }
+      const hasChanges = (Object.keys(SearchSettingsConfig.default) as Array<keyof ISearchSettingsConfig>).some((key) => {
+        if (key === "blockedExchanges") return false;
+        return currentConfig[key] !== SearchSettingsConfig.default[key];
+      });
 
-        const currentConfig = JSON.parse(stored) as SearchSettingsConfig;
+      setHasSearchSettingsChanges(hasChanges);
 
-        const hasChanges = (
-          Object.keys(DEFAULT_SEARCH_SETTINGS) as Array<
-            keyof SearchSettingsConfig
-          >
-        ).some((key) => {
-          if (key === "blockedExchanges") return false;
-
-          return currentConfig[key] !== DEFAULT_SEARCH_SETTINGS[key];
-        });
-
-        setHasSearchSettingsChanges(hasChanges);
-
-        const blocked = currentConfig.blockedExchanges || [];
-        setBlockedExchangesCount(blocked.length);
-      } catch {
-        setHasSearchSettingsChanges(false);
-        setBlockedExchangesCount(0);
-      }
+      const blocked = currentConfig.blockedExchanges || [];
+      setBlockedExchangesCount(blocked.length);
     };
 
     checkSettings();
 
     window.addEventListener(CustomEvent.SEARCH_SETTINGS_CHANGED, checkSettings);
     return () => {
-      window.removeEventListener(
-        CustomEvent.SEARCH_SETTINGS_CHANGED,
-        checkSettings,
-      );
+      window.removeEventListener(CustomEvent.SEARCH_SETTINGS_CHANGED, checkSettings);
     };
   }, []);
   const totalDexs = SupportedDexsUtils.count;
@@ -130,15 +101,9 @@ export function NewPositionForm() {
 
   return (
     <AppProviders>
-      <ExchangesFilterModal
-        isOpen={isExchangesModalOpen}
-        onClose={() => setIsExchangesModalOpen(false)}
-      />
+      <ExchangesFilterModal isOpen={isExchangesModalOpen} onClose={() => setIsExchangesModalOpen(false)} />
 
-      <m.div
-        transition={{ type: "spring", stiffness: 120, damping: 25 }}
-        className="relative w-full min-h-screen"
-      >
+      <m.div transition={{ type: "spring", stiffness: 120, damping: 25 }} className="relative w-full min-h-screen">
         <AnimatePresence mode="popLayout">
           {!isAssetSelectorOpen ? (
             <m.div
@@ -159,53 +124,29 @@ export function NewPositionForm() {
               className="flex flex-col gap-6 w-full max-w-lg mx-auto px-4 sm:px-0"
             >
               <header className="flex flex-col gap-2">
-                <h1 className="text-[28px] font-semibold text-foreground">
-                  {translate(AppTranslationsKeys.NEW_POSITION_TITLE)}
-                </h1>
-                <p className="text-mutated-text">
-                  {translate(AppTranslationsKeys.NEW_POSITION_DESCRIPTION)}
-                </p>
+                <h1 className="text-[28px] font-semibold text-foreground">{translate(AppTranslationsKeys.NEW_POSITION_TITLE)}</h1>
+                <p className="text-mutated-text">{translate(AppTranslationsKeys.NEW_POSITION_DESCRIPTION)}</p>
               </header>
 
               <div className="flex flex-col gap-5">
                 <div className="flex flex-col gap-[10px]">
                   <div className="flex items-end justify-between">
-                    <label className="text-sm text-mutated-text shrink-0 leading-none pb-[3px]">
-                      {translate(
-                        AppTranslationsKeys.NEW_POSITION_ASSET_A_LABEL,
-                      )}
-                    </label>
-                    <Popover
-                      open={isSearchSettingsOpen}
-                      onOpenChange={setIsSearchSettingsOpen}
-                    >
+                    <label className="text-sm text-mutated-text shrink-0 leading-none pb-[3px]">{translate(AppTranslationsKeys.NEW_POSITION_ASSET_A_LABEL)}</label>
+                    <Popover open={isSearchSettingsOpen} onOpenChange={setIsSearchSettingsOpen}>
                       <PopoverTrigger asChild>
                         <button
                           aria-label="Search Settings"
                           className="relative flex items-center justify-center p-2 rounded-lg hover:bg-foreground/5 transition-colors cursor-pointer outline-none group"
-                          onMouseEnter={() =>
-                            searchSettingsIconRef.current?.startAnimation()
-                          }
-                          onMouseLeave={() =>
-                            searchSettingsIconRef.current?.stopAnimation()
-                          }
+                          onMouseEnter={() => searchSettingsIconRef.current?.startAnimation()}
+                          onMouseLeave={() => searchSettingsIconRef.current?.stopAnimation()}
                         >
                           <div className="relative">
                             <CogIcon
                               ref={searchSettingsIconRef}
                               size={22}
-                              className={cn(
-                                "transition-colors",
-                                hasSearchSettingsChanges || isSomeBlocked
-                                  ? "text-orange-400"
-                                  : "text-mutated-text group-hover:text-foreground",
-                              )}
+                              className={cn("transition-colors", hasSearchSettingsChanges || isSomeBlocked ? "text-orange-400" : "text-mutated-text group-hover:text-foreground")}
                             />
-                            <AnimatePresence>
-                              {(hasSearchSettingsChanges || isSomeBlocked) && (
-                                <Badge className="-top-0.5 -right-0.5 w-2 h-2" />
-                              )}
-                            </AnimatePresence>
+                            <AnimatePresence>{(hasSearchSettingsChanges || isSomeBlocked) && <Badge className="-top-0.5 -right-0.5 w-2 h-2" />}</AnimatePresence>
                           </div>
                         </button>
                       </PopoverTrigger>
@@ -226,24 +167,20 @@ export function NewPositionForm() {
                     </Popover>
                   </div>
                   <AssetSelectorButton
+                    data-testid="asset-selector-A"
                     layoutId="asset-selector-A"
-                    label={translate(
-                      AppTranslationsKeys.NEW_POSITION_SELECT_ASSET,
-                    )}
+                    label={translate(AppTranslationsKeys.NEW_POSITION_SELECT_ASSET)}
                     selectedAsset={assetA}
                     onClick={() => handleOpenAssetSelector("A")}
                   />
                 </div>
 
                 <div className="flex flex-col gap-[10px]">
-                  <label className="text-sm text-mutated-text leading-none">
-                    {translate(AppTranslationsKeys.NEW_POSITION_ASSET_B_LABEL)}
-                  </label>
+                  <label className="text-sm text-mutated-text leading-none">{translate(AppTranslationsKeys.NEW_POSITION_ASSET_B_LABEL)}</label>
                   <AssetSelectorButton
+                    data-testid="asset-selector-B"
                     layoutId="asset-selector-B"
-                    label={translate(
-                      AppTranslationsKeys.NEW_POSITION_SELECT_ASSET,
-                    )}
+                    label={translate(AppTranslationsKeys.NEW_POSITION_SELECT_ASSET)}
                     selectedAsset={assetB}
                     onClick={() => handleOpenAssetSelector("B")}
                   />
@@ -255,7 +192,13 @@ export function NewPositionForm() {
                 className="h-12 text-base"
                 onMouseEnter={() => sparklesIconRef.current?.startAnimation()}
                 onMouseLeave={() => sparklesIconRef.current?.stopAnimation()}
-                onClick={() => {}}
+                onClick={() => {
+                  navigator.navigateToPoolsSearch({
+                    assetA: assetA!,
+                    assetB: assetB!,
+                    chainId: activeChainId,
+                  });
+                }}
                 icon={<SparklesIcon ref={sparklesIconRef} size={18} />}
                 alwaysIcon
               >

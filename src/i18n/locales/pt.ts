@@ -8,12 +8,9 @@ export const pt: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_TITLE]: "Selecionar Rede",
   [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_DESCRIPTION]:
     'Selecione sua rede preferida. Escolha uma blockchain específica para filtrar dados ou selecione "Todas as redes" para uma visão geral multichain',
-  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER]:
-    "Buscar uma rede",
-  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_TITLE]:
-    "Nenhuma rede encontrada",
-  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION]:
-    "Não conseguimos encontrar nenhuma rede que corresponda à sua pesquisa. Tente ajustar suas palavras-chave.",
+  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_SEARCH_PLACEHOLDER]: "Buscar uma rede",
+  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_TITLE]: "Nenhuma rede encontrada",
+  [AppTranslationsKeys.NETWORK_SELECTOR_MODAL_EMPTY_DESCRIPTION]: "Não conseguimos encontrar nenhuma rede que corresponda à sua pesquisa. Tente ajustar suas palavras-chave.",
   [AppTranslationsKeys.SETTINGS_THEME_TITLE]: "Modo de Tema",
   [AppTranslationsKeys.SETTINGS_THEME_LIGHT]: "Claro",
   [AppTranslationsKeys.SETTINGS_THEME_DARK]: "Escuro",
@@ -34,50 +31,68 @@ export const pt: Record<AppTranslationsKeys, string> = {
   [AppTranslationsKeys.NEW_POSITION_ASSET_B_LABEL]: "Ativo B",
   [AppTranslationsKeys.NEW_POSITION_BASKET_LABEL]: "Cesta",
   [AppTranslationsKeys.NEW_POSITION_SELECT_ASSET]: "Selecionar Ativo",
-  [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]:
-    "Me mostre onde está o dinheiro!",
-  [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]:
-    "Configurações de Busca",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_BUTTON]: "Me mostre onde está o dinheiro!",
+  [AppTranslationsKeys.NEW_POSITION_SEARCH_SETTINGS_BUTTON]: "Configurações de Busca",
 
-  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]:
-    "Liquidez Mínima da Pool",
-  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]:
-    "Pools com liquidez abaixo desse valor não serão exibidas",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TITLE]: "Liquidez Mínima da Pool",
+  [AppTranslationsKeys.SEARCH_SETTINGS_MIN_LIQUIDITY_TOOLTIP]: "Pools com liquidez abaixo desse valor não serão exibidas",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_TITLE]: "Corretoras",
-  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]:
-    "Liquidez mínima baixa pode levar a rendimentos enganosos, tenha cuidado",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]:
-    "Buscar corretoras por nome",
+  [AppTranslationsKeys.SEARCH_SETTINGS_LOW_LIQUIDITY_WARNING]: "Liquidez mínima baixa pode levar a rendimentos enganosos, tenha cuidado",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SEARCH_PLACEHOLDER]: "Buscar corretoras por nome",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_CLEAR_ALL]: "Desativar tudo",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_SELECT_ALL]: "Ativar tudo",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ALL]: "Todos",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_ENABLED]: "Ativas",
   [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_FILTER_DISABLED]: "Inativas",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]:
-    "Desative corretoras para ocultá-las dos resultados. Você pode reativá-las quando quiser.",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]:
-    "Nenhuma corretora encontrada",
-  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]:
-    "Não achamos nenhuma corretora com esses critérios. Tente mudar os filtros ou procurar outra coisa.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_DESCRIPTION]: "Desative corretoras para ocultá-las dos resultados. Você pode reativá-las quando quiser.",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_TITLE]: "Nenhuma corretora encontrada",
+  [AppTranslationsKeys.EXCHANGES_FILTER_MODAL_EMPTY_DESCRIPTION]: "Não achamos nenhuma corretora com esses critérios. Tente mudar os filtros ou procurar outra coisa.",
   [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_PLACEHOLDER]: "Buscar ativo",
-  [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_RESULTS_TITLE]:
-    "Resultados da busca",
+  [AppTranslationsKeys.ASSET_SELECTOR_SEARCH_RESULTS_TITLE]: "Resultados da busca",
   [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_TITLE]: "Nenhum ativo encontrado",
-  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION]:
-    'Não encontramos nenhum resultado para "{query}". Tente pesquisar outra coisa.',
+  [AppTranslationsKeys.ASSET_SELECTOR_EMPTY_DESCRIPTION]: 'Não encontramos nenhum resultado para "{query}". Tente pesquisar outra coisa.',
   [AppTranslationsKeys.ASSET_SELECTOR_BASKETS_TITLE]: "Cestas de tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKENS_TITLE]: "Tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS]: "{count} tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORK]: "{count} rede",
-  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS]:
-    "{count} redes",
+  [AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS]: "{count} redes",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORK]: "{count} rede",
   [AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS]: "{count} redes",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_TITLE]: "Algo deu errado",
-  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]:
-    "Não conseguimos carregar os ativos. Por favor, tente novamente.",
+  [AppTranslationsKeys.ASSET_SELECTOR_ERROR_DESCRIPTION]: "Não conseguimos carregar os ativos. Por favor, tente novamente.",
   [AppTranslationsKeys.ASSET_SELECTOR_ERROR_RETRY]: "Tentar novamente",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_ALL]: "Tudo",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_TOKENS]: "Tokens",
   [AppTranslationsKeys.ASSET_SELECTOR_FILTER_BASKETS]: "Cestas",
+
+  [AppTranslationsKeys.POOLS_LIST_BACK_BUTTON]: "Selecionar Par",
+  [AppTranslationsKeys.POOLS_LIST_TITLE]: "Escolha uma pool para você",
+  [AppTranslationsKeys.POOLS_LIST_DESCRIPTION]: "Selecione o rendimento que melhor atende às suas necessidades e deposite para começar a ganhar",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_IN]: "Melhores rendimentos em",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_TOOLTIP_P1]:
+    "Cada período de tempo mostra rendimentos com base no desempenho passado. Janelas mais curtas (24h, 7d) destacam tendências recentes para movimentos rápidos.",
+  [AppTranslationsKeys.POOLS_LIST_BEST_YIELDS_TOOLTIP_P2]: "Janelas mais longas (30d, 90d) oferecem uma visão mais ampla para decisões de médio a longo prazo",
+
+  [AppTranslationsKeys.POOLS_LIST_FILTER_ACTIVE]: "Exibindo apenas pools com mais de {amount} depositados.",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_SEARCH_ALL]: "Buscar todas as pools",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_INACTIVE]: "Exibindo todas as pools.",
+  [AppTranslationsKeys.POOLS_LIST_FILTER_SEARCH_MORE]: "Buscar apenas com mais de {amount} depositados",
+
+  [AppTranslationsKeys.POOLS_CAROUSEL_LOADING]: "Buscando pools para você...",
+  [AppTranslationsKeys.POOLS_CAROUSEL_ERROR_TITLE]: "Algo deu errado",
+  [AppTranslationsKeys.POOLS_CAROUSEL_ERROR_DESCRIPTION]: "Ocorreu um erro ao tentar carregar as pools. Por favor, tente novamente.",
+  [AppTranslationsKeys.POOLS_CAROUSEL_TRY_AGAIN]: "Tentar novamente",
+  [AppTranslationsKeys.POOLS_CAROUSEL_EMPTY_TITLE]: "Nenhuma pool encontrada",
+  [AppTranslationsKeys.POOLS_CAROUSEL_EMPTY_DESCRIPTION]: "Não encontramos nenhuma pool que corresponda aos seus critérios de busca.",
+  [AppTranslationsKeys.POOLS_CAROUSEL_LOADING_MORE]: "Carregando mais...",
+  [AppTranslationsKeys.POOLS_CAROUSEL_END_TITLE]: "Nenhuma pool a mais",
+  [AppTranslationsKeys.POOLS_CAROUSEL_END_DESCRIPTION]: "Você chegou ao fim da lista de pools com os filtros selecionados.",
+
+  [AppTranslationsKeys.POOL_CARD_YIELD_TOOLTIP_DESC]: "Rendimento anual estimado com base em {period} de dados vindos das taxas distribuídas aos provedores de liquidez.",
+  [AppTranslationsKeys.POOL_CARD_N_YIELD]: "Rendimento {label}",
+  [AppTranslationsKeys.POOL_CARD_YEARLY_YIELD]: "Rendimento Anual {period}",
+  [AppTranslationsKeys.POOL_CARD_DEPOSITED]: "Depositado",
+  [AppTranslationsKeys.POOL_CARD_PROTOCOL]: "Protocolo",
+  [AppTranslationsKeys.POOL_CARD_BLOCKCHAIN]: "Rede",
+  [AppTranslationsKeys.POOL_CARD_DEPOSIT_BUTTON]: "Depositar",
 };

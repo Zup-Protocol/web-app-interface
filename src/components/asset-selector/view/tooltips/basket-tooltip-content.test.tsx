@@ -1,13 +1,11 @@
-import type { TokenBasket } from "@/core/types/token.types";
+import type { TokenBasket } from "@/core/types/asset.types";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { BasketTooltipContent } from "./basket-tooltip-content";
 
 // Mock framer-motion
 vi.mock("framer-motion", () => {
-  const motionComponent = ({ children, ...props }: any) => (
-    <div {...props}>{children}</div>
-  );
+  const motionComponent = ({ children, ...props }: any) => <div {...props}>{children}</div>;
   return {
     motion: {
       a: motionComponent,
@@ -50,9 +48,7 @@ const mockBasket: TokenBasket = {
   description: "A test basket",
   logoUrl: "https://example.com/basket.png",
   chainIds: [1],
-  addresses: [
-    { chainId: 1, address: "0x0000000000000000000000000000000000000000" },
-  ],
+  addresses: [{ chainId: 1, address: "0x0000000000000000000000000000000000000000" }],
   tokens: [
     {
       chainId: 1,
@@ -77,12 +73,8 @@ describe("BasketTooltipContent", () => {
     // Should have 2 network icons for the one token in the basket
     expect(images).toHaveLength(2);
 
-    const lightLogo = images.find((img) =>
-      img.className?.includes("dark:hidden"),
-    );
-    const darkLogo = images.find((img) =>
-      img.className?.includes("dark:block"),
-    );
+    const lightLogo = images.find((img) => img.className?.includes("dark:hidden"));
+    const darkLogo = images.find((img) => img.className?.includes("dark:block"));
 
     expect(lightLogo).toBeInTheDocument();
     expect(darkLogo).toBeInTheDocument();

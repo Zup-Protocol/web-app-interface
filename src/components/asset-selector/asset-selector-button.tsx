@@ -1,9 +1,6 @@
 "use client";
 
-import {
-    CursorClickIcon,
-    type CursorClickIconHandle,
-} from "@/components/ui/icons/cursor-click";
+import { CursorClickIcon, type CursorClickIconHandle } from "@/components/ui/icons/cursor-click";
 import { useTranslation } from "@/hooks/use-translation";
 import { AppTranslationsKeys } from "@/i18n/app-translations-keys";
 import { cn } from "@/lib/utils";
@@ -12,7 +9,7 @@ import { ChevronDown } from "lucide-react";
 import * as React from "react";
 
 import { AssetLogo } from "@/components/ui/asset-logo";
-import type { SelectableAsset } from "@/core/types/token.types";
+import type { SelectableAsset } from "@/core/types/asset.types";
 import { AnimatePresence } from "framer-motion";
 
 interface AssetSelectorButtonProps {
@@ -21,34 +18,22 @@ interface AssetSelectorButtonProps {
   onClick?: () => void;
   className?: string;
   layoutId?: string;
+  "data-testid"?: string;
 }
 
-export function AssetSelectorButton({
-  label,
-  selectedAsset,
-  onClick,
-  className,
-  layoutId,
-}: AssetSelectorButtonProps) {
+export function AssetSelectorButton({ label, selectedAsset, onClick, className, layoutId, "data-testid": testId }: AssetSelectorButtonProps) {
   const { translate } = useTranslation();
   const [isHovered, setIsHovered] = React.useState(false);
   const iconRef = React.useRef<CursorClickIconHandle>(null);
 
-  const displayLabel = selectedAsset
-    ? selectedAsset.type === "basket"
-      ? selectedAsset.name
-      : selectedAsset.symbol
-    : label;
+  const displayLabel = selectedAsset ? (selectedAsset.type === "basket" ? selectedAsset.name : selectedAsset.symbol) : label;
 
   const displayLogo = selectedAsset?.logoUrl;
-  // .replaceAll(
-  //   "https://logos.hydric.org/",
-  //   "http://localhost:8787/",
-  // );
 
   return (
     <m.button
       type="button"
+      data-testid={testId}
       onClick={onClick}
       onHoverStart={() => {
         setIsHovered(true);
@@ -71,39 +56,23 @@ export function AssetSelectorButton({
         "text-primary font-medium text-left",
         "transition-colors duration-200",
         "cursor-pointer",
-        selectedAsset &&
-          "bg-tertiary-button-background hover:bg-tertiary-button-background-hover text-foreground",
+        selectedAsset && "bg-tertiary-button-background hover:bg-tertiary-button-background-hover text-foreground",
 
         className,
       )}
     >
-      <m.span
-        layout="position"
-        className="flex items-center gap-4 min-w-0 flex-1"
-        exit={{ opacity: 0, transition: { duration: 0.1 } }}
-      >
+      <m.span layout="position" className="flex items-center gap-4 min-w-0 flex-1" exit={{ opacity: 0, transition: { duration: 0.1 } }}>
         <AnimatePresence mode="wait">
           {selectedAsset ? (
             <AssetLogo
               key="asset-logo"
               url={selectedAsset.logoUrl}
-              name={
-                selectedAsset.type === "basket" ? selectedAsset.name : undefined
-              }
-              symbol={
-                selectedAsset.type !== "basket"
-                  ? selectedAsset.symbol
-                  : undefined
-              }
+              name={selectedAsset.type === "basket" ? selectedAsset.name : undefined}
+              symbol={selectedAsset.type !== "basket" ? selectedAsset.symbol : undefined}
               size={40}
             />
           ) : (
-            <m.div
-              key="default-icon"
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-            >
+            <m.div key="default-icon" initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.8, opacity: 0 }}>
               <CursorClickIcon ref={iconRef} size={24} />
             </m.div>
           )}
@@ -114,9 +83,7 @@ export function AssetSelectorButton({
           </m.span>
           {selectedAsset && (
             <span className="text-sm text-mutated-text tracking-wider font-medium mb-0.5 truncate w-full">
-              {selectedAsset.type === "basket"
-                ? translate(AppTranslationsKeys.NEW_POSITION_BASKET_LABEL)
-                : selectedAsset.name}
+              {selectedAsset.type === "basket" ? translate(AppTranslationsKeys.NEW_POSITION_BASKET_LABEL) : selectedAsset.name}
             </span>
           )}
         </div>

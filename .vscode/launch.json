@@ -8,6 +8,12 @@
       "command": "npm run dev"
     },
     {
+      "type": "node-terminal",
+      "request": "launch",
+      "name": "Start Dev Server (Host Access)",
+      "command": "npm run dev -- --host"
+    },
+    {
       "type": "chrome",
       "request": "launch",
       "name": "Debug Web Application in Chrome",

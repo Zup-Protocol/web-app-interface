@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import * as React from "react";
 
 const iconButtonVariants = cva(
-  "inline-flex items-center justify-center whitespace-nowrap rounded-[12px] text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer overflow-hidden [&_svg]:stroke-current [&_svg]:fill-none [&_svg]:size-5",
+  "inline-flex items-center justify-center whitespace-nowrap text-base font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer overflow-hidden [&_svg]:stroke-current [&_svg]:fill-none [&_svg]:size-5",
   {
     variants: {
       variant: {
@@ -21,10 +21,15 @@ const iconButtonVariants = cva(
         sm: "h-9 w-9",
         lg: "h-12 w-12",
       },
+      shape: {
+        square: "rounded-[12px]",
+        circle: "rounded-full",
+      },
     },
     defaultVariants: {
       variant: "default",
       size: "default",
+      shape: "square",
     },
   },
 );
@@ -35,11 +40,13 @@ export interface IconButtonProps
     VariantProps<typeof iconButtonVariants> {}
 
 export const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ className, variant, size, children, ...props }, ref) => {
+  ({ className, variant, size, shape, children, ...props }, ref) => {
     return (
       <ScaleClickAnimation scale={0.94}>
         <button
-          className={cn(iconButtonVariants({ variant, size, className }))}
+          className={cn(
+            iconButtonVariants({ variant, size, shape, className }),
+          )}
           ref={ref}
           {...props}
         >

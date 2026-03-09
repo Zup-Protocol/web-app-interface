@@ -17,53 +17,39 @@ interface AssetListItemProps {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  "data-testid"?: string;
 }
 
-export function AssetListItem({
-  title,
-  subtitle,
-  logoUrl,
-  assetName,
-  assetSymbol,
-  tooltipContent,
-  onClick,
-  disabled,
-  className,
-}: AssetListItemProps) {
+export function AssetListItem({ title, subtitle, logoUrl, assetName, assetSymbol, tooltipContent, onClick, disabled, className, "data-testid": testId }: AssetListItemProps) {
   return (
     <ScaleHoverAnimation asChild scale={1.03} disabled={disabled}>
-      <m.button
-        type="button"
-        onClick={onClick}
-        disabled={disabled}
+      <m.div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        data-testid={testId}
+        onClick={disabled ? undefined : onClick}
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === "Enter" || e.key === " ")) {
+            e.preventDefault();
+            onClick();
+          }
+        }}
         whileTap={{ scale: 0.98 }}
         className={cn(
           "flex w-full items-center justify-between",
           "p-6 rounded-xl mb-4",
           "bg-tertiary-button-background hover:bg-tertiary-button-background-hover",
           "transition-colors duration-200",
-          "text-left group cursor-pointer",
-          disabled &&
-            "opacity-40 cursor-not-allowed hover:bg-tertiary-button-background",
+          "text-left group cursor-pointer outline-none",
+          disabled && "opacity-40 cursor-not-allowed hover:bg-tertiary-button-background",
           className,
         )}
       >
         <div className="flex items-center gap-4 min-w-0">
-          <AssetLogo
-            url={logoUrl}
-            name={assetName}
-            symbol={assetSymbol}
-            size={48}
-          />
+          <AssetLogo url={logoUrl} name={assetName} symbol={assetSymbol} size={48} />
           <div className="flex flex-col min-w-0">
-            <span className="text-base font-semibold text-foreground truncate">
-              {title}
-            </span>
-            {subtitle && (
-              <span className="text-sm text-mutated-text truncate">
-                {subtitle}
-              </span>
-            )}
+            <span className="text-base font-semibold text-foreground truncate">{title}</span>
+            {subtitle && <span className="text-sm text-mutated-text truncate">{subtitle}</span>}
           </div>
         </div>
 
@@ -74,14 +60,11 @@ export function AssetListItem({
               showModalOnMobile
               padding={0}
               className="w-10 h-10 md:w-auto md:h-auto"
-              contentClassName={cn(
-                "max-w-sm p-0",
-                "w-full max-w-none md:max-w-sm",
-              )}
+              contentClassName={cn("max-w-sm p-0", "w-full max-w-none md:max-w-sm")}
             />
           </div>
         )}
-      </m.button>
+      </m.div>
     </ScaleHoverAnimation>
   );
 }

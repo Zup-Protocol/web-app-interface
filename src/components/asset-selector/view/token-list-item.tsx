@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-  MultiChainToken,
-  SingleChainToken,
-} from "@/core/types/token.types";
+import type { MultiChainToken, SingleChainToken } from "@/core/types/asset.types";
 import { TokenTooltipContent } from "./tooltips/token-tooltip-content";
 
 import { useTranslation } from "@/hooks/use-translation";
@@ -16,14 +13,10 @@ interface TokenListItemProps {
   onClick: () => void;
   disabled?: boolean;
   className?: string;
+  "data-testid"?: string;
 }
 
-export function TokenListItem({
-  token,
-  onClick,
-  disabled,
-  className,
-}: TokenListItemProps) {
+export function TokenListItem({ token, onClick, disabled, className, "data-testid": testId }: TokenListItemProps) {
   const { translate } = useTranslation();
   const isMultiChain = token.type === "multi-chain";
   const networkCount = isMultiChain ? token.chainIds.length : 1;
@@ -31,12 +24,8 @@ export function TokenListItem({
 
   const networkInfo =
     networkCount === 1
-      ? AppNetworksUtils.networkName[
-          AppNetworksUtils.chainIdToNetwork[tokenNetwork]
-        ]
-      : translate(
-          AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS,
-        ).replace("{count}", networkCount.toString());
+      ? AppNetworksUtils.networkName[AppNetworksUtils.chainIdToNetwork[tokenNetwork]]
+      : translate(AppTranslationsKeys.ASSET_SELECTOR_TOKEN_SUBTITLE_NETWORKS).replace("{count}", networkCount.toString());
 
   const subtitle = `${token.name} • ${networkInfo}`;
 
@@ -51,6 +40,7 @@ export function TokenListItem({
       onClick={onClick}
       disabled={disabled}
       className={className}
+      data-testid={testId}
     />
   );
 }

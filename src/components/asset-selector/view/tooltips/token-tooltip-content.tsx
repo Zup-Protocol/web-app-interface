@@ -1,9 +1,6 @@
 "use client";
 
-import type {
-    MultiChainToken,
-    SingleChainToken,
-} from "@/core/types/token.types";
+import type { MultiChainToken, SingleChainToken } from "@/core/types/asset.types";
 import { AddressFormatter } from "@/lib/address-formatter";
 import { AppNetworksUtils } from "@/lib/app-networks";
 import { motion } from "framer-motion";
@@ -15,10 +12,7 @@ interface TokenTooltipContentProps {
   onClose?: () => void;
 }
 
-export function TokenTooltipContent({
-  token,
-  onClose,
-}: TokenTooltipContentProps) {
+export function TokenTooltipContent({ token, onClose }: TokenTooltipContentProps) {
   const isMultiChain = token.type === "multi-chain";
 
   const rows = isMultiChain
@@ -35,9 +29,7 @@ export function TokenTooltipContent({
   return (
     <AssetTooltipContent title="Contracts" onClose={onClose}>
       {rows.map((row) => {
-        const networkValue = AppNetworksUtils.values.find(
-          (n) => AppNetworksUtils.wagmiNetwork[n]?.id === row.chainId,
-        );
+        const networkValue = AppNetworksUtils.values.find((n) => AppNetworksUtils.wagmiNetwork[n]?.id === row.chainId);
 
         if (networkValue === undefined) return null;
 
@@ -71,32 +63,17 @@ export function TokenTooltipContent({
           >
             <div className="flex items-center gap-2">
               <div className="w-7 h-7 shrink-0 rounded-full overflow-hidden flex items-center justify-center p-0.5">
-                <img
-                  src={lightSrc}
-                  alt={networkName}
-                  className="w-full h-full object-contain dark:hidden"
-                />
-                <img
-                  src={darkSrc}
-                  alt={networkName}
-                  className="w-full h-full object-contain hidden dark:block"
-                />
+                <img src={lightSrc} alt={networkName} className="w-full h-full object-contain dark:hidden" />
+                <img src={darkSrc} alt={networkName} className="w-full h-full object-contain hidden dark:block" />
               </div>
               <div className="flex flex-col">
-                <span className="text-base font-medium text-foreground leading-none group-hover:text-primary transition-colors">
-                  {networkName}
-                </span>
-                <span className="text-sm text-mutated-text mt-1 group-hover:text-primary transition-colors">
-                  {AddressFormatter.truncateAddress(row.address)}
-                </span>
+                <span className="text-base font-medium text-foreground leading-none group-hover:text-primary transition-colors">{networkName}</span>
+                <span className="text-sm text-mutated-text mt-1 group-hover:text-primary transition-colors">{AddressFormatter.truncateAddress(row.address)}</span>
               </div>
             </div>
 
             <div className="flex items-center gap-1.5 transition-opacity">
-              <ExternalLink
-                size={14}
-                className="text-mutated-text group-hover:text-primary transition-colors"
-              />
+              <ExternalLink size={14} className="text-mutated-text group-hover:text-primary transition-colors" />
             </div>
           </motion.a>
         );

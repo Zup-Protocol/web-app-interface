@@ -1,6 +1,6 @@
 "use client";
 
-import type { TokenBasket } from "@/core/types/token.types";
+import type { TokenBasket } from "@/core/types/asset.types";
 import { BasketTooltipContent } from "./tooltips/basket-tooltip-content";
 
 import { useTranslation } from "@/hooks/use-translation";
@@ -11,31 +11,22 @@ import { AssetListItem } from "./asset-list-item";
 interface BasketListItemProps {
   basket: TokenBasket;
   onClick: () => void;
+  "data-testid"?: string;
   className?: string;
 }
 
-export function BasketListItem({
-  basket,
-  onClick,
-  className,
-}: BasketListItemProps) {
+export function BasketListItem({ basket, onClick, "data-testid": testId, className }: BasketListItemProps) {
   const { translate } = useTranslation();
 
   const tokensCount = basket.tokens.length.toString();
   const networksCount = basket.chainIds.length.toString();
 
-  const tokensPart = translate(
-    AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS,
-  ).replace("{count}", tokensCount);
+  const tokensPart = translate(AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_TOKENS).replace("{count}", tokensCount);
 
   const networksPart =
     basket.chainIds.length === 1
-      ? AppNetworksUtils.networkName[
-          AppNetworksUtils.chainIdToNetwork[basket.chainIds[0]]
-        ]
-      : translate(
-          AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS,
-        ).replace("{count}", networksCount);
+      ? AppNetworksUtils.networkName[AppNetworksUtils.chainIdToNetwork[basket.chainIds[0]]]
+      : translate(AppTranslationsKeys.ASSET_SELECTOR_BASKET_SUBTITLE_NETWORKS).replace("{count}", networksCount);
 
   const subtitle = `${tokensPart} • ${networksPart}`;
 
@@ -48,6 +39,7 @@ export function BasketListItem({
       tooltipContent={<BasketTooltipContent basket={basket} />}
       onClick={onClick}
       className={className}
+      data-testid={testId}
     />
   );
 }

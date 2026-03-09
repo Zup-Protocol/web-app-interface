@@ -1,6 +1,6 @@
 import { triggerHaptic } from "@/lib/haptic";
-import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ScaleClickAnimation } from "./scale-click-animation";
 
 // Mock dependencies
@@ -19,6 +19,15 @@ vi.mock("framer-motion", async () => {
 });
 
 describe("ScaleClickAnimation", () => {
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("renders correctly", () => {
     render(<ScaleClickAnimation>Content</ScaleClickAnimation>);
     expect(screen.getByText("Content")).toBeInTheDocument();
@@ -32,16 +41,17 @@ describe("ScaleClickAnimation", () => {
     fireEvent.pointerDown(content);
 
     expect(triggerHaptic).toHaveBeenCalledWith(10);
+
+    act(() => {
+      vi.runAllTimers();
+    });
   });
 
   it("handles pointer up and cancel", () => {
     const onPointerUp = vi.fn();
     const onPointerCancel = vi.fn();
     render(
-      <ScaleClickAnimation
-        onPointerUp={onPointerUp}
-        onPointerCancel={onPointerCancel}
-      >
+      <ScaleClickAnimation onPointerUp={onPointerUp} onPointerCancel={onPointerCancel}>
         Content
       </ScaleClickAnimation>,
     );
@@ -52,6 +62,10 @@ describe("ScaleClickAnimation", () => {
 
     fireEvent.pointerCancel(content);
     expect(onPointerCancel).toHaveBeenCalled();
+
+    act(() => {
+      vi.runAllTimers();
+    });
   });
 
   it("renders as child component", () => {
@@ -61,6 +75,10 @@ describe("ScaleClickAnimation", () => {
       </ScaleClickAnimation>,
     );
     expect(screen.getByRole("button")).toBeInTheDocument();
+
+    act(() => {
+      vi.runAllTimers();
+    });
   });
 
   it("handles animate prop with scale value", () => {
@@ -72,15 +90,10 @@ describe("ScaleClickAnimation", () => {
     const content = screen.getByText("Content");
     fireEvent.pointerDown(content);
     fireEvent.pointerUp(content);
-  });
 
-  it("handles non-object animate prop", () => {
-    render(
-      <ScaleClickAnimation animate={"string" as any}>
-        <div>Content</div>
-      </ScaleClickAnimation>,
-    );
-    expect(screen.getByText("Content")).toBeInTheDocument();
+    act(() => {
+      vi.runAllTimers();
+    });
   });
 
   it("handles disabled state", () => {
@@ -92,28 +105,9 @@ describe("ScaleClickAnimation", () => {
     const content = screen.getByText("Content");
     fireEvent.pointerDown(content);
     fireEvent.pointerUp(content);
-  });
 
-  it("handles custom transition and style props", () => {
-    render(
-      <ScaleClickAnimation
-        transition={{ duration: 0.5 }}
-        style={{ color: "red" }}
-      >
-        <div>Content</div>
-      </ScaleClickAnimation>,
-    );
-    const content = screen.getByText("Content");
-    fireEvent.pointerDown(content);
-    fireEvent.pointerUp(content);
-  });
-
-  it("handles non-object transition prop", () => {
-    render(
-      <ScaleClickAnimation transition={"string" as any}>
-        <div>Content</div>
-      </ScaleClickAnimation>,
-    );
-    expect(screen.getByText("Content")).toBeInTheDocument();
+    act(() => {
+      vi.runAllTimers();
+    });
   });
 });

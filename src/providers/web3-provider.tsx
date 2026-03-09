@@ -1,11 +1,8 @@
 "use client";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { useEffect, useState } from "react";
 import { WagmiProvider } from "wagmi";
-import { HydricProvider } from "./hydric-provider";
-import { config, initializeAppKit } from "./wagmi-config";
-
-const queryClient = new QueryClient();
+import { initializeAppKit, config as wagmiConfig } from "./wagmi-config";
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -17,13 +14,5 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
 
   if (!ready) return null;
 
-  return (
-    <WagmiProvider config={config}>
-      <HydricProvider>
-        <QueryClientProvider client={queryClient}>
-          {children}
-        </QueryClientProvider>
-      </HydricProvider>
-    </WagmiProvider>
-  );
+  return <WagmiProvider config={wagmiConfig}>{children}</WagmiProvider>;
 }
